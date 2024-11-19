@@ -18,7 +18,7 @@ class AuthHelper {
     ErrorRes? error;
     final requestHeaders = <String, String>{'Content-Type': 'application/json'};
 
-    final url = Uri.http(Config.apiUrl, Config.loginUrl);
+    final url = Uri.https(Config.apiUrl, Config.loginUrl);
     final response = await client.post(
       url,
       headers: requestHeaders,
@@ -52,7 +52,7 @@ class AuthHelper {
       final requestHeaders = <String, String>{
         'Content-Type': 'application/json'
       };
-      final url = Uri.http(Config.apiUrl, Config.signupUrl);
+      final url = Uri.https(Config.apiUrl, Config.signupUrl);
       debugPrint(jsonEncode(model));
       final response = await client.post(
         url,
@@ -80,7 +80,7 @@ class AuthHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.http(Config.apiUrl, Config.profileUrl);
+    final url = Uri.https(Config.apiUrl, Config.profileUrl);
     final response = await client.put(
       url,
       headers: requestHeaders,
@@ -110,7 +110,7 @@ class AuthHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.http(Config.apiUrl, Config.profileUrl);
+    final url = Uri.https(Config.apiUrl, Config.profileUrl);
     final response = await client.get(
       url,
       headers: requestHeaders,

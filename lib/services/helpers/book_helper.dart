@@ -20,7 +20,7 @@ class BookMarkHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.http(Config.apiUrl, Config.bookmarkUrl);
+    final url = Uri.https(Config.apiUrl, Config.bookmarkUrl);
     final response = await client.post(
       url,
       headers: requestHeaders,
@@ -45,7 +45,7 @@ class BookMarkHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.http(Config.apiUrl, '${Config.bookmarkUrl}/$jobId');
+    final url = Uri.https(Config.apiUrl, '${Config.bookmarkUrl}/$jobId');
     final response = await client.delete(
       url,
       headers: requestHeaders,
@@ -68,7 +68,7 @@ class BookMarkHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.http(Config.apiUrl, Config.bookmarkUrl);
+    final url = Uri.https(Config.apiUrl, Config.bookmarkUrl);
     final response = await client.get(
       url,
       headers: requestHeaders,
