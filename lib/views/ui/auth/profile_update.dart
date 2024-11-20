@@ -77,7 +77,6 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                               },
                               child: CircleAvatar(
                                 backgroundColor: Color(kLightBlue.value),
-                                // backgroundImage: ,
                                 child: const Center(
                                   child: Icon(Icons.photo_filter_rounded),
                                 ),
@@ -136,11 +135,11 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: skill0,
-                      hintText: 'Proffessional Skills',
+                      hintText: 'Professional Skills',
                       keyboardType: TextInputType.text,
                       validator: (skill0) {
                         if (skill0!.isEmpty) {
-                          return 'Please enter a valid phone';
+                          return 'Please enter a valid skill';
                         } else {
                           return null;
                         }
@@ -149,11 +148,11 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: skill1,
-                      hintText: 'Proffessional Skills',
+                      hintText: 'Professional Skills',
                       keyboardType: TextInputType.text,
                       validator: (skill1) {
                         if (skill1!.isEmpty) {
-                          return 'Please enter a valid phone';
+                          return 'Please enter a valid skill';
                         } else {
                           return null;
                         }
@@ -162,11 +161,11 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: skill2,
-                      hintText: 'Proffessional Skills',
+                      hintText: 'Professional Skills',
                       keyboardType: TextInputType.text,
                       validator: (skill2) {
                         if (skill2!.isEmpty) {
-                          return 'Please enter a valid phone';
+                          return 'Please enter a valid skill';
                         } else {
                           return null;
                         }
@@ -175,11 +174,11 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: skill3,
-                      hintText: 'Proffessional Skills',
+                      hintText: 'Professional Skills',
                       keyboardType: TextInputType.text,
                       validator: (skill3) {
                         if (skill3!.isEmpty) {
-                          return 'Please enter a valid phone';
+                          return 'Please enter a valid skill';
                         } else {
                           return null;
                         }
@@ -188,11 +187,11 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: skill4,
-                      hintText: 'Proffessional Skills',
+                      hintText: 'Professional Skills',
                       keyboardType: TextInputType.text,
                       validator: (skill4) {
                         if (skill4!.isEmpty) {
-                          return 'Please enter a valid phone';
+                          return 'Please enter a valid skill';
                         } else {
                           return null;
                         }
@@ -200,23 +199,28 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                     ),
                     const HeightSpacer(size: 20),
                     Consumer<ImageUpoader>(
-                      builder: (context, imageUploada, child) {
+                      builder: (context, imageUploader, child) {
                         return CustomButton(
                           onTap: () {
-                            if (imageUploada.imageFil.isEmpty &&
-                                imageUploada.imageUrl == null) {
+                            // Check if image is missing and assign the default image URL
+                            String profileImage = imageUploader.imageUrl ?? 
+                                "https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Clip-Art-Transparent-PNG.png";  // Default image URL
+
+                            if (imageUploader.imageUrl == null) {
+                              imageUploader.imageUrl = "https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Clip-Art-Transparent-PNG.png";
                               Get.snackbar(
                                 'Image Missing',
                                 'Please upload an image to proceed',
                                 colorText: Color(kLight.value),
                                 backgroundColor: Color(kLightBlue.value),
                                 icon: const Icon(Icons.add_alert),
+                                
                               );
-                            } else {
+                            }
                               final model = ProfileUpdateReq(
                                 location: location.text,
                                 phone: phone.text,
-                                profile: imageUploada.imageUrl.toString(),
+                                profile: profileImage,  // Use the profile image (either uploaded or default)
                                 skills: [
                                   skill0.text,
                                   skill1.text,
@@ -226,8 +230,8 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                                 ],
                               );
 
-                              loginNotifier.updateProfile(model);
-                            }
+                              loginNotifier.updateProfile(model);  // Call the update function
+                            
                           },
                           text: 'Update Profile',
                         );
