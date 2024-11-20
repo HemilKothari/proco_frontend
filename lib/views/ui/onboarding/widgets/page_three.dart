@@ -40,7 +40,7 @@ class PageThree extends StatelessWidget {
               right: 0,
               child: Column(
                 children: [
-                  CustomOutlineBtn(
+                  GestureDetector(
                     onTap: () async {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setBool('entrypoint', true);
@@ -50,10 +50,25 @@ class PageThree extends StatelessWidget {
                         ),
                       );
                     },
-                    text: 'Login',
-                    width: width * 0.4,
-                    hieght: hieght * 0.06,
-                    color: Color(kLight.value),
+                    child: Container(
+                      width: width * 0.67, // Increased width for a longer box
+                      height: hieght * 0.06, // Slightly taller height
+                      decoration: BoxDecoration(
+                        color: Color(kLight.value),
+                        borderRadius:
+                            BorderRadius.circular(28), // More curved edges
+                      ),
+                      child: Center(
+                        child: ReusableText(
+                          text: 'Login',
+                          style: appstyle(
+                            18, // Slightly larger text size
+                            Color(0xFF040326),
+                            FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 30),
                   GestureDetector(
@@ -61,15 +76,19 @@ class PageThree extends StatelessWidget {
                       Get.to(() => const RegistrationPage());
                     },
                     child: Container(
-                      width: width * 0.4,
-                      height: hieght * 0.06,
-                      color: Color(kLight.value),
+                      width: width * 0.67, // Increased width for a longer box
+                      height: hieght * 0.06, // Slightly taller height
+                      decoration: BoxDecoration(
+                        color: Color(kLight.value),
+                        borderRadius:
+                            BorderRadius.circular(28), // More curved edges
+                      ),
                       child: Center(
                         child: ReusableText(
                           text: 'Sign Up',
                           style: appstyle(
-                            16,
-                            Color(kLightBlue.value),
+                            18, // Slightly larger text size
+                            Color(0xFF040326),
                             FontWeight.w600,
                           ),
                         ),
