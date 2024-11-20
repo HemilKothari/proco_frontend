@@ -130,7 +130,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       children: [
                         ReusableText(
                           text: 'Password should be at least 8 characters',
-                          style: appstyle(9, kOrange, FontWeight.w500),
+                          style: appstyle(9, const Color(0xFF040326), FontWeight.w500),
                         ),
                         ReusableText(
                           text: 'Login',

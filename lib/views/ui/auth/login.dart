@@ -139,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                           'Sign Failed',
                           'Please Check your credentials',
                           colorText: Color(kLight.value),
-                          backgroundColor: Colors.red,
+                          backgroundColor: const Color(0xFF040326),
                           icon: const Icon(Icons.add_alert),
                         );
                       }
