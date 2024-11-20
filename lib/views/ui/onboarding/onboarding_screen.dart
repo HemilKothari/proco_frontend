@@ -4,7 +4,6 @@ import 'package:jobhub_v1/controllers/exports.dart';
 import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/ui/onboarding/widgets/page_one.dart';
 import 'package:jobhub_v1/views/ui/onboarding/widgets/page_three.dart';
-import 'package:jobhub_v1/views/ui/onboarding/widgets/page_two.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

@@ -20,30 +20,21 @@ class PageThree extends StatelessWidget {
         height: hieght,
         color: const Color(0xFF040326),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const HeightSpacer(size: 120),
             Image.asset(
-              'assets/images/Proco_Logo 1 (Traced).png',
+              'assets/images/grouped.png',
               height: 500,
             ),
-            const HeightSpacer(size: 20),
-            ReusableText(
-              text: 'Welcome To Proco',
-              style: appstyle(30, Color(kLight.value), FontWeight.w600),
-            ),
-            const HeightSpacer(size: 15),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-            ),
-            const HeightSpacer(size: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            const HeightSpacer(size: 1),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomOutlineBtn(
                   onTap: () async {
                     final prefs = await SharedPreferences.getInstance();
-
                     await prefs.setBool('entrypoint', true);
-
                     await Get.to(
                       () => const LoginPage(
                         drawer: true,
@@ -55,6 +46,7 @@ class PageThree extends StatelessWidget {
                   hieght: hieght * 0.06,
                   color: Color(kLight.value),
                 ),
+                const HeightSpacer(size: 10),
                 GestureDetector(
                   onTap: () {
                     Get.to(() => const RegistrationPage());
@@ -75,21 +67,19 @@ class PageThree extends StatelessWidget {
                     ),
                   ),
                 ),
+                const HeightSpacer(size: 20),
+                GestureDetector(
+                  onTap: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('entrypoint', true);
+                    await Get.to(() => const MainScreen());
+                  },
+                  child: ReusableText(
+                    text: 'Continue as guest',
+                    style: appstyle(16, Color(kLight.value), FontWeight.w400),
+                  ),
+                ),
               ],
-            ),
-            const HeightSpacer(size: 30),
-            GestureDetector(
-              onTap: () async {
-                final prefs = await SharedPreferences.getInstance();
-
-                await prefs.setBool('entrypoint', true);
-
-                await Get.to(() => const MainScreen());
-              },
-              child: ReusableText(
-                text: 'Continue as guest',
-                style: appstyle(16, Color(kLight.value), FontWeight.w400),
-              ),
             ),
           ],
         ),
