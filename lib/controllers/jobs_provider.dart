@@ -4,19 +4,23 @@ import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/helpers/jobs_helper.dart';
 
 class JobsNotifier extends ChangeNotifier {
-  late Future<List<JobsResponse>> jobList;
-  late Future<JobsResponse> recent;
-  late Future<GetJobRes> job;
+  Future<List<JobsResponse>>? jobList;  // Nullable Future for jobList
+  Future<JobsResponse>? recent;         // Nullable Future for recent
+  Future<GetJobRes>? job;               // Nullable Future for job
 
-  getJobs() {
-    jobList = JobsHelper.getJobs();
+  void getJobs() {
+    jobList = JobsHelper.getJobs(); // Fetch the list of jobs
+    notifyListeners(); // Notify listeners that the data has changed
   }
 
-  getRecent() {
-    recent = JobsHelper.getRecent();
+  void getRecent() {
+    recent = JobsHelper.getRecent(); // Fetch the recent job
+    notifyListeners(); // Notify listeners about the new data
   }
 
-  getJob(String jobId) {
-    job = JobsHelper.getJob(jobId);
+  void getJob(String jobId) {
+    job = JobsHelper.getJob(jobId); // Fetch a specific job by its ID
+    notifyListeners(); // Notify listeners about the new data
   }
 }
+

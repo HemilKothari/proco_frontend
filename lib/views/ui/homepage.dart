@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/exports.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
+import 'package:jobhub_v1/controllers/jobs_provider.dart';
+import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
+import 'package:jobhub_v1/views/common/app_style.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/common/heading_widget.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/common/search.dart';
-import 'package:jobhub_v1/views/common/vertical_shimmer.dart';
 import 'package:jobhub_v1/views/common/vertical_tile.dart';
 import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
-import 'package:jobhub_v1/views/ui/jobs/jobs_list.dart';
-import 'package:jobhub_v1/views/ui/jobs/widgets/horizontal_shimmer.dart';
-import 'package:jobhub_v1/views/ui/jobs/widgets/horizontal_tile.dart';
 import 'package:jobhub_v1/views/ui/search/searchpage.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +24,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the job list and recent job when the page loads
+    final jobNotifier = Provider.of<JobsNotifier>(context, listen: false);
+    jobNotifier.getJobs();
+    jobNotifier.getRecent();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,8 +56,6 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Consumer<JobsNotifier>(
         builder: (context, jobNotifier, child) {
-          jobNotifier.getJobs();
-          jobNotifier.getRecent();
           return SafeArea(
             child: SingleChildScrollView(
               child: Padding(
@@ -70,41 +76,83 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const HeightSpacer(size: 30),
                     HeadingWidget(
-                      text: 'Popular Queries',
-                      onTap: () {
-                        Get.to(() => const JobListPage());
-                      },
+                      text: 'Explore Opportunities',
+                      onTap: () {},
                     ),
                     const HeightSpacer(size: 15),
                     SizedBox(
-                      height: hieght * 0.28,
-                      child: FutureBuilder(
+                      height: 300.h,
+                      child: FutureBuilder<List<JobsResponse>>(
                         future: jobNotifier.jobList,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const HorizontalShimmer();
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           } else if (snapshot.hasError) {
-                            return Text('Error ${snapshot.error}');
+                            return Center(
+                              child: Text('Error: ${snapshot.error}'),
+                            );
+                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return Center(
+                              child: Text(
+                                'No jobs available.',
+                                style: appstyle(16, Colors.grey, FontWeight.w400),
+                              ),
+                            );
                           } else {
-                            final jobs = snapshot.data;
-                            return ListView.builder(
-                              itemCount: jobs!.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                final job = jobs[index];
-                                return JobHorizontalTile(
-                                  onTap: () {
-                                    Get.to(
-                                      () => JobPage(
-                                        title: job.company,
-                                        id: job.id,
+                            final jobList = snapshot.data!;
+                            return CardSwiper(
+                              cardsCount: jobList.length,
+                              cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                                final job = jobList[index];
+                                return Container(
+                                  padding: EdgeInsets.all(16.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15.w),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 5),
                                       ),
-                                    );
-                                  },
-                                  job: job,
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        job.company ?? 'Unknown Company',
+                                        style: appstyle(20, Colors.black, FontWeight.bold),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        job.title ?? 'No Title',
+                                        style: appstyle(18, Colors.grey.shade700, FontWeight.w500),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        job.location ?? 'Location Not Available',
+                                        style: appstyle(16, Colors.grey.shade600, FontWeight.w400),
+                                      ),
+                                      const Spacer(),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (job.id != null) {
+                                            Get.to(() => JobPage(
+                                                  title: job.company ?? 'Unknown',
+                                                  id: job.id!,
+                                                ));
+                                          }
+                                        },
+                                        child: const Text('View Details'),
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
+                              isLoop: true,
                             );
                           }
                         },
@@ -119,19 +167,15 @@ class _HomePageState extends State<HomePage> {
                     FutureBuilder(
                       future: jobNotifier.recent,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const VerticalShimmer();
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
                         } else if (snapshot.hasError) {
                           return Text('Error ${snapshot.error}');
                         } else {
                           final jobs = snapshot.data;
                           return VerticalTile(
                             onTap: () {
-                              Get.to(
-                                () =>
-                                    JobPage(title: jobs!.company, id: jobs.id),
-                              );
+                              Get.to(() => JobPage(title: jobs!.company, id: jobs.id));
                             },
                             job: jobs,
                           );
