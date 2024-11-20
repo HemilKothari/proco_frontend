@@ -27,7 +27,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ZoomDrawer.of(context)!.toggle();
           },
           child: Scaffold(
-            backgroundColor: Color(kLightBlue.value),
+            backgroundColor: Color(Color.fromRGBO(54, 99, 227, 1).value),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,10 +65,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       : Color(kLightGrey.value),
                 ),
                 drawerItem(
-                  FontAwesome5Regular.user_circle,
-                  'Profile',
+                  FontAwesome5Regular.clipboard,
+                  'Add Job',
                   4,
                   zoomNotifier.currentIndex == 4
+                      ? Color(kLight.value)
+                      : Color(kLightGrey.value),
+                ),
+                drawerItem(
+                  FontAwesome5Regular.user_circle,
+                  'Profile',
+                  5,
+                  zoomNotifier.currentIndex == 5
                       ? Color(kLight.value)
                       : Color(kLightGrey.value),
                 ),

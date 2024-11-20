@@ -86,7 +86,7 @@ class LoginNotifier extends ChangeNotifier {
   Future<void> userLogin(LoginModel model) async {
     await AuthHelper.login(model).then((response) async {
       if (response[0]) {
-        Get.snackbar(
+        Get.snackbar( 
           'Login Success',
           'Enjoy your search for a job',
           colorText: Color(kLight.value),

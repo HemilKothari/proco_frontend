@@ -10,6 +10,7 @@ import 'package:jobhub_v1/views/ui/bookmarks/bookmarks.dart';
 import 'package:jobhub_v1/views/ui/chat/chat_list.dart';
 import 'package:jobhub_v1/views/ui/device_mgt/devices_info.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
+import 'package:jobhub_v1/views/ui/jobs/add_job.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -67,6 +68,12 @@ class _MainScreenState extends State<MainScreen> {
                 drawer: false,
               );
       case 4:
+        return loginNotifier.loggedIn
+            ? const AddJobPage()
+            : const LoginPage(
+                drawer: false,
+              );
+      case 5:
         return loginNotifier.loggedIn
             ? const ProfilePage()
             : const LoginPage(
