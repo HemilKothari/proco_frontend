@@ -12,13 +12,12 @@ class PageTwo extends StatelessWidget {
       body: Container(
         width: width,
         height: hieght,
-        color: Color(kDarkBlue.value),
+        color: const Color(0xFF040326),
         child: Column(
           children: [
             const HeightSpacer(size: 65),
             Padding(
               padding: EdgeInsets.all(8.h),
-              child: Image.asset('assets/images/page2.png'),
             ),
             const HeightSpacer(size: 20),
             Column(

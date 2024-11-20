@@ -66,27 +66,29 @@ class PageOne extends StatelessWidget {
         child: Column(
           children: [
             const HeightSpacer(
-              size: 70,
+              size: 100,
             ),
-            Image.asset('assets/images/page1.png'),
-            const HeightSpacer(size: 40),
-            Column(
-              children: [
-                ReusableText(
-                  text: 'Find Your Connects',
-                  style: appstyle(30, Color(kLight.value), FontWeight.w500),
-                ),
-                const HeightSpacer(size: 10),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-                  child: Text(
-                    'We help you find your dream job according to your skillset, location and preference to build your career',
-                    textAlign: TextAlign.center,
-                    style: appstyle(14, Color(kLight.value), FontWeight.normal),
+            Image.asset('assets/images/mainlogo.png'),
+            const HeightSpacer(size: 20),
+            // Added Spacer to push the text to the bottom
+            const Spacer(flex: 3),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'Connecting The Right People\nAt The Right Time',
+                  textAlign: TextAlign.center, // Center aligns the text
+                  style: TextStyle(
+                    fontFamily: 'Poppins', // Custom font
+                    fontSize: 18.sp, // Responsive font size
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF08959D), // Text color
                   ),
                 ),
-              ],
+              ),
             ),
+            const Spacer(flex: 1),
+            const HeightSpacer(size: 40), // Bottom padding
           ],
         ),
       ),

@@ -18,26 +18,21 @@ class PageThree extends StatelessWidget {
       body: Container(
         width: width,
         height: hieght,
-        color: Color(kLightBlue.value),
+        color: const Color(0xFF040326),
         child: Column(
           children: [
             Image.asset(
-              'assets/images/page3.png',
+              'assets/images/Proco_Logo 1 (Traced).png',
               height: 500,
             ),
             const HeightSpacer(size: 20),
             ReusableText(
-              text: 'Welcome To JobHub',
+              text: 'Welcome To Proco',
               style: appstyle(30, Color(kLight.value), FontWeight.w600),
             ),
             const HeightSpacer(size: 15),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Text(
-                'We help you find your dream job to your skillset, location and preference to build your career',
-                textAlign: TextAlign.center,
-                style: appstyle(14, Color(kLight.value), FontWeight.normal),
-              ),
             ),
             const HeightSpacer(size: 20),
             Row(

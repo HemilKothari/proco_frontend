@@ -39,7 +39,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 onPageChanged: (page) {
                   onBoardNotifier.isLastPage = page == 2;
                 },
-                children: const [PageOne(), PageTwo(), PageThree()],
+                children: const [PageOne(), PageThree()],
               ),
               Positioned(
                 bottom: hieght * 0.12,
@@ -50,7 +50,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     : Center(
                         child: SmoothPageIndicator(
                           controller: pageController,
-                          count: 3,
+                          count: 2,
                           effect: WormEffect(
                             dotHeight: 12,
                             dotWidth: 12,
