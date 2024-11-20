@@ -66,15 +66,17 @@ class PageOne extends StatelessWidget {
         child: Column(
           children: [
             const HeightSpacer(
-              size: 100,
+              size: 205,
             ),
-            Image.asset('assets/images/mainlogo.png'),
-            const HeightSpacer(size: 20),
+            Image.asset('assets/images/Vector.png'),
+            const HeightSpacer(
+              size: 30,
+            ),
             // Added Spacer to push the text to the bottom
-            const Spacer(flex: 3),
+            //const Spacer(flex: 1),
             Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Text(
                   'Connecting The Right People\nAt The Right Time',
                   textAlign: TextAlign.center, // Center aligns the text
