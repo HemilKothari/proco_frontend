@@ -50,7 +50,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 ),
                 drawerItem(
                   Fontisto.bookmark,
-                  'Bookmarks',
+                  'Saved Queries',
                   2,
                   zoomNotifier.currentIndex == 2
                       ? Color(kLight.value)
@@ -58,7 +58,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 ),
                 drawerItem(
                   MaterialCommunityIcons.devices,
-                  'Device Mgmt',
+                  'Devices',
                   3,
                   zoomNotifier.currentIndex == 3
                       ? Color(kLight.value)
