@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:proco/constants/app_constants.dart';
-import 'package:proco/controllers/exports.dart';
-import 'package:proco/views/common/drawer/drawerScreen.dart';
-import 'package:proco/views/common/exports.dart';
-import 'package:proco/views/ui/auth/login.dart';
-import 'package:proco/views/ui/auth/profile.dart';
-import 'package:proco/views/ui/bookmarks/bookmarks.dart';
-import 'package:proco/views/ui/chat/chat_list.dart';
-import 'package:proco/views/ui/device_mgt/devices_info.dart';
-import 'package:proco/views/ui/homepage.dart';
-import 'package:proco/views/ui/jobs/add_job.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
+import 'package:jobhub_v1/controllers/exports.dart';
+import 'package:jobhub_v1/views/common/drawer/drawerScreen.dart';
+import 'package:jobhub_v1/views/common/exports.dart';
+import 'package:jobhub_v1/views/ui/auth/login.dart';
+import 'package:jobhub_v1/views/ui/auth/profile.dart';
+import 'package:jobhub_v1/views/ui/bookmarks/bookmarks.dart';
+import 'package:jobhub_v1/views/ui/chat/chat_list.dart';
+import 'package:jobhub_v1/views/ui/device_mgt/devices_info.dart';
+import 'package:jobhub_v1/views/ui/homepage.dart';
+import 'package:jobhub_v1/views/ui/jobs/add_job.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {

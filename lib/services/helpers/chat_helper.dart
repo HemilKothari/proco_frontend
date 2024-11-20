@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as https;
-import 'package:proco/models/request/chat/create_chat.dart';
-import 'package:proco/models/response/chat/get_chat.dart';
-import 'package:proco/models/response/chat/intitial_msg.dart';
-import 'package:proco/services/config.dart';
+import 'package:jobhub_v1/models/request/chat/create_chat.dart';
+import 'package:jobhub_v1/models/response/chat/get_chat.dart';
+import 'package:jobhub_v1/models/response/chat/intitial_msg.dart';
+import 'package:jobhub_v1/services/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatHelper {

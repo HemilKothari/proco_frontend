@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:proco/constants/app_constants.dart';
-import 'package:proco/models/request/bookmarks/bookmarks_model.dart';
-import 'package:proco/models/response/bookmarks/all_bookmarks.dart';
-import 'package:proco/services/helpers/book_helper.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
+import 'package:jobhub_v1/models/request/bookmarks/bookmarks_model.dart';
+import 'package:jobhub_v1/models/response/bookmarks/all_bookmarks.dart';
+import 'package:jobhub_v1/services/helpers/book_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookMarkNotifier extends ChangeNotifier {

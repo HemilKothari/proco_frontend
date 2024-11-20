@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as https;
-import 'package:proco/models/response/jobs/get_job.dart';
-import 'package:proco/models/response/jobs/jobs_response.dart';
-import 'package:proco/services/config.dart';
+import 'package:jobhub_v1/models/response/jobs/get_job.dart';
+import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
+import 'package:jobhub_v1/services/config.dart';
 
 // FIX: ADDED TRY CATCHES EVERYWHERE
 class JobsHelper {

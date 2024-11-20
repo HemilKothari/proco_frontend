@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:proco/controllers/exports.dart';
-import 'package:proco/models/response/bookmarks/all_bookmarks.dart';
-import 'package:proco/views/common/app_bar.dart';
-import 'package:proco/views/common/drawer/drawer_widget.dart';
-import 'package:proco/views/ui/bookmarks/widgets/bookmark_widget.dart';
+import 'package:jobhub_v1/controllers/exports.dart';
+import 'package:jobhub_v1/models/response/bookmarks/all_bookmarks.dart';
+import 'package:jobhub_v1/views/common/app_bar.dart';
+import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
+import 'package:jobhub_v1/views/ui/bookmarks/widgets/bookmark_widget.dart';
 import 'package:provider/provider.dart';
 
 class BookMarkPage extends StatefulWidget {

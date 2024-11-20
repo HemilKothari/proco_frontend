@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:proco/constants/app_constants.dart';
-import 'package:proco/models/request/auth/signup_model.dart';
-import 'package:proco/services/helpers/auth_helper.dart';
-import 'package:proco/views/common/exports.dart';
-import 'package:proco/views/ui/auth/login.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
+import 'package:jobhub_v1/models/request/auth/signup_model.dart';
+import 'package:jobhub_v1/services/helpers/auth_helper.dart';
+import 'package:jobhub_v1/views/common/exports.dart';
+import 'package:jobhub_v1/views/ui/auth/login.dart';
 
 class SignUpNotifier extends ChangeNotifier {
   bool _obscureText = true;

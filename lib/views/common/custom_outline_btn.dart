@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:proco/views/common/app_style.dart';
-import 'package:proco/views/common/reusable_text.dart';
+import 'package:jobhub_v1/views/common/app_style.dart';
+import 'package:jobhub_v1/views/common/reusable_text.dart';
 
 class CustomOutlineBtn extends StatelessWidget {
   const CustomOutlineBtn({

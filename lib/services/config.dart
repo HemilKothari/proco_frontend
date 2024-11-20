@@ -1,6 +1,6 @@
 class Config {
   // static const apiUrl = "a821-159-138-45-185.ngrok-free.app";
-  static const String apiUrl = 'proco-server-api.onrender.com';
+  static const String apiUrl = 'jobhub_v1-server-api.onrender.com';
 
   static const String loginUrl = '/api/login';
   static const String signupUrl = '/api/register';

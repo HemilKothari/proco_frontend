@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as https;
-import 'package:proco/models/error.dart';
-import 'package:proco/models/request/auth/login_model.dart';
-import 'package:proco/models/request/auth/profile_update_model.dart';
-import 'package:proco/models/request/auth/signup_model.dart';
-import 'package:proco/models/response/auth/login_res_model.dart';
-import 'package:proco/models/response/auth/profile_model.dart';
-import 'package:proco/services/config.dart';
+import 'package:jobhub_v1/models/error.dart';
+import 'package:jobhub_v1/models/request/auth/login_model.dart';
+import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
+import 'package:jobhub_v1/models/request/auth/signup_model.dart';
+import 'package:jobhub_v1/models/response/auth/login_res_model.dart';
+import 'package:jobhub_v1/models/response/auth/profile_model.dart';
+import 'package:jobhub_v1/services/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthHelper {

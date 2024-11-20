@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:proco/constants/app_constants.dart';
-import 'package:proco/main.dart';
-import 'package:proco/models/request/auth/login_model.dart';
-import 'package:proco/models/request/auth/profile_update_model.dart';
-import 'package:proco/services/helpers/auth_helper.dart';
-import 'package:proco/views/ui/mainscreen.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
+import 'package:jobhub_v1/main.dart';
+import 'package:jobhub_v1/models/request/auth/login_model.dart';
+import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
+import 'package:jobhub_v1/services/helpers/auth_helper.dart';
+import 'package:jobhub_v1/views/ui/mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginNotifier extends ChangeNotifier {

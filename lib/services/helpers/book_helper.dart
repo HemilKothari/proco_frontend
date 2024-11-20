@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as https;
-import 'package:proco/models/request/bookmarks/bookmarks_model.dart';
-import 'package:proco/models/response/bookmarks/all_bookmarks.dart';
-import 'package:proco/models/response/bookmarks/book_res.dart';
-import 'package:proco/services/config.dart';
+import 'package:jobhub_v1/models/request/bookmarks/bookmarks_model.dart';
+import 'package:jobhub_v1/models/response/bookmarks/all_bookmarks.dart';
+import 'package:jobhub_v1/models/response/bookmarks/book_res.dart';
+import 'package:jobhub_v1/services/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookMarkHelper {

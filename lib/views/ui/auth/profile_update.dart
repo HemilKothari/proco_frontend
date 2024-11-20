@@ -4,13 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:proco/controllers/exports.dart';
-import 'package:proco/models/request/auth/profile_update_model.dart';
-import 'package:proco/views/common/app_bar.dart';
-import 'package:proco/views/common/custom_btn.dart';
-import 'package:proco/views/common/custom_textfield.dart';
-import 'package:proco/views/common/exports.dart';
-import 'package:proco/views/common/height_spacer.dart';
+import 'package:jobhub_v1/controllers/exports.dart';
+import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
+import 'package:jobhub_v1/views/common/app_bar.dart';
+import 'package:jobhub_v1/views/common/custom_btn.dart';
+import 'package:jobhub_v1/views/common/custom_textfield.dart';
+import 'package:jobhub_v1/views/common/exports.dart';
+import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:provider/provider.dart';
 
 class ProfileUpdate extends StatefulWidget {
