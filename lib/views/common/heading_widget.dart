@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
+import 'package:proco/views/common/exports.dart';
 
 class HeadingWidget extends StatelessWidget {
   const HeadingWidget({required this.text, super.key, this.onTap});

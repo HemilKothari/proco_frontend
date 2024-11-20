@@ -4,14 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/profile_provider.dart';
-import 'package:jobhub_v1/models/response/auth/profile_model.dart';
-import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/common/width_spacer.dart';
-import 'package:jobhub_v1/views/ui/auth/profile_update.dart';
+import 'package:proco/controllers/profile_provider.dart';
+import 'package:proco/models/response/auth/profile_model.dart';
+import 'package:proco/views/common/app_bar.dart';
+import 'package:proco/views/common/drawer/drawer_widget.dart';
+import 'package:proco/views/common/exports.dart';
+import 'package:proco/views/common/height_spacer.dart';
+import 'package:proco/views/common/width_spacer.dart';
+import 'package:proco/views/ui/auth/profile_update.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {

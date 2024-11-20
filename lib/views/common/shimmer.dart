@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jobhub_v1/views/common/vertical_shimmer.dart';
+import 'package:proco/views/common/vertical_shimmer.dart';
 
 class SearchShimmer extends StatelessWidget {
   const SearchShimmer({

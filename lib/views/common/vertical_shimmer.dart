@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
+import 'package:proco/views/common/exports.dart';
 
 class VerticalShimmer extends StatelessWidget {
   const VerticalShimmer({

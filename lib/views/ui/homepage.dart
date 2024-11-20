@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/exports.dart';
-import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/heading_widget.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/common/search.dart';
-import 'package:jobhub_v1/views/common/vertical_shimmer.dart';
-import 'package:jobhub_v1/views/common/vertical_tile.dart';
-import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
-import 'package:jobhub_v1/views/ui/jobs/jobs_list.dart';
-import 'package:jobhub_v1/views/ui/jobs/widgets/horizontal_shimmer.dart';
-import 'package:jobhub_v1/views/ui/jobs/widgets/horizontal_tile.dart';
-import 'package:jobhub_v1/views/ui/search/searchpage.dart';
+import 'package:proco/controllers/exports.dart';
+import 'package:proco/views/common/app_bar.dart';
+import 'package:proco/views/common/drawer/drawer_widget.dart';
+import 'package:proco/views/common/exports.dart';
+import 'package:proco/views/common/heading_widget.dart';
+import 'package:proco/views/common/height_spacer.dart';
+import 'package:proco/views/common/search.dart';
+import 'package:proco/views/common/vertical_shimmer.dart';
+import 'package:proco/views/common/vertical_tile.dart';
+import 'package:proco/views/ui/jobs/job_page.dart';
+import 'package:proco/views/ui/jobs/jobs_list.dart';
+import 'package:proco/views/ui/jobs/widgets/horizontal_shimmer.dart';
+import 'package:proco/views/ui/jobs/widgets/horizontal_tile.dart';
+import 'package:proco/views/ui/search/searchpage.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {

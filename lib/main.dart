@@ -2,11 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/exports.dart';
-import 'package:jobhub_v1/firebase_options.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/ui/mainscreen.dart';
-import 'package:jobhub_v1/views/ui/onboarding/onboarding_screen.dart';
+import 'package:proco/controllers/exports.dart';
+import 'package:proco/firebase_options.dart';
+import 'package:proco/views/common/exports.dart';
+import 'package:proco/views/ui/mainscreen.dart';
+import 'package:proco/views/ui/onboarding/onboarding_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

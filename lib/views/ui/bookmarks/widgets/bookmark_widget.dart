@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/models/response/bookmarks/all_bookmarks.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/width_spacer.dart';
-import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
+import 'package:proco/models/response/bookmarks/all_bookmarks.dart';
+import 'package:proco/views/common/exports.dart';
+import 'package:proco/views/common/width_spacer.dart';
+import 'package:proco/views/ui/jobs/job_page.dart';
 
 class BookMarkTileWidget extends StatelessWidget {
   const BookMarkTileWidget({required this.job, super.key});

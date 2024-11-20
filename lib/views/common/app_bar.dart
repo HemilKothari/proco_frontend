@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jobhub_v1/constants/app_constants.dart';
-import 'package:jobhub_v1/views/common/app_style.dart';
-import 'package:jobhub_v1/views/common/reusable_text.dart';
+import 'package:proco/constants/app_constants.dart';
+import 'package:proco/views/common/app_style.dart';
+import 'package:proco/views/common/reusable_text.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({

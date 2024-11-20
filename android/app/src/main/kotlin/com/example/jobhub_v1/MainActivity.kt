@@ -1,4 +1,4 @@
-package com.example.jobhub_v1
+package com.example.proco
 
 import io.flutter.embedding.android.FlutterActivity
 

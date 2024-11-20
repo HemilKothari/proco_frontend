@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/exports.dart';
-import 'package:jobhub_v1/main.dart';
-import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/ui/device_mgt/widgets/device_info.dart';
+import 'package:proco/controllers/exports.dart';
+import 'package:proco/main.dart';
+import 'package:proco/views/common/app_bar.dart';
+import 'package:proco/views/common/drawer/drawer_widget.dart';
+import 'package:proco/views/common/exports.dart';
+import 'package:proco/views/common/height_spacer.dart';
+import 'package:proco/views/ui/device_mgt/widgets/device_info.dart';
 import 'package:provider/provider.dart';
 
 class DeviceManagement extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jobhub_v1/views/common/custom_outline_btn.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
+import 'package:proco/views/common/custom_outline_btn.dart';
+import 'package:proco/views/common/exports.dart';
+import 'package:proco/views/common/height_spacer.dart';
 
 class DevicesInfo extends StatelessWidget {
   const DevicesInfo({

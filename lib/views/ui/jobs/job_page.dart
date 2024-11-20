@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/exports.dart';
-import 'package:jobhub_v1/models/request/bookmarks/bookmarks_model.dart';
-import 'package:jobhub_v1/models/request/chat/create_chat.dart';
-import 'package:jobhub_v1/models/request/messaging/send_message.dart';
-import 'package:jobhub_v1/services/helpers/chat_helper.dart';
-import 'package:jobhub_v1/services/helpers/messaging_helper.dart';
-import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/custom_outline_btn.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/ui/mainscreen.dart';
+import 'package:proco/controllers/exports.dart';
+import 'package:proco/models/request/bookmarks/bookmarks_model.dart';
+import 'package:proco/models/request/chat/create_chat.dart';
+import 'package:proco/models/request/messaging/send_message.dart';
+import 'package:proco/services/helpers/chat_helper.dart';
+import 'package:proco/services/helpers/messaging_helper.dart';
+import 'package:proco/views/common/app_bar.dart';
+import 'package:proco/views/common/custom_outline_btn.dart';
+import 'package:proco/views/common/exports.dart';
+import 'package:proco/views/common/height_spacer.dart';
+import 'package:proco/views/ui/mainscreen.dart';
 import 'package:provider/provider.dart';
 
 class JobPage extends StatefulWidget {

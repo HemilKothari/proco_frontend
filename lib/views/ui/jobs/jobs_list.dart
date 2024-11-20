@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/jobs_provider.dart';
-import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
-import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/loader.dart';
-import 'package:jobhub_v1/views/ui/jobs/widgets/job_tile.dart';
+import 'package:proco/controllers/jobs_provider.dart';
+import 'package:proco/models/response/jobs/jobs_response.dart';
+import 'package:proco/views/common/app_bar.dart';
+import 'package:proco/views/common/loader.dart';
+import 'package:proco/views/ui/jobs/widgets/job_tile.dart';
 import 'package:provider/provider.dart';
 
 class JobListPage extends StatelessWidget {

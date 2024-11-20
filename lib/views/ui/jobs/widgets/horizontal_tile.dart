@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/common/width_spacer.dart';
+import 'package:proco/models/response/jobs/jobs_response.dart';
+import 'package:proco/views/common/exports.dart';
+import 'package:proco/views/common/height_spacer.dart';
+import 'package:proco/views/common/width_spacer.dart';
 
 class JobHorizontalTile extends StatelessWidget {
   const JobHorizontalTile({required this.job, super.key, this.onTap});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
+import 'package:proco/views/common/exports.dart';
 
 class MessaginTextField extends StatelessWidget {
   const MessaginTextField({

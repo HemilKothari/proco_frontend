@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:jobhub_v1/models/response/chat/get_chat.dart';
-import 'package:jobhub_v1/services/helpers/chat_helper.dart';
+import 'package:proco/models/response/chat/get_chat.dart';
+import 'package:proco/services/helpers/chat_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatNotifier extends ChangeNotifier {

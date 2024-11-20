@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as https;
-import 'package:jobhub_v1/models/request/messaging/send_message.dart';
-import 'package:jobhub_v1/models/response/messaging/messaging_res.dart';
-import 'package:jobhub_v1/services/config.dart';
+import 'package:proco/models/request/messaging/send_message.dart';
+import 'package:proco/models/response/messaging/messaging_res.dart';
+import 'package:proco/services/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MesssagingHelper {
