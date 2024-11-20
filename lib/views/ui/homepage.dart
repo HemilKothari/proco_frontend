@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const HeightSpacer(size: 30),
                     HeadingWidget(
-                      text: 'Popular Jobs',
+                      text: 'Popular Queries',
                       onTap: () {
                         Get.to(() => const JobListPage());
                       },

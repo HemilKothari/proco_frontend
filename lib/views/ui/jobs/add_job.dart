@@ -65,7 +65,7 @@ class _AddJobPageState extends State<AddJobPage> {
     };
 
     // TODO: Call the API to send `jobData` to the backend
-    print('Job Data: $jobData');
+    print('Query Data: $jobData');
 
     // Reset the form
     setState(() {
@@ -85,7 +85,7 @@ class _AddJobPageState extends State<AddJobPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50.h),
         child: CustomAppBar(
-          text: 'Add Job',
+          text: 'List Query',
           child: Padding(
             padding: EdgeInsets.all(12.0.h),
             child: const DrawerWidget(),
@@ -101,7 +101,7 @@ class _AddJobPageState extends State<AddJobPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ReusableText(
-                    text: 'Job Details',
+                    text: 'Query Details',
                     style: appstyle(35, Color(kDark.value), FontWeight.bold),
                   ),
                 ],
@@ -113,7 +113,7 @@ class _AddJobPageState extends State<AddJobPage> {
                   children: [
                     CustomTextField(
                       controller: titleController,
-                      hintText: 'Job Title',
+                      hintText: 'Query Title',
                       keyboardType: TextInputType.text,
                       validator: (title) {
                         if (title!.isEmpty) {
@@ -136,7 +136,8 @@ class _AddJobPageState extends State<AddJobPage> {
                         }
                       },
                     ),
-                    const HeightSpacer(size: 10),
+
+                    /*const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: companyController,
                       hintText: 'Company',
@@ -148,7 +149,7 @@ class _AddJobPageState extends State<AddJobPage> {
                           return null;
                         }
                       },
-                    ),
+                    ), */
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: descriptionController,
@@ -164,8 +165,8 @@ class _AddJobPageState extends State<AddJobPage> {
                     ),
                     const HeightSpacer(size: 10),
                     CustomTextField(
-                      controller: salaryController, 
-                      hintText: 'Salary',
+                      controller: salaryController,
+                      hintText: 'Reward/Compensation',
                       keyboardType: TextInputType.number,
                       validator: (salary) {
                         if (salary!.isEmpty) {
@@ -179,7 +180,7 @@ class _AddJobPageState extends State<AddJobPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Hiring Status'),
+                        const Text('Query Status'),
                         Switch(
                           value: isHiring,
                           onChanged: (value) {
@@ -206,7 +207,7 @@ class _AddJobPageState extends State<AddJobPage> {
                     const HeightSpacer(size: 20),
                     CustomButton(
                       onTap: submitJob,
-                      text: 'Add Job',
+                      text: 'List Query',
                     ),
                   ],
                 ),

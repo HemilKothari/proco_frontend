@@ -19,7 +19,7 @@ class JobListPage extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50.h),
         child: CustomAppBar(
-          text: 'Jobs',
+          text: 'Queries',
           child: GestureDetector(
             onTap: Get.back,
             child: const Icon(CupertinoIcons.arrow_left),
@@ -34,7 +34,7 @@ class JobListPage extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text('Error ${snapshot.error}');
           } else if (snapshot.data!.isEmpty) {
-            return const SearchLoading(text: 'No Jobs to display');
+            return const SearchLoading(text: 'No Oppotunities to display');
           } else {
             final job = snapshot.data;
             return Padding(
