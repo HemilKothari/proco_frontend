@@ -330,7 +330,7 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                             );
                           }else{
-                            return LinearProgressIndicator();
+                            return const LinearProgressIndicator();
                           }
                         }
                     )

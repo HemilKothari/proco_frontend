@@ -27,7 +27,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ZoomDrawer.of(context)!.toggle();
           },
           child: Scaffold(
-            backgroundColor: Color(Color.fromRGBO(54, 99, 227, 1).value),
+            backgroundColor: Color(const Color.fromRGBO(54, 99, 227, 1).value),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,

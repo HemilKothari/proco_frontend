@@ -139,13 +139,11 @@ class _HomePageState extends State<HomePage> {
                                       const Spacer(),
                                       ElevatedButton(
                                         onPressed: () {
-                                          if (job.id != null) {
-                                            Get.to(() => JobPage(
-                                                  title: job.company ?? 'Unknown',
-                                                  id: job.id!,
-                                                ));
-                                          }
-                                        },
+                                          Get.to(() => JobPage(
+                                                title: job.company ?? 'Unknown',
+                                                id: job.id!,
+                                              ));
+                                                                                },
                                         child: const Text('View Details'),
                                       ),
                                     ],
