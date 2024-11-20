@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, profileNitifier, child) {
           profileNitifier.getProfile();
           // Fix: make nullable for proper push to home after login
-          return FutureBuilder<ProfileRes?>(
+          return FutureBuilder<ProfileRes?>( 
             future: profileNitifier.profile,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -68,16 +68,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(20),
                                   ),
-                                  // Fix: Image not loading, somewhere
-                                  // the userData.profile is being set to
-                                  // the string 'null', this shouldn't be
-                                  // the case, make it nullable rather.
-                                  // so for now, I'm just checking for 'n
-                                  // ull', You should rather make profile
-                                  // nullable. I didn't have time to go
-                                  // change the profile everywhere and
-                                  // correct the backend code or wherever
-                                  // it was being set as null
                                   child: UserData!.profile == 'null'
                                       ? Image.asset(
                                           'assets/images/user.png',
@@ -134,70 +124,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ],
                         ),
-                      ),
-                      const HeightSpacer(size: 20),
-                      Stack(
-                        children: [
-                          Container(
-                            width: width,
-                            height: hieght * 0.12,
-                            color: Color(kLightGrey.value),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(left: 12.w),
-                                  width: 60.w,
-                                  height: 70.h,
-                                  color: Color(kLight.value),
-                                  child: const Icon(
-                                    FontAwesome5Regular.file_pdf,
-                                    color: Colors.red,
-                                    size: 40,
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ReusableText(
-                                      text: 'Resume from JobHub',
-                                      style: appstyle(
-                                        18,
-                                        Color(kDark.value),
-                                        FontWeight.w500,
-                                      ),
-                                    ),
-                                    ReusableText(
-                                      text: 'JobHub Resume',
-                                      style: appstyle(
-                                        16,
-                                        Color(kDarkGrey.value),
-                                        FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const WidthSpacer(width: 1),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            top: 2.h,
-                            right: 5.w,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: ReusableText(
-                                text: 'Edit',
-                                style: appstyle(
-                                  16,
-                                  Color(kOrange.value),
-                                  FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                       const HeightSpacer(size: 20),
                       Container(

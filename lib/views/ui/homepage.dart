@@ -9,12 +9,9 @@ import 'package:jobhub_v1/views/common/app_style.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/common/heading_widget.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/common/search.dart';
-import 'package:jobhub_v1/views/common/vertical_tile.dart';
-import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
-import 'package:jobhub_v1/views/ui/search/searchpage.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,10 +24,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Fetch the job list and recent job when the page loads
     final jobNotifier = Provider.of<JobsNotifier>(context, listen: false);
     jobNotifier.getJobs();
-    jobNotifier.getRecent();
   }
 
   @override
@@ -63,25 +58,15 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const HeightSpacer(size: 10),
-                    Text(
-                      'Search \nFind & Apply',
-                      style: appstyle(40, Color(kDark.value), FontWeight.bold),
-                    ),
-                    const HeightSpacer(size: 40),
-                    SearchWidget(
-                      onTap: () {
-                        Get.to(() => const SearchPage());
-                      },
-                    ),
-                    const HeightSpacer(size: 30),
                     HeadingWidget(
-                      text: 'Explore Opportunities',
-                      onTap: () {},
+                      text: 'Filter Jobs',
+                      onTap: () {
+                        // Add filter functionality
+                      },
                     ),
                     const HeightSpacer(size: 15),
                     SizedBox(
-                      height: 300.h,
+                      height: 0.75.sh, // Set the height for the cards to occupy most of the page
                       child: FutureBuilder<List<JobsResponse>>(
                         future: jobNotifier.jobList,
                         builder: (context, snapshot) {
@@ -120,32 +105,40 @@ class _HomePageState extends State<HomePage> {
                                     ],
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
+                                      const Spacer(),
+                                      job.imageUrl != null
+                                          ? Image.network(
+                                              job.imageUrl!,
+                                              height: 200.h,
+                                              width: double.infinity,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Icon(
+                                              Icons.business,
+                                              size: 100.h,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                      const Spacer(),
                                       Text(
                                         job.company ?? 'Unknown Company',
-                                        style: appstyle(20, Colors.black, FontWeight.bold),
+                                        style: appstyle(22, Colors.black, FontWeight.bold),
+                                        textAlign: TextAlign.center,
                                       ),
                                       const SizedBox(height: 10),
                                       Text(
                                         job.title ?? 'No Title',
-                                        style: appstyle(18, Colors.grey.shade700, FontWeight.w500),
+                                        style: appstyle(20, Colors.grey.shade700, FontWeight.w500),
+                                        textAlign: TextAlign.center,
                                       ),
                                       const SizedBox(height: 10),
                                       Text(
                                         job.location ?? 'Location Not Available',
-                                        style: appstyle(16, Colors.grey.shade600, FontWeight.w400),
+                                        style: appstyle(18, Colors.grey.shade600, FontWeight.w400),
+                                        textAlign: TextAlign.center,
                                       ),
                                       const Spacer(),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Get.to(() => JobPage(
-                                                title: job.company ?? 'Unknown',
-                                                id: job.id!,
-                                              ));
-                                                                                },
-                                        child: const Text('View Details'),
-                                      ),
                                     ],
                                   ),
                                 );
@@ -157,28 +150,28 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const HeightSpacer(size: 20),
-                    HeadingWidget(
-                      text: 'Recently Posted',
-                      onTap: () {},
-                    ),
-                    const HeightSpacer(size: 20),
-                    FutureBuilder(
-                      future: jobNotifier.recent,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text('Error ${snapshot.error}');
-                        } else {
-                          final jobs = snapshot.data;
-                          return VerticalTile(
-                            onTap: () {
-                              Get.to(() => JobPage(title: jobs!.company, id: jobs.id));
-                            },
-                            job: jobs,
-                          );
-                        }
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Handle No action
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: const Text('No'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Handle Yes action
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
+                          child: const Text('Yes'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
