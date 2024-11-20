@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/jobs_provider.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
@@ -21,6 +22,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final CardSwiperController controller = CardSwiperController();
+
   @override
   void initState() {
     super.initState();
@@ -58,118 +61,152 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    HeadingWidget(
-                      text: 'Filter Jobs',
-                      onTap: () {
-                        // Add filter functionality
-                      },
-                    ),
-                    const HeightSpacer(size: 15),
-                    SizedBox(
-                      height: 0.75.sh, // Set the height for the cards to occupy most of the page
-                      child: FutureBuilder<List<JobsResponse>>(
-                        future: jobNotifier.jobList,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Center(
-                              child: Text('Error: ${snapshot.error}'),
-                            );
-                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Center(
-                              child: Text(
-                                'No jobs available.',
-                                style: appstyle(16, Colors.grey, FontWeight.w400),
-                              ),
-                            );
-                          } else {
-                            final jobList = snapshot.data!;
-                            return CardSwiper(
-                              cardsCount: jobList.length,
-                              cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-                                final job = jobList[index];
-                                return Container(
-                                  padding: EdgeInsets.all(16.w),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15.w),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.shade300,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 5),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      const Spacer(),
-                                      job.imageUrl != null
-                                          ? Image.network(
-                                              job.imageUrl!,
-                                              height: 200.h,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Icon(
-                                              Icons.business,
-                                              size: 100.h,
-                                              color: Colors.grey.shade400,
-                                            ),
-                                      const Spacer(),
-                                      Text(
-                                        job.company ?? 'Unknown Company',
-                                        style: appstyle(22, Colors.black, FontWeight.bold),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        job.title ?? 'No Title',
-                                        style: appstyle(20, Colors.grey.shade700, FontWeight.w500),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        job.location ?? 'Location Not Available',
-                                        style: appstyle(18, Colors.grey.shade600, FontWeight.w400),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const Spacer(),
-                                    ],
+                    // Stack to overlay the icon
+                    Stack(
+                      clipBehavior: Clip.none, // Allows the icon to extend outside the SizedBox
+                      children: [
+                        // The SizedBox for the cards
+                        SizedBox(
+                          height: 0.8.sh, // Increase height to include more top space
+                          child: FutureBuilder<List<JobsResponse>>(
+                            future: jobNotifier.jobList,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                  child: Text('Error: ${snapshot.error}'),
+                                );
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    'No jobs available.',
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                 );
-                              },
-                              isLoop: true,
-                            );
-                          }
-                        },
-                      ),
+                              } else {
+                                final jobList = snapshot.data!;
+                                return CardSwiper(
+                                  controller: controller,
+                                  cardsCount: jobList.length,
+                                  cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                                    final job = jobList[index];
+                                    return Container(
+                                      padding: EdgeInsets.all(16.w),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(15.w),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.shade300,
+                                            blurRadius: 5,
+                                            offset: const Offset(0, 5),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          const Spacer(),
+                                          job.imageUrl != null
+                                              ? Image.network(
+                                                  job.imageUrl!,
+                                                  height: 200.h,
+                                                  width: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Icon(
+                                                  Icons.business,
+                                                  size: 100.h,
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                          const Spacer(),
+                                          Text(
+                                            job.company ?? 'Unknown Company',
+                                            style: TextStyle(
+                                              fontSize: 22.sp,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            job.title ?? 'No Title',
+                                            style: TextStyle(
+                                              fontSize: 20.sp,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey.shade700,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            job.location ?? 'Location Not Available',
+                                            style: TextStyle(
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const Spacer(),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  isLoop: true,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        // The Icon overlaid on the SizedBox
+                        Positioned(
+                          top: 36.h, // Move the icon above the SizedBox
+                          right: 20.0.w, // Adjust right alignment
+                          child: Icon(
+                            FontAwesome.sliders,
+                            color: const Color(0xFF040326),
+                            size: 32.h, // Slightly larger size for emphasis
+                          ),
+                        ),
+                      ],
                     ),
-                    const HeightSpacer(size: 20),
+                    const SizedBox(height: 10),
+                    // Other widgets below the cards
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            // Handle No action
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          child: const Text('No'),
+                        FloatingActionButton(
+                          onPressed: controller.undo,
+                          child: const Icon(Icons.rotate_left),
+                          backgroundColor: const Color(0xFF040326),
+                          foregroundColor: Colors.white,
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Handle Yes action
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                          ),
-                          child: const Text('Yes'),
+                        FloatingActionButton(
+                          onPressed: () => controller.swipe(CardSwiperDirection.left),
+                          child: const Icon(Icons.keyboard_arrow_left),
+                          backgroundColor: const Color(0xFF040326),
+                          foregroundColor: Colors.white,
+                        ),
+                        FloatingActionButton(
+                          onPressed: () => controller.swipe(CardSwiperDirection.right),
+                          child: const Icon(Icons.keyboard_arrow_right),
+                          backgroundColor: const Color(0xFF040326),
+                          foregroundColor: Colors.white,
+                        ),
+                        FloatingActionButton(
+                          onPressed: () => controller.swipe(CardSwiperDirection.top),
+                          child: const Icon(Icons.keyboard_arrow_up),
+                          backgroundColor: const Color(0xFF040326),
+                          foregroundColor: Colors.white,
                         ),
                       ],
                     ),
