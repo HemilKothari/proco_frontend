@@ -40,9 +40,16 @@ class _HomePageState extends State<HomePage> {
         child: CustomAppBar(
           actions: [
             Padding(
-              padding: EdgeInsets.all(12.h),
+              padding: EdgeInsets.all(1.h),
               child: Icon(
                             FontAwesome.filter,
+                            color: const Color(0xFF08959D),
+                          ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(12.h),
+              child: Icon(
+                            FontAwesome.bell,
                             color: const Color(0xFF08959D),
                           ),
             ),
@@ -69,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         // The SizedBox for the cards
                         SizedBox(
-                          height: 0.7
+                          height: 0.75
                               .sh, // Increase height to include more top space
                           child: FutureBuilder<List<JobsResponse>>(
                             future: jobNotifier.jobList,
@@ -90,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                                     'No jobs available.',
                                     style: TextStyle(
                                       fontSize: 16.sp,
-                                      color: Colors.grey,
+                                      color: const Color(0xFF040326),
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -99,23 +106,17 @@ class _HomePageState extends State<HomePage> {
                                 final jobList = snapshot.data!;
                                 return CardSwiper(
                                   controller: controller,
+                                  scale: .5,
                                   cardsCount: jobList.length,
                                   cardBuilder: (context, index,
                                       percentThresholdX, percentThresholdY) {
                                     final job = jobList[index];
                                     return Container(
-                                      padding: EdgeInsets.all(16.w),
+                                      padding: EdgeInsets.all(12.w),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFF040326),
                                         borderRadius:
-                                            BorderRadius.circular(15.w),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.shade300,
-                                            blurRadius: 5,
-                                            offset: const Offset(0, 5),
-                                          ),
-                                        ],
+                                            BorderRadius.circular(15.w),                                        
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
@@ -135,10 +136,9 @@ class _HomePageState extends State<HomePage> {
                                           SizedBox(height: 18),
                                           Image.network(
                                             job.imageUrl!,
-                                            height: 200
-                                                .h, // Adjust height as needed
+                                            //height: 200.h, // Adjust height as needed
                                             width: double.infinity,
-                                            fit: BoxFit.fitHeight,
+                                            fit: BoxFit.fitWidth,
                                           ),
 
                                           // const Spacer(),
@@ -265,51 +265,48 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         // The Icon overlaid on the SizedBox
-                        /* Positioned(
-                          top: 36.h, // Move the icon above the SizedBox
-                          right: 20.0.w, // Adjust right alignment
-                          child: Icon(
-                            FontAwesome.sliders,
-                            color: const Color.fromARGB(255, 199, 100, 116),
-                            size: 32.h, // Slightly larger size for emphasis
+                         Positioned(
+                          top: 570.h, // Move the icon above the SizedBox
+                          right: 20.0.w,
+                          left: 20.0.w, // Adjust right alignment
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              FloatingActionButton(
+                                onPressed: controller.undo,
+                                child: const Icon(Icons.rotate_left),
+                                backgroundColor: const Color(0xFF08979F),
+                                foregroundColor: Colors.white,
+                              ),
+                              FloatingActionButton(
+                                onPressed: () =>
+                                    controller.swipe(CardSwiperDirection.left),
+                                child: const Icon(Icons.heart_broken),
+                                backgroundColor: const Color(0xFFD23838),
+                                foregroundColor: Colors.white,
+                              ),
+                              FloatingActionButton(
+                                onPressed: () =>
+                                    controller.swipe(CardSwiperDirection.right),
+                                child: const Icon(Icons.star),
+                                backgroundColor: const Color(0xFF089F20),
+                                foregroundColor: Colors.white,
+                              ),
+                              FloatingActionButton(
+                                onPressed: () =>
+                                    controller.swipe(CardSwiperDirection.top),
+                                child: const Icon(Icons.bookmark),
+                                backgroundColor: const Color(0xFF08979F),
+                                foregroundColor: Colors.white,
+                              ),
+                            ],
                           ),
-                        ),*/
+                        ),
                       ],
                     ),
                     const SizedBox(height: 1),
                     // Other widgets below the cards
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        FloatingActionButton(
-                          onPressed: controller.undo,
-                          child: const Icon(Icons.rotate_left),
-                          backgroundColor: const Color(0xFF040326),
-                          foregroundColor: Colors.white,
-                        ),
-                        FloatingActionButton(
-                          onPressed: () =>
-                              controller.swipe(CardSwiperDirection.left),
-                          child: const Icon(Icons.heart_broken),
-                          backgroundColor: const Color(0xFFD23838),
-                          foregroundColor: Colors.white,
-                        ),
-                        FloatingActionButton(
-                          onPressed: () =>
-                              controller.swipe(CardSwiperDirection.right),
-                          child: const Icon(Icons.star),
-                          backgroundColor: const Color(0xFF089F20),
-                          foregroundColor: Colors.white,
-                        ),
-                        FloatingActionButton(
-                          onPressed: () =>
-                              controller.swipe(CardSwiperDirection.top),
-                          child: const Icon(Icons.bookmark),
-                          backgroundColor: const Color(0xFF040326),
-                          foregroundColor: Colors.white,
-                        ),
-                      ],
-                    ),
+                    
                   ],
                 ),
               ),
