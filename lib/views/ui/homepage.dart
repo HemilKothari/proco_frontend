@@ -63,15 +63,18 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     // Stack to overlay the icon
                     Stack(
-                      clipBehavior: Clip.none, // Allows the icon to extend outside the SizedBox
+                      clipBehavior: Clip
+                          .none, // Allows the icon to extend outside the SizedBox
                       children: [
                         // The SizedBox for the cards
                         SizedBox(
-                          height: 0.8.sh, // Increase height to include more top space
+                          height: 0.8
+                              .sh, // Increase height to include more top space
                           child: FutureBuilder<List<JobsResponse>>(
                             future: jobNotifier.jobList,
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
                                 return const Center(
                                   child: CircularProgressIndicator(),
                                 );
@@ -79,7 +82,8 @@ class _HomePageState extends State<HomePage> {
                                 return Center(
                                   child: Text('Error: ${snapshot.error}'),
                                 );
-                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
                                 return Center(
                                   child: Text(
                                     'No jobs available.',
@@ -95,13 +99,15 @@ class _HomePageState extends State<HomePage> {
                                 return CardSwiper(
                                   controller: controller,
                                   cardsCount: jobList.length,
-                                  cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+                                  cardBuilder: (context, index,
+                                      percentThresholdX, percentThresholdY) {
                                     final job = jobList[index];
                                     return Container(
                                       padding: EdgeInsets.all(16.w),
                                       decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(15.w),
+                                        color: const Color(0xFF040326),
+                                        borderRadius:
+                                            BorderRadius.circular(15.w),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey.shade300,
@@ -111,44 +117,133 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
-                                          const Spacer(),
-                                          job.imageUrl != null
-                                              ? Image.network(
-                                                  job.imageUrl!,
-                                                  height: 200.h,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Icon(
-                                                  Icons.business,
-                                                  size: 100.h,
-                                                  color: Colors.grey.shade400,
-                                                ),
-                                          const Spacer(),
+                                          //const Spacer
                                           Text(
                                             job.company ?? 'Unknown Company',
                                             style: TextStyle(
-                                              fontSize: 22.sp,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
+                                                fontSize: 24.sp,
+                                                fontWeight: FontWeight.bold,
+                                                color: const Color(0xFF08979F),
+                                                fontFamily: 'Poppins'),
                                             textAlign: TextAlign.center,
                                           ),
-                                          const SizedBox(height: 10),
-                                          Text(
+                                          // const Spacer(),
+                                          SizedBox(height: 18),
+                                          Image.network(
+                                            job.imageUrl!,
+                                            height: 200
+                                                .h, // Adjust height as needed
+                                            width: double.infinity,
+                                            //fit: BoxFit.cover,
+                                          ),
+
+                                          // const Spacer(),
+                                          //const SizedBox(height: 10),
+                                          /* Text(
                                             job.title ?? 'No Title',
                                             style: TextStyle(
-                                              fontSize: 20.sp,
+                                              fontSize: 14.sp,
                                               fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade700,
+                                              color: const Color.fromARGB(
+                                                  255, 247, 245, 245),
                                             ),
-                                            textAlign: TextAlign.center,
+                                            textAlign: TextAlign.left,
+                                          ),*/
+                                          SizedBox(height: 22),
+                                          /* Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(
+                                                  0xFF08979F), // Background color of the box
+                                              borderRadius: BorderRadius.circular(
+                                                  8.0), // Optional: Rounded corners
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0,
+                                                vertical:
+                                                    4.0), // Padding inside the box
+                                            child: Text(
+                                              job.title ?? 'No Title',
+                                              style: TextStyle(
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: const Color.fromARGB(
+                                                    255,
+                                                    247,
+                                                    245,
+                                                    245), // Text color
+                                              ),
+                                              textAlign: TextAlign.left,
+                                            ),
+                                          ),*/
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Aligns the box to the left
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: const Color(
+                                                    0xFF08979F), // Background color of the box
+                                                borderRadius: BorderRadius.circular(
+                                                    8.0), // Optional: Rounded corners
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0,
+                                                  vertical:
+                                                      4.0), // Padding inside the box
+                                              child: Text(
+                                                job.title ?? 'No Title',
+                                                style: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: const Color.fromARGB(
+                                                      255,
+                                                      247,
+                                                      245,
+                                                      245), // Text color
+                                                ),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
                                           ),
                                           const SizedBox(height: 10),
-                                          Text(
-                                            job.location ?? 'Location Not Available',
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Aligns the box to the left
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: const Color(
+                                                    0xFF08979F), // Background color of the box
+                                                borderRadius: BorderRadius.circular(
+                                                    8.0), // Optional: Rounded corners
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0,
+                                                  vertical:
+                                                      4.0), // Padding inside the box
+                                              child: Text(
+                                                job.location ??
+                                                    'Location Not Available',
+                                                style: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.w500,
+
+                                                  color: const Color.fromARGB(
+                                                      255,
+                                                      247,
+                                                      245,
+                                                      245), // Text color
+                                                ),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 10),
+                                          /*Text(
+                                            job.location ??
+                                                'Location Not Available',
                                             style: TextStyle(
                                               fontSize: 18.sp,
                                               fontWeight: FontWeight.w400,
@@ -156,6 +251,7 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
+                                          */
                                           const Spacer(),
                                         ],
                                       ),
@@ -168,15 +264,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         // The Icon overlaid on the SizedBox
-                        Positioned(
+                        /* Positioned(
                           top: 36.h, // Move the icon above the SizedBox
                           right: 20.0.w, // Adjust right alignment
                           child: Icon(
                             FontAwesome.sliders,
-                            color: const Color(0xFF040326),
+                            color: const Color.fromARGB(255, 199, 100, 116),
                             size: 32.h, // Slightly larger size for emphasis
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -191,20 +287,23 @@ class _HomePageState extends State<HomePage> {
                           foregroundColor: Colors.white,
                         ),
                         FloatingActionButton(
-                          onPressed: () => controller.swipe(CardSwiperDirection.left),
-                          child: const Icon(Icons.keyboard_arrow_left),
-                          backgroundColor: const Color(0xFF040326),
+                          onPressed: () =>
+                              controller.swipe(CardSwiperDirection.left),
+                          child: const Icon(Icons.heart_broken),
+                          backgroundColor: const Color(0xFFD23838),
                           foregroundColor: Colors.white,
                         ),
                         FloatingActionButton(
-                          onPressed: () => controller.swipe(CardSwiperDirection.right),
-                          child: const Icon(Icons.keyboard_arrow_right),
-                          backgroundColor: const Color(0xFF040326),
+                          onPressed: () =>
+                              controller.swipe(CardSwiperDirection.right),
+                          child: const Icon(Icons.star),
+                          backgroundColor: const Color(0xFF089F20),
                           foregroundColor: Colors.white,
                         ),
                         FloatingActionButton(
-                          onPressed: () => controller.swipe(CardSwiperDirection.top),
-                          child: const Icon(Icons.keyboard_arrow_up),
+                          onPressed: () =>
+                              controller.swipe(CardSwiperDirection.top),
+                          child: const Icon(Icons.bookmark),
                           backgroundColor: const Color(0xFF040326),
                           foregroundColor: Colors.white,
                         ),
