@@ -11,11 +11,11 @@ class CreateJobsRequest {
     required this.hiring,
     required this.description,
     required this.salary,
-    required this.period,
-    required this.contract,
-    required this.imageUrl,
-    required this.agentId,
-    required this.requirements,
+    this.period,
+    this.contract,
+    this.imageUrl,
+    this.agentId,
+    this.requirements,
   });
 
   final String title;
@@ -24,11 +24,11 @@ class CreateJobsRequest {
   final bool hiring;
   final String description;
   final String salary;
-  final String period;
-  final String contract;
-  final String imageUrl;
-  final String agentId;
-  final List<String> requirements;
+  final String? period;
+  final String? contract;
+  final String? imageUrl;
+  final String? agentId;
+  final List<String>? requirements;
 
   Map<String, dynamic> toJson() => {
         'title': title,
@@ -41,6 +41,7 @@ class CreateJobsRequest {
         'contract': contract,
         'imageUrl': imageUrl,
         'agentId': agentId,
-        'requirements': List<dynamic>.from(requirements.map((x) => x)),
+        'requirements': requirements?.map((x) => x).toList() ?? [],
+
       };
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/exports.dart';
+import 'package:jobhub_v1/models/request/jobs/create_job.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/app_style.dart';
 import 'package:jobhub_v1/views/common/custom_btn.dart';
@@ -26,6 +27,10 @@ class _AddJobPageState extends State<AddJobPage> {
   final descriptionController = TextEditingController();
   final salaryController = TextEditingController();
   final imageUrlController = TextEditingController();
+  final requirementsController = TextEditingController();
+  final periodController = TextEditingController();
+  // List to hold multiple requirements controllers
+  List<TextEditingController> requirementsControllers = [TextEditingController()];
   bool isHiring = true;
 
   @override
@@ -36,35 +41,54 @@ class _AddJobPageState extends State<AddJobPage> {
     descriptionController.dispose();
     salaryController.dispose();
     imageUrlController.dispose();
+    requirementsController.dispose();
+    periodController.dispose();
+    // Dispose all requirements controllers
+    for (var controller in requirementsControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
+  void addRequirementField() {
+    setState(() {
+      requirementsControllers.add(TextEditingController());
+    });
+  }
+
+  void removeRequirementField(int index) {
+    setState(() {
+      requirementsControllers[index].dispose();
+      requirementsControllers.removeAt(index);
+    });
+  }
+
   void submitJob() {
-    if (titleController.text.isEmpty ||
-        locationController.text.isEmpty ||
-        companyController.text.isEmpty ||
-        descriptionController.text.isEmpty ||
-        salaryController.text.isEmpty ||
-        imageUrlController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('All fields are required')),
-      );
-      return;
-    }
+    // if (titleController.text.isEmpty ||S
+    //     locationController.text.isEmpty ||
+    //     companyController.text.isEmpty ||
+    //     descriptionController.text.isEmpty ||
+    //     salaryController.text.isEmpty ) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('All fields are required')),
+    //   );
+    //   return;
+    // }
 
     // Example job data to send to the backend
-    final jobData = {
-      'title': titleController.text,
-      'location': locationController.text,
-      'company': companyController.text,
-      'description': descriptionController.text,
-      'salary': salaryController.text,
-      'hiring': isHiring,
-      'imageUrl': imageUrlController.text,
-    };
+    // final jobData = {
+    //   'title': titleController.text,
+    //   'location': locationController.text,
+    //   'company': companyController.text,
+    //   'description': descriptionController.text,
+    //   'salary': salaryController.text,
+    //   'hiring': isHiring,
+    //   'imageUrl': imageUrlController.text,
+    // };
+    
+    // JobsNotifier.createJob(jobData);
 
-    // TODO: Call the API to send `jobData` to the backend
-    print('Query Data: $jobData');
+    // To do: Call the API to send `jobData` to the backend
 
     // Reset the form
     setState(() {
@@ -74,6 +98,8 @@ class _AddJobPageState extends State<AddJobPage> {
       descriptionController.clear();
       salaryController.clear();
       imageUrlController.clear();
+      requirementsController.clear();
+      periodController.clear();
       isHiring = true;
     });
   }
@@ -91,8 +117,8 @@ class _AddJobPageState extends State<AddJobPage> {
           ),
         ),
       ),
-      body: Consumer<LoginNotifier>(
-        builder: (context, loginNotifier, child) {
+      body: Consumer<JobsNotifier>(
+        builder: (context, JobsNotifier, child) {
           return ListView(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
             children: [
@@ -136,7 +162,7 @@ class _AddJobPageState extends State<AddJobPage> {
                       },
                     ),
 
-                    /*const HeightSpacer(size: 10),
+                    const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: companyController,
                       hintText: 'Company',
@@ -148,7 +174,7 @@ class _AddJobPageState extends State<AddJobPage> {
                           return null;
                         }
                       },
-                    ), */
+                    ), 
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: descriptionController,
@@ -176,6 +202,54 @@ class _AddJobPageState extends State<AddJobPage> {
                       },
                     ),
                     const HeightSpacer(size: 10),
+                    CustomTextField(
+                      controller: periodController,
+                      hintText: 'period',
+                      keyboardType: TextInputType.text,
+                      validator: (period) {
+                        if (period!.isEmpty) {
+                          return 'Please enter a valid period';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    const HeightSpacer(size: 10),
+                    Text(
+                      'Requirements',
+                      style: appstyle(18, Colors.black, FontWeight.bold),
+                    ),
+                    const HeightSpacer(size: 10),
+                    Column(
+                      children: List.generate(
+                        requirementsControllers.length,
+                        (index) => Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextField(
+                                controller: requirementsControllers[index],
+                                hintText: 'Requirement ${index + 1}',
+                                keyboardType: TextInputType.text,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => removeRequirementField(index),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const HeightSpacer(size: 10),
+                    TextButton.icon(
+                      onPressed: addRequirementField,
+                      icon: const Icon(Icons.add, color: Colors.green),
+                      label: Text(
+                        'Add Requirement',
+                        style: appstyle(16, Colors.green, FontWeight.bold),
+                      ),
+                    ),
+                    const HeightSpacer(size: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -195,17 +269,31 @@ class _AddJobPageState extends State<AddJobPage> {
                       controller: imageUrlController,
                       hintText: 'Image URL',
                       keyboardType: TextInputType.text,
-                      validator: (url) {
-                        if (url!.isEmpty) {
-                          return 'Please enter a valid image URL';
-                        } else {
-                          return null;
-                        }
-                      },
+                      // validator: (url) {
+                      //   if (url!.isEmpty) {
+                      //     return 'Please enter a valid image URL';
+                      //   } else {
+                      //     return null;
+                      //   }
+                      // },
                     ),
                     const HeightSpacer(size: 20),
                     CustomButton(
-                      onTap: submitJob,
+                      onTap: (){
+                        const userId = "6777c8d3b4c508d712aac2f3";
+                        final jobData = CreateJobsRequest(
+                          title: titleController.text,
+                          location: locationController.text,
+                          company: companyController.text,
+                          description: descriptionController.text,
+                          salary: salaryController.text,
+                          hiring: isHiring,
+                          imageUrl: imageUrlController.text,
+                          agentId: userId,
+                          // requirements: requirementsController.text,
+                      );
+                      JobsNotifier.createJob(jobData);
+                      },    
                       text: 'List Query',
                     ),
                   ],
