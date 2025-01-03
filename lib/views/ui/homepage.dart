@@ -22,6 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
   final CardSwiperController controller = CardSwiperController();
 
   @override
@@ -40,10 +41,10 @@ class _HomePageState extends State<HomePage> {
           actions: [
             Padding(
               padding: EdgeInsets.all(12.h),
-              child: const CircleAvatar(
-                radius: 15,
-                backgroundImage: AssetImage('assets/images/user.png'),
-              ),
+              child: Icon(
+                            FontAwesome.filter,
+                            color: const Color(0xFF08959D),
+                          ),
             ),
           ],
           child: Padding(
@@ -68,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         // The SizedBox for the cards
                         SizedBox(
-                          height: 0.8
+                          height: 0.7
                               .sh, // Increase height to include more top space
                           child: FutureBuilder<List<JobsResponse>>(
                             future: jobNotifier.jobList,
@@ -137,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                                             height: 200
                                                 .h, // Adjust height as needed
                                             width: double.infinity,
-                                            //fit: BoxFit.cover,
+                                            fit: BoxFit.fitHeight,
                                           ),
 
                                           // const Spacer(),
@@ -275,7 +276,7 @@ class _HomePageState extends State<HomePage> {
                         ),*/
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 1),
                     // Other widgets below the cards
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -315,6 +316,18 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        selectedItemColor: const Color(0xFF08959D), // Color for the selected item
+        unselectedItemColor: Colors.white, // Color for unselected items
+        backgroundColor: const Color(0xFF040326),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
       ),
     );
   }

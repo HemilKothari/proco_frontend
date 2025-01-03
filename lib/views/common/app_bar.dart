@@ -22,7 +22,7 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppBar(
       iconTheme: const IconThemeData(),
-      backgroundColor: Color(kLight.value),
+      backgroundColor: const Color(0XFF040326),
       elevation: 0,
       automaticallyImplyLeading: false,
       leadingWidth: 70.w,
@@ -31,7 +31,7 @@ class CustomAppBar extends StatelessWidget {
       centerTitle: true,
       title: ReusableText(
         text: text ?? '',
-        style: appstyle(16, Color(kDark.value), FontWeight.w600),
+        style: appstyle(16, const Color(0xFF08959D), FontWeight.w600),
       ),
     );
   }
