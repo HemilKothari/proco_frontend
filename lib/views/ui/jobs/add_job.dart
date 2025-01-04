@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
@@ -11,6 +13,7 @@ import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/common/reusable_text.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddJobPage extends StatefulWidget {
   const AddJobPage({Key? key}) : super(key: key);
@@ -27,6 +30,7 @@ class _AddJobPageState extends State<AddJobPage> {
   final descriptionController = TextEditingController();
   final salaryController = TextEditingController();
   final imageUrlController = TextEditingController();
+  final contractController = TextEditingController();
   final requirementsController = TextEditingController();
   final periodController = TextEditingController();
   // List to hold multiple requirements controllers
@@ -41,6 +45,7 @@ class _AddJobPageState extends State<AddJobPage> {
     descriptionController.dispose();
     salaryController.dispose();
     imageUrlController.dispose();
+    contractController.dispose();
     requirementsController.dispose();
     periodController.dispose();
     // Dispose all requirements controllers
@@ -98,6 +103,7 @@ class _AddJobPageState extends State<AddJobPage> {
       descriptionController.clear();
       salaryController.clear();
       imageUrlController.clear();
+      contractController.clear();
       requirementsController.clear();
       periodController.clear();
       isHiring = true;
@@ -215,6 +221,19 @@ class _AddJobPageState extends State<AddJobPage> {
                       },
                     ),
                     const HeightSpacer(size: 10),
+                    CustomTextField(
+                      controller: contractController,
+                      hintText: 'contract',
+                      keyboardType: TextInputType.text,
+                      validator: (contract) {
+                        if (contract!.isEmpty) {
+                          return 'Please enter a valid contract';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    const HeightSpacer(size: 10),
                     Text(
                       'Requirements',
                       style: appstyle(18, Colors.black, FontWeight.bold),
@@ -279,20 +298,27 @@ class _AddJobPageState extends State<AddJobPage> {
                     ),
                     const HeightSpacer(size: 20),
                     CustomButton(
-                      onTap: (){
-                        const userId = "6777c8d3b4c508d712aac2f3";
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        var userId = prefs.getString('id');
+                        // const userId = "6777c8d3b4c508d712aac2f3";
                         final jobData = CreateJobsRequest(
                           title: titleController.text,
                           location: locationController.text,
                           company: companyController.text,
                           description: descriptionController.text,
                           salary: salaryController.text,
+                          period: periodController.text,
                           hiring: isHiring,
-                          imageUrl: imageUrlController.text,
-                          agentId: userId,
+                          contract: contractController.text,
                           // requirements: requirementsController.text,
+                          imageUrl: imageUrlController.text,
+                          agentId: userId?? '6777c8d3b4c508d712aac2f3',
                       );
+                      // JobsNotifier.createJob(jobData);
+                      // print('Job Data: ${jsonEncode(jobData.toJson())}');
                       JobsNotifier.createJob(jobData);
+
                       },    
                       text: 'List Query',
                     ),

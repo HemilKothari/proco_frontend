@@ -5,6 +5,7 @@ import 'package:jobhub_v1/models/request/jobs/create_job.dart';
 import 'package:jobhub_v1/models/response/jobs/get_job.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class JobsHelper {
   static https.Client client = https.Client();
@@ -86,35 +87,69 @@ class JobsHelper {
     }
   }
 
-  static Future<JobsResponse> createJob(CreateJobsRequest model) async {
-    try {
-      final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, Config.jobs);
-      final response = await client.post(
-        url,
-        headers: requestHeaders,
-        body: jsonEncode(model),
-      );
+static Future<List<JobsResponse>> createJob(CreateJobsRequest model) async {
+  try {
+    // Fetch the token from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
 
-      if (response.statusCode == 201) {
-        return jobsResponseFromJson(response.body).first;
-      } else {
-        throw Exception('Failed to create a job');
-      }
-    } catch (e, s) {
-      debugPrint('Error Occurred: $e');
-      debugPrintStack(stackTrace: s);
-      rethrow;
+    if (token == null || token.isEmpty) {
+      throw Exception('Token is null or empty');
     }
+
+    final url = Uri.https(Config.apiUrl, Config.jobs);
+
+    // API Request
+    final response = await client.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'token': 'Bearer $token', // Correct header for Bearer token
+      },
+      body: jsonEncode(model),
+    );
+
+    // Log the response for debugging
+    debugPrint('Request URL: $url');
+    debugPrint('Request Headers: ${{
+    'Content-Type': 'application/json',
+    'token': 'Bearer $token',
+    }}');
+debugPrint('Request Body: ${jsonEncode(model)}');
+
+    debugPrint('Response Code: ${response.statusCode}');
+    debugPrint('Response Body: ${response.body}');
+
+    if (response.statusCode == 201) {
+      // Parse the list of jobs
+      return (json.decode(response.body) as List)
+          .map((job) => JobsResponse.fromJson(job))
+          .toList();
+    } else {
+      // Throw exception with detailed error
+      throw Exception('Failed to create a job: ${response.body}');
+    }
+  } catch (e, s) {
+    debugPrint('Error Occurred: $e');
+    debugPrintStack(stackTrace: s);
+    rethrow;
   }
+}
+
 
   static Future<void> updateJob(String jobId, Map<String, dynamic> jobData) async {
+    
+
     try {
-      final requestHeaders = {'Content-Type': 'application/json'};
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('token');
       final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId');
       final response = await client.put(
         url,
-        headers: requestHeaders,
+        headers: {
+        'Content-Type': 'application/json',
+        'token': 'Bearer $token', // Include the token here
+      },
         body: jsonEncode(jobData),
       );
 
