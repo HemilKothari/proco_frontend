@@ -1,9 +1,5 @@
-import 'dart:ui';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/models/request/jobs/create_job.dart';
 import 'package:jobhub_v1/models/response/jobs/get_job.dart';

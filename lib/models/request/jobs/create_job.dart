@@ -8,40 +8,40 @@ class CreateJobsRequest {
     required this.title,
     required this.location,
     required this.company,
-    required this.hiring,
     required this.description,
     required this.salary,
-    this.period,
-    this.contract,
-    this.imageUrl,
-    this.agentId,
+    required this.period,
+    required this.hiring,
+    required this.contract,
     this.requirements,
+    required this.imageUrl,
+    required this.agentId,
   });
 
   final String title;
   final String location;
   final String company;
-  final bool hiring;
   final String description;
   final String salary;
-  final String? period;
-  final String? contract;
-  final String? imageUrl;
-  final String? agentId;
+  final String period;
+  final bool hiring;
+  final String contract;
   final List<String>? requirements;
+  final String imageUrl;
+  final String agentId;
 
   Map<String, dynamic> toJson() => {
         'title': title,
         'location': location,
         'company': company,
-        'hiring': hiring,
         'description': description,
         'salary': salary,
         'period': period,
+        'hiring': hiring,
         'contract': contract,
+        'requirements': requirements?.map((x) => x).toList() ?? [],
         'imageUrl': imageUrl,
         'agentId': agentId,
-        'requirements': requirements?.map((x) => x).toList() ?? [],
 
       };
 }
