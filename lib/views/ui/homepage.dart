@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, jobNotifier, child) {
           return SafeArea(
             child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Column(
@@ -140,45 +141,8 @@ class _HomePageState extends State<HomePage> {
                                             width: double.infinity,
                                             fit: BoxFit.fitWidth,
                                           ),
-
-                                          // const Spacer(),
-                                          //const SizedBox(height: 10),
-                                          /* Text(
-                                            job.title ?? 'No Title',
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: const Color.fromARGB(
-                                                  255, 247, 245, 245),
-                                            ),
-                                            textAlign: TextAlign.left,
-                                          ),*/
                                           SizedBox(height: 22),
-                                          /* Container(
-                                            decoration: BoxDecoration(
-                                              color: const Color(
-                                                  0xFF08979F), // Background color of the box
-                                              borderRadius: BorderRadius.circular(
-                                                  8.0), // Optional: Rounded corners
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0,
-                                                vertical:
-                                                    4.0), // Padding inside the box
-                                            child: Text(
-                                              job.title ?? 'No Title',
-                                              style: TextStyle(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w500,
-                                                color: const Color.fromARGB(
-                                                    255,
-                                                    247,
-                                                    245,
-                                                    245), // Text color
-                                              ),
-                                              textAlign: TextAlign.left,
-                                            ),
-                                          ),*/
+                                          
                                           Align(
                                             alignment: Alignment
                                                 .centerLeft, // Aligns the box to the left
@@ -242,17 +206,7 @@ class _HomePageState extends State<HomePage> {
                                           ),
 
                                           const SizedBox(height: 10),
-                                          /*Text(
-                                            job.location ??
-                                                'Location Not Available',
-                                            style: TextStyle(
-                                              fontSize: 18.sp,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey.shade600,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          */
+                                          
                                           const Spacer(),
                                         ],
                                       ),
