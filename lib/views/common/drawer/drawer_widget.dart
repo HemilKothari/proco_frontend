@@ -14,7 +14,7 @@ class DrawerWidget extends StatelessWidget {
       },
       child: Image.asset(
         'assets/images/Vector.png',
-        width: 100.w,
+        width: 200.w,
         height: 30.h,
       ),
     );

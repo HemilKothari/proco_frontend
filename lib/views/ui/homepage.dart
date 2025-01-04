@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                padding: EdgeInsets.symmetric(horizontal: 0.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -77,152 +77,157 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         // The SizedBox for the cards
                         SizedBox(
-                          height: 0.75
-                              .sh, // Increase height to include more top space
-                          child: FutureBuilder<List<JobsResponse>>(
-                            future: jobNotifier.jobList,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                  child: Text('Error: ${snapshot.error}'),
-                                );
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return Center(
-                                  child: Text(
-                                    'No jobs available.',
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: const Color(0xFF040326),
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                final jobList = snapshot.data!;
-                                return CardSwiper(
-                                  controller: controller,
-                                  scale: .5,
-                                  cardsCount: jobList.length,
-                                  cardBuilder: (context, index,
-                                      percentThresholdX, percentThresholdY) {
-                                    final job = jobList[index];
-                                    return Container(
-                                      padding: EdgeInsets.all(12.w),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF040326),
-                                        borderRadius:
-                                            BorderRadius.circular(15.w),                                        
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          //const Spacer
-                                          Text(
-                                            job.company ?? 'Unknown Company',
-                                            style: TextStyle(
-                                                fontSize: 24.sp,
-                                                fontWeight: FontWeight.bold,
-                                                color: const Color(0xFF08979F),
-                                                fontFamily: 'Poppins'),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          // const Spacer(),
-                                          SizedBox(height: 18),
-                                          Image.network(
-                                            job.imageUrl!,
-                                            //height: 200.h, // Adjust height as needed
-                                            width: double.infinity,
-                                            fit: BoxFit.fitWidth,
-                                          ),
-                                          SizedBox(height: 22),
-                                          
-                                          Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Aligns the box to the left
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: const Color(
-                                                    0xFF08979F), // Background color of the box
-                                                borderRadius: BorderRadius.circular(
-                                                    8.0), // Optional: Rounded corners
-                                              ),
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 8.0,
-                                                  vertical:
-                                                      4.0), // Padding inside the box
-                                              child: Text(
-                                                job.title ?? 'No Title',
-                                                style: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: const Color.fromARGB(
-                                                      255,
-                                                      247,
-                                                      245,
-                                                      245), // Text color
-                                                ),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Aligns the box to the left
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: const Color(
-                                                    0xFF08979F), // Background color of the box
-                                                borderRadius: BorderRadius.circular(
-                                                    8.0), // Optional: Rounded corners
-                                              ),
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 8.0,
-                                                  vertical:
-                                                      4.0), // Padding inside the box
-                                              child: Text(
-                                                job.location ??
-                                                    'Location Not Available',
-                                                style: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  fontWeight: FontWeight.w500,
-
-                                                  color: const Color.fromARGB(
-                                                      255,
-                                                      247,
-                                                      245,
-                                                      245), // Text color
-                                                ),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 10),
-                                          
-                                          const Spacer(),
-                                        ],
+                          height: 0.78.sh, // Increase height to include more top space
+                          child: ClipRRect(
+                            clipBehavior: Clip.antiAlias,
+                              child: FutureBuilder<List<JobsResponse>>(
+                                future: jobNotifier.jobList,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text('Error: ${snapshot.error}'),
+                                    );
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    return Center(
+                                      child: Text(
+                                        'No jobs available.',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          color: const Color(0xFF040326),
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                       ),
                                     );
-                                  },
-                                  isLoop: true,
-                                );
-                              }
-                            },
+                                  } else {
+                                    final jobList = snapshot.data!;
+                                    return CardSwiper(
+                                      controller: controller,
+                                      scale: .5,
+                                      cardsCount: jobList.length,
+                                      cardBuilder: (context, index,
+                                          percentThresholdX, percentThresholdY) {
+                                        final job = jobList[index];
+                                        return Container(
+                                          padding: EdgeInsets.all(12.w),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF040326),
+                                            borderRadius:
+                                                BorderRadius.circular(15.w),                                        
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              //const Spacer
+                                              Text(
+                                                job.company ?? 'Unknown Company',
+                                                style: TextStyle(
+                                                    fontSize: 20.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: const Color(0xFF08979F),
+                                                    fontFamily: 'Poppins'),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              // const Spacer(),
+                                              SizedBox(height: 18),
+                                              ClipRRect(
+                                                borderRadius: BorderRadius.circular(10),
+                                                child: Image.network(
+                                                  job.imageUrl!,
+                                                  height: 0.45.sh, // Adjust height as needed
+                                                  width: double.infinity,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                              SizedBox(height: 22),
+                                              
+                                              Align(
+                                                alignment: Alignment
+                                                    .centerLeft, // Aligns the box to the left
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(
+                                                        0xFF08979F), // Background color of the box
+                                                    borderRadius: BorderRadius.circular(
+                                                        8.0), // Optional: Rounded corners
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8.0,
+                                                      vertical:
+                                                          4.0), // Padding inside the box
+                                                  child: Text(
+                                                    job.title ?? 'No Title',
+                                                    style: TextStyle(
+                                                      fontSize: 12.sp,
+                                                      fontWeight: FontWeight.w500,
+                                                      color: const Color.fromARGB(
+                                                          255,
+                                                          247,
+                                                          245,
+                                                          245), // Text color
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Align(
+                                                alignment: Alignment
+                                                    .centerLeft, // Aligns the box to the left
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(
+                                                        0xFF08979F), // Background color of the box
+                                                    borderRadius: BorderRadius.circular(
+                                                        8.0), // Optional: Rounded corners
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8.0,
+                                                      vertical:
+                                                          4.0), // Padding inside the box
+                                                  child: Text(
+                                                    job.location ??
+                                                        'Location Not Available',
+                                                    style: TextStyle(
+                                                      fontSize: 12.sp,
+                                                      fontWeight: FontWeight.normal,
+
+                                                      color: const Color.fromARGB(
+                                                          255,
+                                                          247,
+                                                          245,
+                                                          245), // Text color
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              const SizedBox(height: 10),
+                                              
+                                              const Spacer(),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      isLoop: true,
+                                    );
+                                  }
+                                },
+                              ),
                           ),
                         ),
                         // The Icon overlaid on the SizedBox
                          Positioned(
-                          top: 570.h, // Move the icon above the SizedBox
-                          right: 20.0.w,
-                          left: 20.0.w, // Adjust right alignment
+                          bottom: 0, // Adjusted for better positioning
+                          left: 0,
+                          right: 0, // Adjust right alignment
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
