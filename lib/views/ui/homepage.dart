@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
         child: CustomAppBar(
           actions: [
             Padding(
-              padding: EdgeInsets.all(1.h),
+              padding: EdgeInsets.all(12.h),
               child: Icon(
                             FontAwesome.filter,
                             color: const Color(0xFF08959D),
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
           child: Padding(
-            padding: EdgeInsets.all(12.0.h),
+            padding: EdgeInsets.all(1.0.h),
             child: const DrawerWidget(),
           ),
         ),
@@ -137,12 +137,21 @@ class _HomePageState extends State<HomePage> {
                                               // const Spacer(),
                                               SizedBox(height: 18),
                                               ClipRRect(
-                                                borderRadius: BorderRadius.circular(10),
+                                                borderRadius: BorderRadius.circular(15),
                                                 child: Image.network(
-                                                  job.imageUrl!,
+                                                  job.imageUrl,
                                                   height: 0.45.sh, // Adjust height as needed
                                                   width: double.infinity,
-                                                  fit: BoxFit.fill,
+                                                  fit: BoxFit.contain,
+                                                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                                    // This widget is displayed when the image fails to load
+                                                    return Image.asset(
+                                                      'assets/images/default-placeholder.png', // Path to your default image
+                                                      height: 0.45.sh,
+                                                      width: double.infinity,
+                                                      fit: BoxFit.contain,
+                                                    );
+                                                  },
                                                 ),
                                               ),
                                               SizedBox(height: 22),
