@@ -4,6 +4,7 @@ import 'package:jobhub_v1/controllers/jobs_provider.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
+import 'package:jobhub_v1/views/ui/jobs/add_job.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,6 +43,24 @@ void loadJobs() async {
         preferredSize: const Size.fromHeight(50),
         child: CustomAppBar(
           text: 'My Queries',
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.add,
+                color: Color(0xFF08959D),
+              ),
+              onPressed: () {
+                // Action to perform when the add icon is tapped.
+                debugPrint('Add button tapped');
+                // Navigate to another screen or perform some action here
+                // For example:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddJobPage()),
+                );
+              },
+            ),
+          ],
           child: Padding(
             padding: EdgeInsets.all(12.0.h),
             child: const DrawerWidget(),
