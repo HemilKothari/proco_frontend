@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jobhub_v1/views/common/custom_outline_btn.dart';
 import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/ui/auth/login.dart';
 import 'package:jobhub_v1/views/ui/auth/signup.dart';
+import 'package:jobhub_v1/views/ui/mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PageThree extends StatelessWidget {
@@ -60,7 +63,7 @@ class PageThree extends StatelessWidget {
                           text: 'Login',
                           style: appstyle(
                             18, // Slightly larger text size
-                            const Color(0xFF040326),
+                            Color(0xFF040326),
                             FontWeight.w600,
                           ),
                         ),
@@ -85,7 +88,7 @@ class PageThree extends StatelessWidget {
                           text: 'Sign Up',
                           style: appstyle(
                             18, // Slightly larger text size
-                            const Color(0xFF040326),
+                            Color(0xFF040326),
                             FontWeight.w600,
                           ),
                         ),

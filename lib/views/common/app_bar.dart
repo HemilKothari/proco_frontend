@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/views/common/app_style.dart';
 import 'package:jobhub_v1/views/common/reusable_text.dart';
 
@@ -24,10 +25,8 @@ class CustomAppBar extends StatelessWidget {
       backgroundColor: const Color(0XFF040326),
       elevation: 0,
       automaticallyImplyLeading: false,
-      //leadingWidth: 70.w,
+      leadingWidth: 70.w,
       leading: child,
-      leadingWidth: 140, // Match the new container width
-
       actions: actions,
       centerTitle: true,
       title: ReusableText(
