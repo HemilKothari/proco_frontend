@@ -66,7 +66,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 ),
                 drawerItem(
                   FontAwesome5Regular.clipboard,
-                  'Add Job',
+                  'My Job',
                   4,
                   zoomNotifier.currentIndex == 4
                       ? Color(kLight.value)

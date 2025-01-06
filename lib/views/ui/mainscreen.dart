@@ -11,6 +11,7 @@ import 'package:jobhub_v1/views/ui/chat/chat_list.dart';
 import 'package:jobhub_v1/views/ui/device_mgt/devices_info.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
 import 'package:jobhub_v1/views/ui/jobs/add_job.dart';
+import 'package:jobhub_v1/views/ui/jobs/user_job_page.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -69,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
               );
       case 4:
         return loginNotifier.loggedIn
-            ? const AddJobPage()
+            ? const JobListingPage()
             : const LoginPage(
                 drawer: false,
               );

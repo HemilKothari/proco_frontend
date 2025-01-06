@@ -60,4 +60,6 @@ class JobsResponse {
   final String agentId;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  get isHiring => null;
 }

@@ -46,6 +46,23 @@ class JobsHelper {
     }
   }
 
+static Future<List<JobsResponse>> getUserJobs(String agentId) async {
+  final requestHeaders = {'Content-Type': 'application/json'};
+  final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/$agentId');
+  final response = await client.get(url, headers: requestHeaders);
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body) as List;
+    if (data.isEmpty) {
+      debugPrint('No jobs found for user: $agentId');
+    }
+    return data.map((job) => JobsResponse.fromJson(job)).toList();
+  } else {
+    debugPrint('Failed to load jobs: ${response.statusCode}');
+    throw Exception('Failed to load user jobs');
+  }
+}
+
+
   static Future<JobsResponse> getRecent() async {
     final requestHeaders = <String, String>{
       'Content-Type': 'application/json',

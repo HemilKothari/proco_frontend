@@ -10,6 +10,7 @@ class JobsNotifier extends ChangeNotifier {
   Future<List<JobsResponse>>? jobList;
   Future<JobsResponse>? recent;
   Future<GetJobRes>? job;
+  Future<List<JobsResponse>>? userJobs;
 
   void getJobs() {
     jobList = JobsHelper.getJobs();
@@ -63,4 +64,11 @@ Future<void> createJob(CreateJobsRequest model) async {
     await JobsHelper.deleteJob(jobId);
     getJobs(); // Refresh the job list after deletion
   }
+
+// Add the new function to fetch jobs for a specific user
+  void getUserJobs(String agentId) {
+    userJobs = JobsHelper.getUserJobs(agentId);
+    notifyListeners();
+  }
 }
+
