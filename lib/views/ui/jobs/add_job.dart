@@ -31,7 +31,7 @@ class _AddJobPageState extends State<AddJobPage> {
   final salaryController = TextEditingController();
   final imageUrlController = TextEditingController();
   final contractController = TextEditingController();
-  final requirementsController = TextEditingController();
+  // final requirementsController = TextEditingController();
   final periodController = TextEditingController();
   // List to hold multiple requirements controllers
   List<TextEditingController> requirementsControllers = [TextEditingController()];
@@ -46,7 +46,6 @@ class _AddJobPageState extends State<AddJobPage> {
     salaryController.dispose();
     imageUrlController.dispose();
     contractController.dispose();
-    requirementsController.dispose();
     periodController.dispose();
     // Dispose all requirements controllers
     for (var controller in requirementsControllers) {
@@ -104,7 +103,7 @@ class _AddJobPageState extends State<AddJobPage> {
       salaryController.clear();
       imageUrlController.clear();
       contractController.clear();
-      requirementsController.clear();
+      requirementsControllers.clear();
       periodController.clear();
       isHiring = true;
     });
@@ -301,6 +300,10 @@ class _AddJobPageState extends State<AddJobPage> {
                       onTap: () async {
                         final prefs = await SharedPreferences.getInstance();
                         var userId = prefs.getString('id');
+                        final requirementsList = requirementsControllers
+                                .map((controller) => controller.text)
+                                .toList();
+
                         // const userId = "6777c8d3b4c508d712aac2f3";
                         final jobData = CreateJobsRequest(
                           title: titleController.text,
@@ -311,7 +314,7 @@ class _AddJobPageState extends State<AddJobPage> {
                           period: periodController.text,
                           hiring: isHiring,
                           contract: contractController.text,
-                          // requirements: requirementsController.text,
+                          requirements: requirementsList,
                           imageUrl: imageUrlController.text,
                           agentId: userId?? '6777c8d3b4c508d712aac2f3',
                       );

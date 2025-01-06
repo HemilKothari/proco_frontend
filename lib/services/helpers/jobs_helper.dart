@@ -86,55 +86,54 @@ class JobsHelper {
       throw Exception('Failed to get the jobs');
     }
   }
+  
+  static Future<JobsResponse> createJob(CreateJobsRequest model) async {
+    try {
+      // Fetch the token from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('token');
 
-static Future<List<JobsResponse>> createJob(CreateJobsRequest model) async {
-  try {
-    // Fetch the token from SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString('token');
+      if (token == null || token.isEmpty) {
+        throw Exception('Token is null or empty');
+      }
 
-    if (token == null || token.isEmpty) {
-      throw Exception('Token is null or empty');
-    }
+      final url = Uri.https(Config.apiUrl, Config.jobs);
 
-    final url = Uri.https(Config.apiUrl, Config.jobs);
+      // API Request
+      final response = await client.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': 'Bearer $token', // Correct header for Bearer token
+        },
+        body: jsonEncode(model),
+      );
 
-    // API Request
-    final response = await client.post(
-      url,
-      headers: {
+      // Log the response for debugging
+      debugPrint('Request URL: $url');
+      debugPrint('Request Headers: ${{
         'Content-Type': 'application/json',
-        'token': 'Bearer $token', // Correct header for Bearer token
-      },
-      body: jsonEncode(model),
-    );
+        'token': 'Bearer $token',
+      }}');
+      debugPrint('Request Body: ${jsonEncode(model)}');
 
-    // Log the response for debugging
-    debugPrint('Request URL: $url');
-    debugPrint('Request Headers: ${{
-    'Content-Type': 'application/json',
-    'token': 'Bearer $token',
-    }}');
-debugPrint('Request Body: ${jsonEncode(model)}');
+      debugPrint('Response Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.body}');
 
-    debugPrint('Response Code: ${response.statusCode}');
-    debugPrint('Response Body: ${response.body}');
-
-    if (response.statusCode == 201) {
-      // Parse the list of jobs
-      return (json.decode(response.body) as List)
-          .map((job) => JobsResponse.fromJson(job))
-          .toList();
-    } else {
-      // Throw exception with detailed error
-      throw Exception('Failed to create a job: ${response.body}');
+      if (response.statusCode == 200) {
+        // Parse the single job object
+        return JobsResponse.fromJson(json.decode(response.body));
+      } else {
+        // Throw exception with detailed error
+        throw Exception('Failed to create a job: ${response.body}');
+      }
+    } catch (e, s) {
+      debugPrint('Error Occurred: $e');
+      debugPrintStack(stackTrace: s);
+      rethrow;
     }
-  } catch (e, s) {
-    debugPrint('Error Occurred: $e');
-    debugPrintStack(stackTrace: s);
-    rethrow;
   }
-}
+
 
 
   static Future<void> updateJob(String jobId, Map<String, dynamic> jobData) async {

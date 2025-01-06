@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-String createJobsRequestToJson(CreateJobsRequest data) =>
-    json.encode(data.toJson());
+String createJobsRequestToJson(CreateJobsRequest data) => json.encode(data.toJson());
 
 class CreateJobsRequest {
   CreateJobsRequest({
@@ -13,7 +12,7 @@ class CreateJobsRequest {
     required this.period,
     required this.hiring,
     required this.contract,
-    this.requirements,
+    required this.requirements,
     required this.imageUrl,
     required this.agentId,
   });
@@ -26,7 +25,7 @@ class CreateJobsRequest {
   final String period;
   final bool hiring;
   final String contract;
-  final List<String>? requirements;
+  final List<String> requirements;
   final String imageUrl;
   final String agentId;
 
@@ -39,9 +38,8 @@ class CreateJobsRequest {
         'period': period,
         'hiring': hiring,
         'contract': contract,
-        'requirements': requirements?.map((x) => x).toList() ?? [],
+        'requirements': requirements.map((x) => x).toList(),
         'imageUrl': imageUrl,
         'agentId': agentId,
-
       };
 }

@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-// FIX: Error Occurred: -------------- type '(Map<String, dynamic>) => JobsResponse' is not a subtype of type '(dynamic) => dynamic' of 'f' ---------------
 List<JobsResponse> jobsResponseFromJson(String str) =>
     (json.decode(str) as List)
-        .cast<Map<String, dynamic>>()
-        .map(JobsResponse.fromJson)
+        .map((e) => JobsResponse.fromJson(e as Map<String, dynamic>))
         .toList();
 
 class JobsResponse {
@@ -26,21 +24,26 @@ class JobsResponse {
   });
 
   factory JobsResponse.fromJson(Map<String, dynamic> json) => JobsResponse(
-        id: json['_id'],
-        title: json['title'],
-        location: json['location'],
-        company: json['company'],
-        hiring: json['hiring'],
-        description: json['description'],
-        salary: json['salary'],
-        period: json['period'],
-        contract: json['contract'],
-        requirements: List<String>.from(json['requirements'].map((x) => x)),
-        imageUrl: json['imageUrl'],
-        // Fix: Type 'Null' is not a subtype 'String' in type cast
+        id: json['_id'] ?? '',
+        title: json['title'] ?? '',
+        location: json['location'] ?? '',
+        company: json['company'] ?? '',
+        hiring: json['hiring'] ?? false,
+        description: json['description'] ?? '',
+        salary: json['salary'] ?? '',
+        period: json['period'] ?? '',
+        contract: json['contract'] ?? '',
+        requirements: json['requirements'] != null
+            ? List<String>.from(json['requirements'].map((x) => x))
+            : [],
+        imageUrl: json['imageUrl'] ?? '',
         agentId: json['agentId'] ?? '',
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
+        createdAt: json['createdAt'] != null && json['createdAt'] != ''
+            ? DateTime.parse(json['createdAt'])
+            : DateTime.now(),
+        updatedAt: json['updatedAt'] != null && json['updatedAt'] != ''
+            ? DateTime.parse(json['updatedAt'])
+            : DateTime.now(),
       );
 
   final String id;
