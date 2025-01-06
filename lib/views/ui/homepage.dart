@@ -71,18 +71,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(56.h),
+        preferredSize: Size.fromHeight(0.065.sh),
         child: CustomAppBar(
           actions: [
             Padding(
-              padding: EdgeInsets.all(12.h),
+              padding: EdgeInsets.only(right: 0.010.sh),
               child: Icon(
                 FontAwesome.filter,
                 color: const Color(0xFF08959D),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 1.0.h),
+              padding: EdgeInsets.only(right: 0.010.sh),
               child: Icon(
                 FontAwesome.bell,
                 color: const Color(0xFF08959D),
@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
           child: Padding(
-            padding: EdgeInsets.all(1.0.h),
+            padding: EdgeInsets.only(left: 0.010.sh),
             child: const DrawerWidget(),
           ),
         ),
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                     clipBehavior: Clip.none,
                     children: [
                       SizedBox(
-                        height: 0.78.sh,
+                        height: 0.82.sh,
                         child: ClipRRect(
                           clipBehavior: Clip.antiAlias,
                           child: FutureBuilder<List<JobsResponse>>(
@@ -245,12 +245,12 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         selectedItemColor: const Color(0xFF08959D),
-        unselectedItemColor: Colors.white,
-        backgroundColor: const Color(0xFF040326),
+        unselectedItemColor: const Color(0xFF040326),
+        backgroundColor: Colors.white,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
         ],
       ),
     );
