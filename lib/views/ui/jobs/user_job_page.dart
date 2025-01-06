@@ -40,7 +40,7 @@ void loadJobs() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
+        preferredSize: Size.fromHeight(0.065.sh),
         child: CustomAppBar(
           text: 'My Queries',
           actions: [
@@ -62,7 +62,7 @@ void loadJobs() async {
             ),
           ],
           child: Padding(
-            padding: EdgeInsets.all(12.0.h),
+            padding: EdgeInsets.only(left: 0.010.sh),
             child: const DrawerWidget(),
           ),
         ),

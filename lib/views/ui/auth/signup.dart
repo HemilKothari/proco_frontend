@@ -39,7 +39,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       builder: (context, signupNotifier, child) {
         return Scaffold(
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(50),
+            preferredSize: Size.fromHeight(0.065.sh),
             child: CustomAppBar(
               text: 'Sign Up',
               child: GestureDetector(

@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
         loginNotifier.getPrefs();
         return Scaffold(
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(50),
+            preferredSize: Size.fromHeight(0.065.sh),
             child: CustomAppBar(
               text: 'Login',
               child: widget.drawer == true

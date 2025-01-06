@@ -26,11 +26,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50.h),
+        preferredSize: Size.fromHeight(0.065.sh),
         child: CustomAppBar(
           text: 'Profile',
           child: Padding(
-            padding: EdgeInsets.all(12.0.h),
+            padding: EdgeInsets.only(left: 0.010.sh),
             child: const DrawerWidget(),
           ),
         ),

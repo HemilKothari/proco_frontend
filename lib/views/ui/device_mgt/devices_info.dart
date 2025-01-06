@@ -22,11 +22,11 @@ class DeviceManagement extends StatelessWidget {
     final loginDate = date.substring(0, 11);
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50.h),
+        preferredSize: Size.fromHeight(0.065.sh),
         child: CustomAppBar(
           text: 'Device Management',
           child: Padding(
-            padding: EdgeInsets.all(12.0.h),
+            padding: EdgeInsets.only(left: 0.010.sh),
             child: const DrawerWidget(),
           ),
         ),

@@ -162,7 +162,7 @@ class _ChatPageState extends State<ChatPage> {
         }
         return Scaffold(
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(50.h),
+            preferredSize: Size.fromHeight(0.065.sh),
             child: CustomAppBar(
               text: !chatNotifier.typing ? widget.title : 'typing .....',
               actions: [
