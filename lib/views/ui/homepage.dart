@@ -11,7 +11,9 @@ import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/common/heading_widget.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:jobhub_v1/views/ui/filters/filter_page.dart';
 import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
+import 'package:jobhub_v1/views/ui/notification/notification_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -76,17 +78,46 @@ class _HomePageState extends State<HomePage> {
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 0.025.sh),
-              child: Icon(
+
+              /*child: Icon(
                 FontAwesome.filter,
                 color: const Color(0xFF08959D),
+              ),
+              */
+
+              child: IconButton(
+                icon: const Icon(
+                  FontAwesome.filter,
+                  color: Color(0xFF08959D),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FilterPage()),
+                  );
+                },
               ),
             ),
             Padding(
               padding: EdgeInsets.only(right: 0.025.sh),
-              child: Icon(
+              child: IconButton(
+                icon: const Icon(
+                  FontAwesome.bell,
+                  color: Color(0xFF08959D),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NotificationPage()),
+                  );
+                },
+              ),
+
+              /*child: Icon(
                 FontAwesome.bell,
                 color: const Color(0xFF08959D),
-              ),
+              ),*/
             ),
           ],
           child: Padding(
@@ -243,8 +274,10 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       bottomNavigationBar: Container(
-        height: kBottomNavigationBarHeight, // Standard height for navigation bars
-        width: double.infinity, // Ensures it occupies the full width of the screen
+        height:
+            kBottomNavigationBarHeight, // Standard height for navigation bars
+        width:
+            double.infinity, // Ensures it occupies the full width of the screen
         decoration: BoxDecoration(
           color: Colors.white, // Background color
           boxShadow: [
@@ -257,7 +290,8 @@ class _HomePageState extends State<HomePage> {
         ),
         child: BottomAppBar(
           color: Colors.transparent, // Set transparent to use container's color
-          elevation: 0, // Remove BottomAppBar's elevation to avoid duplicate shadows
+          elevation:
+              0, // Remove BottomAppBar's elevation to avoid duplicate shadows
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(5, (index) {
@@ -277,11 +311,15 @@ class _HomePageState extends State<HomePage> {
                     AnimatedContainer(
                       duration: Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
-                      margin: EdgeInsets.only(top: 4), // Space between icon and line
+                      margin: EdgeInsets.only(
+                          top: 4), // Space between icon and line
                       height: 3, // Height of the blue line
-                      width: _currentIndex == index ? 48 : 0, // Line width for selected item
+                      width: _currentIndex == index
+                          ? 48
+                          : 0, // Line width for selected item
                       color: _currentIndex == index
-                          ? const Color(0xFF08959D) // Blue line for selected item
+                          ? const Color(
+                              0xFF08959D) // Blue line for selected item
                           : Colors.transparent, // No line for unselected items
                     ),
                   ],
@@ -293,6 +331,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
   IconData _getIconForIndex(int index) {
     switch (index) {
       case 0:
