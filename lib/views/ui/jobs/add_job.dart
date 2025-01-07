@@ -299,7 +299,7 @@ class _AddJobPageState extends State<AddJobPage> {
                     CustomButton(
                       onTap: () async {
                         final prefs = await SharedPreferences.getInstance();
-                        var userId = prefs.getString('id');
+                        var userId = prefs.getString('userId');
                         final requirementsList = requirementsControllers
                                 .map((controller) => controller.text)
                                 .toList();
