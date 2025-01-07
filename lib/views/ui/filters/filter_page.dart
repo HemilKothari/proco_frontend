@@ -8,65 +8,51 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  // Controller for the text fields
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _skillController = TextEditingController();
-  final TextEditingController _opportunityController = TextEditingController();
-
-  // Initial data for each filter
-  final List<String> _locations = [
-    'New York',
-    'San Francisco',
-    'London',
-    'Berlin'
+  // List of options for the bubbles
+  final List<String> options = [
+    'Web Development',
+    'App Development',
+    'Graphic Designer',
+    'Fianace',
+    'Consulting',
+    'Marketing',
+    'Competitive Programming',
+    'Cyber Security',
+    'Blockchain',
+    'Research',
+    'UI/UX',
+    'Animator',
   ];
-  final List<String> _skills = [
-    'Flutter',
-    'React',
-    'Dart',
-    'Node.js',
-    'Python'
-  ];
-  final List<String> _opportunityTypes = [
-    'Full-time',
-    'Part-time',
-    'Internship',
-    'Freelance'
-  ];
+  final Map<String, bool> opportunityTypes = {
+    'Internship': false,
+    'Research': false,
+    'Freelance': false,
+    'Competition': false,
+  };
 
-  // Filtered results
-  List<String> _filteredLocations = [];
-  List<String> _filteredSkills = [];
-  List<String> _filteredOpportunityTypes = [];
+  final List<String> states = [
+    "California",
+    "Texas",
+    "Florida",
+    "New York",
+    "Illinois",
+    "Pennsylvania",
+    "Ohio",
+    "Georgia",
+    "North Carolina",
+    "Michigan"
+  ]; // List of states
 
-  // Update filtered results based on the user input
-  void _filterResults() {
-    setState(() {
-      _filteredLocations = _locations
-          .where((location) => location
-              .toLowerCase()
-              .contains(_locationController.text.toLowerCase()))
-          .toList();
-      _filteredSkills = _skills
-          .where((skill) =>
-              skill.toLowerCase().contains(_skillController.text.toLowerCase()))
-          .toList();
-      _filteredOpportunityTypes = _opportunityTypes
-          .where((opportunity) => opportunity
-              .toLowerCase()
-              .contains(_opportunityController.text.toLowerCase()))
-          .toList();
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Initializing the filtered lists
-    _filteredLocations = _locations;
-    _filteredSkills = _skills;
-    _filteredOpportunityTypes = _opportunityTypes;
-  }
+  // Store the selected options
+  final List<String> selectedOptions = [];
+  bool showCustomInput = false; // Flag to show/hide custom input
+  String customInputValue = ""; // Store the custom input value
+  double selectedDistance = 10.0;
+  String selectedLocationOption =
+      ""; // Keeps track of the selected option (City/State/Country)
+  double locationDistance = 10.0; // For City Slider
+  String selectedState = ""; // For State Dropdown
+  String enteredCountry = ""; // For Country Text Input
 
   @override
   Widget build(BuildContext context) {
@@ -75,132 +61,236 @@ class _FilterPageState extends State<FilterPage> {
         title: const Text(
           'Filters',
           style: TextStyle(
-            color: Color(0xFF08959D), // Title color
-            fontFamily: 'Poppins', // Font family
+            color: Color(0xFF08959D), // Set the text color here
           ),
         ),
         backgroundColor: const Color(0xFF040326),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color(0xFF08959D), // Back button color
+            color: Color(0xFF08959D), // Set the back button color here
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context); // Go back to the previous page
           },
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Location Filter
-            TextField(
-              controller: _locationController,
-              onChanged: (value) => _filterResults(),
-              decoration: InputDecoration(
-                labelText: 'Location',
-                hintText: 'Type to filter locations',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: const Color(0xFF040326),
-                labelStyle: const TextStyle(
-                  color: Color(0xFF08959D),
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'Poppins',
-              ),
+            const Text(
+              'Which Area To Explore?',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            _buildFilteredList(_filteredLocations),
-            const SizedBox(height: 20),
-
-            // Skill Filter
-            TextField(
-              controller: _skillController,
-              onChanged: (value) => _filterResults(),
-              decoration: InputDecoration(
-                labelText: 'Skills',
-                hintText: 'Type to filter skills',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: const Color(0xFF040326),
-                labelStyle: const TextStyle(
-                  color: Color(0xFF08959D),
-                  fontFamily: 'Poppins',
+            Expanded(
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 8, // Space between bubbles horizontally
+                  runSpacing: 8, // Space between bubbles vertically
+                  children: [
+                    ...options.map((option) {
+                      final isSelected = selectedOptions.contains(option);
+                      return ChoiceChip(
+                        label: Text(
+                          option,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        selected: isSelected,
+                        selectedColor: const Color(0xFF040326),
+                        backgroundColor: Colors.grey[200],
+                        checkmarkColor: Colors.teal,
+                        onSelected: (selected) {
+                          setState(() {
+                            if (selected) {
+                              selectedOptions.add(option);
+                            } else {
+                              selectedOptions.remove(option);
+                            }
+                          });
+                        },
+                      );
+                    }).toList(),
+                    // Custom Bubble
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showCustomInput = true;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.teal,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Text(
+                          'CUSTOM',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'Poppins',
-              ),
             ),
-            const SizedBox(height: 20),
-            _buildFilteredList(_filteredSkills),
-            const SizedBox(height: 20),
+            // Show Text Field for Custom Input
+            if (showCustomInput)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  TextField(
+                    onChanged: (value) {
+                      customInputValue = value;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Enter custom option',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (customInputValue.isNotEmpty) {
+                        setState(() {
+                          options.add(customInputValue);
+                          selectedOptions.add(customInputValue);
+                          showCustomInput = false;
+                          customInputValue = "";
+                        });
+                      }
+                    },
+                    child: const Text('Add Custom Option'),
+                  ),
+                ],
+              ),
 
-            // Opportunity Type Filter
-            TextField(
-              controller: _opportunityController,
-              onChanged: (value) => _filterResults(),
-              decoration: InputDecoration(
-                labelText: 'Opportunity Type',
-                hintText: 'Type to filter opportunity types',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: const Color(0xFF040326),
-                labelStyle: const TextStyle(
-                  color: Color(0xFF08959D),
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'Poppins',
-              ),
+            const SizedBox(height: 5),
+            // Second Section: Opportunity Type with Toggle Switch
+            const Text(
+              'What Opportunity Type?',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            _buildFilteredList(_filteredOpportunityTypes),
-            const SizedBox(height: 20),
-
-            // Submit Button
-            ElevatedButton(
-              onPressed: () {
-                // Handle submit action (e.g., apply filters)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Filters applied')),
+            const SizedBox(height: 10),
+            Column(
+              children: opportunityTypes.keys.map((opportunity) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      opportunity,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    Switch(
+                      value: opportunityTypes[opportunity]!,
+                      activeColor: Colors.teal, // Teal for toggle switch
+                      onChanged: (value) {
+                        setState(() {
+                          opportunityTypes[opportunity] = value;
+                        });
+                      },
+                    ),
+                  ],
                 );
-              },
-              child: const Text('Apply Filters'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color(0xFF08959D),
-                textStyle: const TextStyle(fontFamily: 'Poppins'),
-              ),
+              }).toList(),
             ),
+
+            const SizedBox(height: 20),
+            // Location Selector Section
+            const Text(
+              'Select Location Type:',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildLocationToggle("City"),
+                _buildLocationToggle("State"),
+                _buildLocationToggle("Country"),
+              ],
+            ),
+            const SizedBox(height: 20),
+            if (selectedLocationOption == "City")
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Distance (in kms):",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Slider(
+                    value: locationDistance,
+                    min: 0,
+                    max: 100,
+                    divisions: 20,
+                    activeColor: Colors.teal,
+                    inactiveColor: Colors.grey,
+                    label: '${locationDistance.toInt()} km',
+                    onChanged: (value) {
+                      setState(() {
+                        locationDistance = value;
+                      });
+                    },
+                  ),
+                  Text('${locationDistance.toInt()} km'),
+                ],
+              ),
+            if (selectedLocationOption == "State")
+              DropdownButton<String>(
+                value: selectedState.isEmpty ? null : selectedState,
+                items: states.map((state) {
+                  return DropdownMenuItem(
+                    value: state,
+                    child: Text(state),
+                  );
+                }).toList(),
+                hint: const Text("Choose a state"),
+                onChanged: (value) {
+                  setState(() {
+                    selectedState = value!;
+                  });
+                },
+              ),
+            if (selectedLocationOption == "Country")
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    enteredCountry = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Type country name",
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFilteredList(List<String> filteredList) {
-    return Column(
-      children: filteredList
-          .map((item) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                child: Text(
-                  item,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-              ))
-          .toList(),
+  Widget _buildLocationToggle(String option) {
+    return Row(
+      children: [
+        Text(option, style: const TextStyle(fontSize: 16)),
+        Switch(
+          value: selectedLocationOption == option,
+          activeColor: Colors.teal,
+          onChanged: (value) {
+            setState(() {
+              selectedLocationOption = value ? option : "";
+            });
+          },
+        ),
+      ],
     );
   }
 }
