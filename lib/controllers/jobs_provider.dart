@@ -5,6 +5,7 @@ import 'package:jobhub_v1/models/request/jobs/create_job.dart';
 import 'package:jobhub_v1/models/response/jobs/get_job.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/helpers/jobs_helper.dart';
+import 'package:jobhub_v1/views/ui/jobs/user_job_page.dart';
 
 class JobsNotifier extends ChangeNotifier {
   Future<List<JobsResponse>>? jobList;
@@ -29,7 +30,7 @@ class JobsNotifier extends ChangeNotifier {
 
 Future<void> createJob(CreateJobsRequest model) async {
   try {
-    await JobsHelper.createJob(model).then((_) {
+    await JobsHelper.createJob(model).then((_) async {
       // Show success message
       Get.snackbar(
         'Query Created Successfully',
@@ -38,7 +39,9 @@ Future<void> createJob(CreateJobsRequest model) async {
         backgroundColor: Color(kLightBlue.value),
         icon: const Icon(Icons.check_circle),
       );
-
+      await Future.delayed(const Duration(seconds: 1)).then((value) {
+          Get.offAll(() => const JobListingPage());
+        });
       // Refresh the job list after successful creation
       getJobs();
     });

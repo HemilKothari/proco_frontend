@@ -316,7 +316,7 @@ class _AddJobPageState extends State<AddJobPage> {
                           contract: contractController.text,
                           requirements: requirementsList,
                           imageUrl: imageUrlController.text,
-                          agentId: userId?? '6777c8d3b4c508d712aac2f3',
+                          agentId: userId?? '',
                       );
                       // JobsNotifier.createJob(jobData);
                       // print('Job Data: ${jsonEncode(jobData.toJson())}');
