@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -50,23 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAQwbwfMbYPUqsXaM7b3xGcsAKtN8JKO9E',
-    appId: '1:438442066203:android:e62bd996fcdfa6150513be',
-    messagingSenderId: '438442066203',
-    projectId: 'wilinxhub',
-    storageBucket: 'wilinxhub.appspot.com',
+    apiKey: 'AIzaSyC2hCvyfSl46WIU5lrQgsOOs99ARduYACI',
+    appId: '1:990483552835:android:9e25738abe6a8f9eb252f6',
+    messagingSenderId: '990483552835',
+    projectId: 'proco-3d9fe',
+    storageBucket: 'proco-3d9fe.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD0Xm3XiKALFWP2D2fioxx3hjydJADe0Ec',
-    appId: '1:438442066203:ios:2e1194f32139f9070513be',
-    messagingSenderId: '438442066203',
-    projectId: 'wilinxhub',
-    storageBucket: 'wilinxhub.appspot.com',
-    androidClientId:
-        '438442066203-md1gclmtvskmep1olr0u29k5ru244qm8.apps.googleusercontent.com',
-    iosClientId:
-        '438442066203-v9khert0pi45es2bqu4ppg84q31r9ffo.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBzx7hotO5MB5as9BYzR0Tb7PgxyY-8DWs',
+    appId: '1:990483552835:ios:6dd5f2067e1ae8cab252f6',
+    messagingSenderId: '990483552835',
+    projectId: 'proco-3d9fe',
+    storageBucket: 'proco-3d9fe.firebasestorage.app',
     iosBundleId: 'com.example.jobhubV1',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBEOFxxIm27ouo1USfKG6vCX4QpesXwLFc',
+    appId: '1:990483552835:web:b936294f36d8654cb252f6',
+    messagingSenderId: '990483552835',
+    projectId: 'proco-3d9fe',
+    authDomain: 'proco-3d9fe.firebaseapp.com',
+    storageBucket: 'proco-3d9fe.firebasestorage.app',
+    measurementId: 'G-8DNTQ6XHPN',
+  );
+
 }
