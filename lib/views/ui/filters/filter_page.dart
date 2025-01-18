@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jobhub_v1/controllers/filter_provider.dart';
+import 'package:jobhub_v1/views/common/custom_btn.dart';
+import 'package:jobhub_v1/views/common/height_spacer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FilterPage extends StatefulWidget {
   const FilterPage({Key? key}) : super(key: key);
@@ -271,6 +275,21 @@ class _FilterPageState extends State<FilterPage> {
                   hintText: "Type country name",
                 ),
               ),
+              const HeightSpacer(size: 20),
+              CustomButton(
+                onTap: () async {
+                //   // const userId = "6777c8d3b4c508d712aac2f3";
+                  final filterData = FilterJobsRequest(
+                    
+                );
+                // JobsNotifier.createJob(jobData);
+                // print('Job Data: ${jsonEncode(jobData.toJson())}');
+                FilterNotifier.applyFilters();
+
+                },    
+                text: 'List Query',
+              ),
+              
           ],
         ),
       ),
