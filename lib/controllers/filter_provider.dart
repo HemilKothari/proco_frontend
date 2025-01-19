@@ -32,7 +32,7 @@ class FilterNotifier extends ChangeNotifier {
   }
 
   // Method to create a new filter
-  Future<void> createFilter(CreateFilterRequest model) async {
+  Future<void> createFilter(String agentId, CreateFilterRequest model) async {
     try {
       await FilterHelper.createFilter(model).then((_) async {
         // Show success message
@@ -47,7 +47,7 @@ class FilterNotifier extends ChangeNotifier {
           Get.offAll(() => const FilterPage());
         });
         // Refresh the filter list after successful creation
-        getFilters();
+        getUserFilters(agentId);
       });
     } catch (e) {
       // Handle errors
@@ -65,13 +65,13 @@ class FilterNotifier extends ChangeNotifier {
   Future<void> updateFilter(
       String filterId, Map<String, dynamic> filterData) async {
     await FilterHelper.updateFilter(filterId, filterData);
-    getFilters(); // Refresh the filter list after update
+    // getFilters(); // Refresh the filter list after update
   }
 
   // Method to delete a filter
   Future<void> deleteFilter(String filterId) async {
     await FilterHelper.deleteFilter(filterId);
-    getFilters(); // Refresh the filter list after deletion
+    // getFilters(); // Refresh the filter list after deletion
   }
 
   // Method to get filters for a specific user

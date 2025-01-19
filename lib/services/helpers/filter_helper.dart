@@ -28,12 +28,18 @@ class FilterHelper {
     }
   }
 
-  static Future<GetFilterRes> getFilter(String filterId) async {
+  static Future<GetFilterRes> getFilter(String agentId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, '${Config.filters}/$filterId');
+      final url = Uri.https(Config.apiUrl, '${Config.filters}/$agentId');
       final response = await client.get(url, headers: requestHeaders);
 
+      debugPrint('Request Headers: ${{
+        'Content-Type': 'application/json',
+      }}');
+      debugPrint('Request URL: $url');
+      debugPrint('Response Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.body}');
       if (response.statusCode == 200) {
         return getFilterResFromJson(response.body);
       } else {
@@ -50,17 +56,39 @@ class FilterHelper {
     final requestHeaders = {'Content-Type': 'application/json'};
     final url = Uri.https(Config.apiUrl, '${Config.filters}/user/$agentId');
     final response = await client.get(url, headers: requestHeaders);
+
     if (response.statusCode == 200) {
-      final data = json.decode(response.body) as List;
-      if (data.isEmpty) {
-        debugPrint('No filters found for user: $agentId');
+      final data = json.decode(response.body);
+
+      // Log the response for debugging
+      debugPrint('Request URL: $url');
+      debugPrint('Request Headers: ${{
+        'Content-Type': 'application/json',
+      }}');
+
+      debugPrint('Response Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.body}');
+      
+      // Check if data['data'] is a Map or List
+      if (data['data'] is List) {
+        // If it's a List, parse as a list of FilterResponse
+        return (data['data'] as List)
+            .map((filter) => FilterResponse.fromJson(filter))
+            .toList();
+      } else if (data['data'] is Map) {
+        // If it's a Map, wrap it in a list and parse the single item
+        return [
+          FilterResponse.fromJson(data['data'] as Map<String, dynamic>)
+        ];
+      } else {
+        throw Exception('Unexpected response structure');
       }
-      return data.map((filter) => FilterResponse.fromJson(filter)).toList();
     } else {
       debugPrint('Failed to load filters: ${response.statusCode}');
       throw Exception('Failed to load user filters');
     }
   }
+
 
   static Future<FilterResponse> getRecentFilters() async {
     final requestHeaders = <String, String>{
@@ -97,14 +125,14 @@ class FilterHelper {
       );
 
       // Log the response for debugging
-      debugPrint('Request URL: $url');
-      debugPrint('Request Headers: ${{
-        'Content-Type': 'application/json',
-      }}');
-      debugPrint('Request Body: ${jsonEncode(model)}');
+      // debugPrint('Request URL: $url');
+      // debugPrint('Request Headers: ${{
+      //   'Content-Type': 'application/json',
+      // }}');
+      // debugPrint('Request Body: ${jsonEncode(model)}');
 
-      debugPrint('Response Code: ${response.statusCode}');
-      debugPrint('Response Body: ${response.body}');
+      // debugPrint('Response Code: ${response.statusCode}');
+      // debugPrint('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         // Parse the single filter object

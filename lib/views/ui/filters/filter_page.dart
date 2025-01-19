@@ -316,7 +316,7 @@ class _FilterPageState extends State<FilterPage> {
                 // JobsNotifier.createJob(jobData);
                 // print('Job Data: ${jsonEncode(jobData.toJson())}');
                 final filterNotifier = Provider.of<FilterNotifier>(context, listen: false);
-                await filterNotifier.createFilter(filterData);
+                await filterNotifier.createFilter(userId!, filterData);
                 },    
                 text: 'List Query',
               ),
