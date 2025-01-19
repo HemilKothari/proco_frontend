@@ -8,41 +8,46 @@ List<FilterResponse> filterResponseFromJson(String str) =>
 class FilterResponse {
   FilterResponse({
     required this.id,
-    required this.selectedOptions,
-    required this.opportunityTypes,
-    required this.selectedLocationOption,
-    required this.locationDistance,
-    required this.selectedState,
-    required this.enteredCountry,
-    required this.customOptions,
-    required this.updatedAt,
+    this.selectedOptions,
+    this.opportunityTypes,
+    this.selectedLocationOption,
+    this.locationDistance,
+    this.selectedState,
+    this.enteredCountry,
+    this.customOptions,
+    this.updatedAt,
   });
 
   factory FilterResponse.fromJson(Map<String, dynamic> json) => FilterResponse(
         id: json['_id'] ?? '',
         selectedOptions: json['selectedOptions'] != null
-            ? List<String>.from(json['selectedOptions'].map((x) => x))
-            : [],
+            ? List<String>.from(json['selectedOptions'])
+            : null,
         opportunityTypes: json['opportunityTypes'] != null
             ? Map<String, bool>.from(json['opportunityTypes'])
-            : {},
-        selectedLocationOption: json['selectedLocationOption'] ?? '',
-        locationDistance: json['locationDistance'] ?? 10.0,
-        selectedState: json['selectedState'] ?? '',
-        enteredCountry: json['enteredCountry'] ?? '',
+            : null,
+        selectedLocationOption: json['selectedLocationOption'],
+        locationDistance: (json['locationDistance'] is int
+                ? (json['locationDistance'] as int).toDouble()
+                : json['locationDistance'])
+            as double?,
+        selectedState: json['selectedState'],
+        enteredCountry: json['enteredCountry'],
         customOptions: json['customOptions'] != null
-            ? List<String>.from(json['customOptions'].map((x) => x))
-            : [],
-        updatedAt: DateTime.parse(json['updatedAt']),
+            ? List<String>.from(json['customOptions'])
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.tryParse(json['updatedAt'])
+            : null,
       );
 
   final String id;
-  final List<String> selectedOptions;
-  final Map<String, bool> opportunityTypes;
-  final String selectedLocationOption;
-  final double locationDistance;
-  final String selectedState;
-  final String enteredCountry;
-  final List<String> customOptions;
-  final DateTime updatedAt;
+  final List<String>? selectedOptions;
+  final Map<String, bool>? opportunityTypes;
+  final String? selectedLocationOption;
+  final double? locationDistance;
+  final String? selectedState;
+  final String? enteredCountry;
+  final List<String>? customOptions;
+  final DateTime? updatedAt;
 }
