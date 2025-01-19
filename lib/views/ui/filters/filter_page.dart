@@ -275,8 +275,8 @@ class _FilterPageState extends State<FilterPage> {
                   hintText: "Type country name",
                 ),
               ),
-              const HeightSpacer(size: 20),
-              CustomButton(
+            const HeightSpacer(size: 20),
+            /*CustomButton(
                 onTap: () async {
                 //   // const userId = "6777c8d3b4c508d712aac2f3";
                   final filterData = FilterJobsRequest(
@@ -289,7 +289,7 @@ class _FilterPageState extends State<FilterPage> {
                 },    
                 text: 'List Query',
               ),
-              
+              */
           ],
         ),
       ),
