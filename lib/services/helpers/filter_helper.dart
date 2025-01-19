@@ -54,7 +54,7 @@ class FilterHelper {
 
   static Future<List<FilterResponse>> getUserFilters(String agentId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.https(Config.apiUrl, '${Config.filters}/user/$agentId');
+    final url = Uri.https(Config.apiUrl, '${Config.filters}/$agentId');
     final response = await client.get(url, headers: requestHeaders);
 
     if (response.statusCode == 200) {
