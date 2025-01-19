@@ -7,6 +7,7 @@ String getFilterResToJson(GetFilterRes data) => json.encode(data.toJson());
 
 class GetFilterRes {
   GetFilterRes({
+    required this.id,
     required this.selectedOptions,
     required this.opportunityTypes,
     required this.selectedLocationOption,
@@ -17,6 +18,7 @@ class GetFilterRes {
   });
 
   factory GetFilterRes.fromJson(Map<String, dynamic> json) => GetFilterRes(
+        id: json['_id'],
         selectedOptions:
             List<String>.from(json['selectedOptions'].map((x) => x)),
         opportunityTypes: Map<String, bool>.from(
@@ -28,6 +30,7 @@ class GetFilterRes {
         customOptions: List<String>.from(json['customOptions'].map((x) => x)),
       );
 
+  final String id;
   final List<String> selectedOptions;
   final Map<String, bool> opportunityTypes;
   final String selectedLocationOption;
@@ -37,6 +40,7 @@ class GetFilterRes {
   final List<String> customOptions;
 
   Map<String, dynamic> toJson() => {
+        '_id': id,
         'selectedOptions': List<dynamic>.from(selectedOptions.map((x) => x)),
         'opportunityTypes': Map<String, dynamic>.from(
             opportunityTypes.map((k, v) => MapEntry(k, v))),

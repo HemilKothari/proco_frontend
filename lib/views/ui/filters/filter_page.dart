@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jobhub_v1/controllers/filter_provider.dart';
+import 'package:jobhub_v1/models/request/filters/create_filter.dart';
 import 'package:jobhub_v1/views/common/custom_btn.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FilterPage extends StatefulWidget {
@@ -50,7 +52,8 @@ class _FilterPageState extends State<FilterPage> {
   // Store the selected options
   final List<String> selectedOptions = [];
   bool showCustomInput = false; // Flag to show/hide custom input
-  String customInputValue = ""; // Store the custom input value
+  // String customInputValue = ""; // Store the custom input value
+  List<TextEditingController>  customInputValue = [TextEditingController()];
   double selectedDistance = 10.0;
   String selectedLocationOption =
       ""; // Keeps track of the selected option (City/State/Country)
@@ -149,11 +152,30 @@ class _FilterPageState extends State<FilterPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: customInputValue.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(customInputValue[index] as String),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            setState(() {
+                              selectedOptions.remove(customInputValue[index]);
+                              customInputValue.removeAt(index);
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
                   TextField(
                     onChanged: (value) {
-                      customInputValue = value;
+                      customInputValue = value as List<TextEditingController>;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Enter custom option',
                       border: OutlineInputBorder(),
                     ),
@@ -163,10 +185,9 @@ class _FilterPageState extends State<FilterPage> {
                     onPressed: () {
                       if (customInputValue.isNotEmpty) {
                         setState(() {
-                          options.add(customInputValue);
-                          selectedOptions.add(customInputValue);
-                          showCustomInput = false;
-                          customInputValue = "";
+                          customInputValue.add(customInputValue as TextEditingController);
+                          selectedOptions.add(customInputValue as String);
+                          customInputValue = "" as List<TextEditingController>;
                         });
                       }
                     },
@@ -174,7 +195,6 @@ class _FilterPageState extends State<FilterPage> {
                   ),
                 ],
               ),
-
             const SizedBox(height: 5),
             // Second Section: Opportunity Type with Toggle Switch
             const Text(
@@ -276,20 +296,30 @@ class _FilterPageState extends State<FilterPage> {
                 ),
               ),
             const HeightSpacer(size: 20),
-            /*CustomButton(
+            CustomButton(
                 onTap: () async {
-                //   // const userId = "6777c8d3b4c508d712aac2f3";
-                  final filterData = FilterJobsRequest(
-                    
+                  final prefs = await SharedPreferences.getInstance();
+                  var userId = prefs.getString('userId');
+                  final customInput = customInputValue
+                                .map((controller) => controller.text)
+                                .toList();
+                  final filterData = CreateFilterRequest(
+                    agentId: userId?? '',
+                    selectedOptions: selectedOptions,
+                    opportunityTypes: opportunityTypes,
+                    selectedLocationOption: selectedLocationOption,
+                    locationDistance: locationDistance,
+                    selectedState: selectedState,
+                    enteredCountry: enteredCountry,
+                    customOptions: customInput,                    
                 );
                 // JobsNotifier.createJob(jobData);
                 // print('Job Data: ${jsonEncode(jobData.toJson())}');
-                FilterNotifier.applyFilters();
-
+                final filterNotifier = Provider.of<FilterNotifier>(context, listen: false);
+                await filterNotifier.createFilter(filterData);
                 },    
                 text: 'List Query',
               ),
-              */
           ],
         ),
       ),

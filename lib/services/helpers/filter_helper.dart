@@ -85,14 +85,6 @@ class FilterHelper {
 
   static Future<FilterResponse> createFilter(CreateFilterRequest model) async {
     try {
-      // Fetch the token from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      var token = prefs.getString('token');
-
-      if (token == null || token.isEmpty) {
-        throw Exception('Token is null or empty');
-      }
-
       final url = Uri.https(Config.apiUrl, Config.filters);
 
       // API Request
@@ -100,7 +92,6 @@ class FilterHelper {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'token': 'Bearer $token', // Correct header for Bearer token
         },
         body: jsonEncode(model),
       );
@@ -109,7 +100,6 @@ class FilterHelper {
       debugPrint('Request URL: $url');
       debugPrint('Request Headers: ${{
         'Content-Type': 'application/json',
-        'token': 'Bearer $token',
       }}');
       debugPrint('Request Body: ${jsonEncode(model)}');
 

@@ -4,6 +4,7 @@ String createFilterRequestToJson(CreateFilterRequest data) => json.encode(data.t
 
 class CreateFilterRequest {
   CreateFilterRequest({
+    required this.agentId,
     required this.selectedOptions,
     required this.opportunityTypes,
     required this.selectedLocationOption,
@@ -13,6 +14,7 @@ class CreateFilterRequest {
     required this.customOptions,
   });
 
+  final String agentId;
   final List<String> selectedOptions; // Array of strings for selected options like 'Web Development', etc.
   final Map<String, bool> opportunityTypes; // Map for storing boolean values of opportunity types
   final String selectedLocationOption; // Location type selected: 'City', 'State', or 'Country'
@@ -22,6 +24,7 @@ class CreateFilterRequest {
   final List<String> customOptions; // Array to store custom options added by the user
 
   Map<String, dynamic> toJson() => {
+        'agentId': agentId,
         'selectedOptions': selectedOptions.map((x) => x).toList(),
         'opportunityTypes': opportunityTypes.map((k, v) => MapEntry(k, v)),
         'selectedLocationOption': selectedLocationOption,

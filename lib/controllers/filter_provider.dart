@@ -37,8 +37,8 @@ class FilterNotifier extends ChangeNotifier {
       await FilterHelper.createFilter(model).then((_) async {
         // Show success message
         Get.snackbar(
-          'Filter Created Successfully',
-          'Your filter has been added.',
+          'Filter Added Successfully',
+          '',
           colorText: Color(kLight.value),
           backgroundColor: Color(kLightBlue.value),
           icon: const Icon(Icons.check_circle),
