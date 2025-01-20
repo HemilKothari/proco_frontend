@@ -11,7 +11,7 @@ import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/ui/auth/signup.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
-import 'package:jobhub_v1/views/ui/onboarding/widgets/name_page.dart';
+
 import 'package:provider/provider.dart';
 
 /*class LoginPage extends StatefulWidget {
@@ -196,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
         await prefs.setBool('isFirstLogin', false);
 
         // Navigate to NameInputPage
-        Get.offAll(() => NameInputPage());
+        //Get.offAll(() => NameInputPage());
       } else {
         // Navigate to the main app or desired screen for returning users
         Get.offAll(() => HomePage()); // Replace with your main app page
