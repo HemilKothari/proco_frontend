@@ -1,12 +1,13 @@
 // page3.dart
 import 'package:flutter/material.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
+import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_location.dart';
 
 class Page3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo[900],
+      backgroundColor: const Color(0xFF040326),
       body: Center(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -52,7 +53,7 @@ class Page3 extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              TextField(
+              /*TextField(
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: "Department (eg: CSE)",
@@ -61,7 +62,7 @@ class Page3 extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              ),
+              ),*/
               SizedBox(height: 20),
               IconButton(
                 icon: Icon(Icons.arrow_circle_right, color: Colors.white),
@@ -69,7 +70,7 @@ class Page3 extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
+                    MaterialPageRoute(builder: (context) => Page4()),
                   );
                 },
               ),

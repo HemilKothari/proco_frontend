@@ -6,7 +6,7 @@ class Page2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo[900],
+      backgroundColor: const Color(0xFF040326),
       body: Center(
         child: Container(
           padding: EdgeInsets.all(20),
