@@ -6,7 +6,7 @@ String getJobResToJson(GetJobRes data) => json.encode(data.toJson());
 
 class GetJobRes {
   GetJobRes({
-    required this.id,
+    required this.jobId,
     required this.title,
     required this.location,
     required this.company,
@@ -22,7 +22,7 @@ class GetJobRes {
   });
 
   factory GetJobRes.fromJson(Map<String, dynamic> json) => GetJobRes(
-        id: json['_id'],
+        jobId: json['_id'],
         title: json['title'],
         location: json['location'],
         company: json['company'],
@@ -38,7 +38,7 @@ class GetJobRes {
         updatedAt: DateTime.parse(json['updatedAt']),
       );
 
-  final String id;
+  final String jobId;
   final String title;
   final String location;
   final String company;
@@ -53,7 +53,7 @@ class GetJobRes {
   final DateTime updatedAt;
 
   Map<String, dynamic> toJson() => {
-        '_id': id,
+        '_id': jobId,
         'title': title,
         'location': location,
         'company': company,

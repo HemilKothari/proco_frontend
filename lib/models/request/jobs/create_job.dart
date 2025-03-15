@@ -15,6 +15,7 @@ class CreateJobsRequest {
     required this.requirements,
     required this.imageUrl,
     required this.agentId,
+    this.matchedUsers = const[],
   });
 
   final String title;
@@ -28,6 +29,7 @@ class CreateJobsRequest {
   final List<String> requirements;
   final String imageUrl;
   final String agentId;
+  final List<String> matchedUsers;
 
   Map<String, dynamic> toJson() => {
         'title': title,
@@ -41,5 +43,6 @@ class CreateJobsRequest {
         'requirements': requirements.map((x) => x).toList(),
         'imageUrl': imageUrl,
         'agentId': agentId,
+        'matchedUsers': matchedUsers.map((x) => x).toList(),
       };
 }

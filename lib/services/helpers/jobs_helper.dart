@@ -151,8 +151,6 @@ static Future<List<JobsResponse>> getUserJobs(String agentId) async {
     }
   }
 
-
-
   static Future<void> updateJob(String jobId, Map<String, dynamic> jobData) async {
     
 
@@ -194,4 +192,6 @@ static Future<List<JobsResponse>> getUserJobs(String agentId) async {
       rethrow;
     }
   }
+
+  //  static Future<void> getMatchedJobs(String )
 }

@@ -12,6 +12,7 @@ class JobsNotifier extends ChangeNotifier {
   Future<JobsResponse>? recent;
   Future<GetJobRes>? job;
   Future<List<JobsResponse>>? userJobs;
+  Future<List<JobsResponse>>? matchedJobs;
 
   void getJobs() {
     jobList = JobsHelper.getJobs();
@@ -28,50 +29,55 @@ class JobsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-Future<void> createJob(CreateJobsRequest model) async {
-  try {
-    await JobsHelper.createJob(model).then((_) async {
-      // Show success message
+  Future<void> createJob(CreateJobsRequest model) async {
+    try {
+      await JobsHelper.createJob(model).then((_) async {
+        // Show success message
+        Get.snackbar(
+          'Query Created Successfully',
+          'Your job listing has been added.',
+          colorText: Color(kLight.value),
+          backgroundColor: Color(kLightBlue.value),
+          icon: const Icon(Icons.check_circle),
+        );
+        await Future.delayed(const Duration(seconds: 1)).then((value) {
+            Get.offAll(() => const JobListingPage());
+          });
+        // Refresh the job list after successful creation
+        getJobs();
+      });
+    } catch (e) {
+      // Handle errors
       Get.snackbar(
-        'Query Created Successfully',
-        'Your job listing has been added.',
+        'Error Creating Query',
+        e.toString(),
         colorText: Color(kLight.value),
-        backgroundColor: Color(kLightBlue.value),
-        icon: const Icon(Icons.check_circle),
+        backgroundColor: Color(kOrange.value),
+        icon: const Icon(Icons.error),
       );
-      await Future.delayed(const Duration(seconds: 1)).then((value) {
-          Get.offAll(() => const JobListingPage());
-        });
-      // Refresh the job list after successful creation
-      getJobs();
-    });
-  } catch (e) {
-    // Handle errors
-    Get.snackbar(
-      'Error Creating Query',
-      e.toString(),
-      colorText: Color(kLight.value),
-      backgroundColor: Color(kOrange.value),
-      icon: const Icon(Icons.error),
-    );
+    }
   }
-}
-
 
   Future<void> updateJob(String jobId, Map<String, dynamic> jobData) async {
-    await JobsHelper.updateJob(jobId, jobData);
-    getJobs(); // Refresh the job list after update
-  }
+      await JobsHelper.updateJob(jobId, jobData);
+      getJobs(); // Refresh the job list after update
+    }
 
   Future<void> deleteJob(String jobId) async {
-    await JobsHelper.deleteJob(jobId);
-    getJobs(); // Refresh the job list after deletion
-  }
+      await JobsHelper.deleteJob(jobId);
+      getJobs(); // Refresh the job list after deletion
+    }
 
-// Add the new function to fetch jobs for a specific user
-  void getUserJobs(String agentId) {
-    userJobs = JobsHelper.getUserJobs(agentId);
-    notifyListeners();
-  }
+  // Add the new function to fetch jobs for a specific user
+    void getUserJobs(String agentId) {
+      userJobs = JobsHelper.getUserJobs(agentId);
+      notifyListeners();
+    }
+
+    void getMatchedJobs(String jobId) {
+      matchedJobs = JobsHelper.getUserJobs(jobId);
+      notifyListeners();
+
+    }
 }
 
