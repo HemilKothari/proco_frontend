@@ -43,9 +43,9 @@ class FilterNotifier extends ChangeNotifier {
           backgroundColor: Color(kLightBlue.value),
           icon: const Icon(Icons.check_circle),
         );
-        await Future.delayed(const Duration(seconds: 1)).then((value) {
-          Get.offAll(() => const FilterPage());
-        });
+        // await Future.delayed(const Duration(seconds: 1)).then((value) {
+        //   Get.offAll(() => const FilterPage());
+        // });
         // Refresh the filter list after successful creation
         getUserFilters(agentId);
       });

@@ -51,8 +51,8 @@ class _FilterPageState extends State<FilterPage> {
     "Michigan"
   ]; // List of states
 
-  List<TextEditingController> customControllers = List.generate(10, (index) => TextEditingController());
-  
+  List<TextEditingController> customControllers =
+      List.generate(10, (index) => TextEditingController());
 
   // Store the selected options
   final List<String> selectedOptions = [];
@@ -89,10 +89,7 @@ class _FilterPageState extends State<FilterPage> {
             color: Color(0xFF08959D), // Set the back button color here
           ),
           onPressed: () {
-            Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
-                  );
+            Navigator.pop(context);
           },
         ),
       ),
@@ -171,28 +168,33 @@ class _FilterPageState extends State<FilterPage> {
                         child: SizedBox(
                           height: 38,
                           child: TextField(
-                          controller: customControllers[index], 
-                          onChanged: (value) {
-                            customControllers[index].value = TextEditingValue(text: value); 
-                          },
-                          maxLines: 1,
-                          decoration: const InputDecoration(
-                            labelText: 'Enter custom option',
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 6)
+                            controller: customControllers[index],
+                            onChanged: (value) {
+                              customControllers[index].value =
+                                  TextEditingValue(text: value);
+                            },
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                                labelText: 'Enter custom option',
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 6, horizontal: 6)),
                           ),
                         ),
-                        ),
                       ),
-                      const SizedBox(width: 12), // Use width instead of height for horizontal spacing
+                      const SizedBox(
+                          width:
+                              12), // Use width instead of height for horizontal spacing
                       ElevatedButton(
                         onPressed: () {
                           if (customControllers[index].text.isNotEmpty) {
                             setState(() {
                               options.add(customControllers[index].text);
-                              selectedOptions.add(customControllers[index].text);
+                              selectedOptions
+                                  .add(customControllers[index].text);
                               showCustomInput = false;
-                              customControllers[index].clear(); // Clear input instead of assigning ""
+                              customControllers[index]
+                                  .clear(); // Clear input instead of assigning ""
                             });
                           }
                         },
@@ -307,9 +309,11 @@ class _FilterPageState extends State<FilterPage> {
               onTap: () async {
                 final prefs = await SharedPreferences.getInstance();
                 var userId = prefs.getString('userId');
+
                 final customInput = customControllers
                     .map((controller) => controller.text)
                     .toList();
+
                 final filterData = CreateFilterRequest(
                   agentId: userId ?? '',
                   selectedOptions: selectedOptions,
@@ -320,11 +324,22 @@ class _FilterPageState extends State<FilterPage> {
                   enteredCountry: enteredCountry,
                   customOptions: customInput,
                 );
-                // JobsNotifier.createJob(jobData);
-                // print('Job Data: ${jsonEncode(jobData.toJson())}');
+
+                if (!context.mounted) return;
+
                 final filterNotifier =
                     Provider.of<FilterNotifier>(context, listen: false);
+
                 await filterNotifier.createFilter(userId!, filterData);
+
+                if (!context.mounted) return;
+
+                /// Safe navigation check before popping
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context); // Go back safely
+                } else {
+                  print("No screen to pop!");
+                }
               },
               text: 'Add Filters',
             ),
