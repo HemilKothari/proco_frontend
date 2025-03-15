@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                     clipBehavior: Clip.none,
                     children: [
                       SizedBox(
-                        height: 0.8.sh,
+                        height: 0.87.sh,
                         child: ClipRRect(
                           clipBehavior: Clip.antiAlias,
                           child: FutureBuilder<List<JobsResponse>>(
@@ -288,64 +288,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        child: BottomAppBar(
-          color: Colors.transparent, // Set transparent to use container's color
-          elevation:
-              0, // Remove BottomAppBar's elevation to avoid duplicate shadows
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(5, (index) {
-              return GestureDetector(
-                onTap: () => setState(() => _currentIndex = index),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      _getIconForIndex(index),
-                      size: 36, // Get the appropriate icon
-                      color: _currentIndex == index
-                          ? const Color(0xFF08959D) // Selected icon color
-                          : const Color(0xFF040326), // Unselected icon color
-                    ),
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      margin: EdgeInsets.only(
-                          top: 4), // Space between icon and line
-                      height: 3, // Height of the blue line
-                      width: _currentIndex == index
-                          ? 48
-                          : 0, // Line width for selected item
-                      color: _currentIndex == index
-                          ? const Color(
-                              0xFF08959D) // Blue line for selected item
-                          : Colors.transparent, // No line for unselected items
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ),
-        ),
       ),
     );
-  }
-
-  IconData _getIconForIndex(int index) {
-    switch (index) {
-      case 0:
-        return Icons.home;
-      case 1:
-        return Icons.search;
-      case 2:
-        return Icons.star;
-      case 3:
-        return Icons.chat_rounded;
-      case 4:
-        return Icons.person;
-      default:
-        return Icons.home;
-    }
   }
 }
