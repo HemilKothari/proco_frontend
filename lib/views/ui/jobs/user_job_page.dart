@@ -5,6 +5,7 @@ import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/ui/jobs/add_job.dart';
+import 'package:jobhub_v1/views/ui/jobs/matched_users.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -122,13 +123,15 @@ class _JobListingPageState extends State<JobListingPage> {
                               iconEnabledColor: const Color(0xFF08959D),
                               isExpanded: true,
                               underline: Container(
-                                color: const Color(0xFF040326), // Color of the underline
+                                color: const Color(
+                                    0xFF040326), // Color of the underline
                               ),
-                              style: TextStyle(
-                                  color: const Color(0xFF08959D),
+                              style: const TextStyle(
+                                  color: Color(0xFF08959D),
                                   fontWeight: FontWeight
                                       .bold), // Text color for selected item
-                              dropdownColor: Colors.white, // Background color of the dropdown
+                              dropdownColor: Colors
+                                  .white, // Background color of the dropdown
                               items: const [
                                 DropdownMenuItem(
                                   value: 'all',
@@ -141,7 +144,6 @@ class _JobListingPageState extends State<JobListingPage> {
                                 DropdownMenuItem(
                                   value: 'closed',
                                   child: Text("Closed Jobs"),
-                                  
                                 ),
                               ],
                               onChanged: (value) {
@@ -227,18 +229,18 @@ class JobCard extends StatelessWidget {
                   child: Text(
                     job.title,
                     style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF08959D)),
+                        color: Color(0xFF08959D)),
                   ),
                 ),
                 IconButton(
                   icon: const Icon(
                     Icons.edit,
-                    color: const Color(0xFF08959D),
+                    color: Color(0xFF08959D),
                   ),
                   onPressed: () {
-                    // Action to perform when the add icon is tapped.
+                    // Action to perform when the edit icon is tapped.
                     debugPrint('Edit button tapped');
                     // Navigate to another screen or perform some action here
                     // For example:
@@ -252,7 +254,15 @@ class JobCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
-            Image.network(job.imageUrl),
+            GestureDetector(
+              child: Image.network(job.imageUrl),
+              onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MatchedUsers()),
+                )
+              },
+            ),
             const SizedBox(height: 4),
             Row(
               children: [

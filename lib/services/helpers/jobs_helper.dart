@@ -5,6 +5,7 @@ import 'package:jobhub_v1/models/request/jobs/create_job.dart';
 import 'package:jobhub_v1/models/response/jobs/get_job.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/config.dart';
+import 'package:jobhub_v1/views/ui/jobs/matched_users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class JobsHelper {
@@ -46,22 +47,21 @@ class JobsHelper {
     }
   }
 
-static Future<List<JobsResponse>> getUserJobs(String agentId) async {
-  final requestHeaders = {'Content-Type': 'application/json'};
-  final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/$agentId');
-  final response = await client.get(url, headers: requestHeaders);
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body) as List;
-    if (data.isEmpty) {
-      debugPrint('No jobs found for user: $agentId');
+  static Future<List<JobsResponse>> getUserJobs(String agentId) async {
+    final requestHeaders = {'Content-Type': 'application/json'};
+    final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/$agentId');
+    final response = await client.get(url, headers: requestHeaders);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List;
+      if (data.isEmpty) {
+        debugPrint('No jobs found for user: $agentId');
+      }
+      return data.map((job) => JobsResponse.fromJson(job)).toList();
+    } else {
+      debugPrint('Failed to load jobs: ${response.statusCode}');
+      throw Exception('Failed to load user jobs');
     }
-    return data.map((job) => JobsResponse.fromJson(job)).toList();
-  } else {
-    debugPrint('Failed to load jobs: ${response.statusCode}');
-    throw Exception('Failed to load user jobs');
   }
-}
-
 
   static Future<JobsResponse> getRecent() async {
     final requestHeaders = <String, String>{
@@ -83,7 +83,7 @@ static Future<List<JobsResponse>> getUserJobs(String agentId) async {
       throw Exception('Failed to get the jobs');
     }
   }
-  
+
   //SEARCH
   static Future<List<JobsResponse>> searchJobs(String searchQeury) async {
     final requestHeaders = <String, String>{
@@ -103,7 +103,7 @@ static Future<List<JobsResponse>> getUserJobs(String agentId) async {
       throw Exception('Failed to get the jobs');
     }
   }
-  
+
   static Future<JobsResponse> createJob(CreateJobsRequest model) async {
     try {
       // Fetch the token from SharedPreferences
@@ -151,9 +151,8 @@ static Future<List<JobsResponse>> getUserJobs(String agentId) async {
     }
   }
 
-  static Future<void> updateJob(String jobId, Map<String, dynamic> jobData) async {
-    
-
+  static Future<void> updateJob(
+      String jobId, Map<String, dynamic> jobData) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       var token = prefs.getString('token');
@@ -161,9 +160,9 @@ static Future<List<JobsResponse>> getUserJobs(String agentId) async {
       final response = await client.put(
         url,
         headers: {
-        'Content-Type': 'application/json',
-        'token': 'Bearer $token', // Include the token here
-      },
+          'Content-Type': 'application/json',
+          'token': 'Bearer $token', // Include the token here
+        },
         body: jsonEncode(jobData),
       );
 
@@ -193,5 +192,61 @@ static Future<List<JobsResponse>> getUserJobs(String agentId) async {
     }
   }
 
-  //  static Future<void> getMatchedJobs(String )
+  static Future<List<JobsResponse>> getMatchedUsers(String jobId) async {
+    final requestHeaders = {'Content-Type': 'application/json'};
+    final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId');
+    final response = await client.get(url, headers: requestHeaders);
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      if (data.isEmpty) {
+        debugPrint('No matched users found for this job: $jobId');
+      }
+      return data.map((users) => JobsResponse.fromJson(users)).toList();
+    } else {
+      debugPrint('Failed to load matched users: ${response.statusCode}');
+      throw Exception('Failed to load matched users');
+    }
+  }
+
+  static Future<void> addMatchedUsers(String jobId, String userId) async {
+    final requestHeaders = {'Content-Type': 'application/json'};
+
+    // Construct API endpoint
+    final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId/match');
+
+    try {
+      // Fetch the existing job data first
+      final getResponse = await client.get(url, headers: requestHeaders);
+
+      if (getResponse.statusCode == 200) {
+        final Map<String, dynamic> jobData = json.decode(getResponse.body);
+        List<dynamic> matchedUsers = jobData['matchedUsers'] ?? [];
+
+        // Check if user is already in the list
+        if (!matchedUsers.contains(userId)) {
+          matchedUsers.add(userId); // Append the new user ID
+        } else {
+          debugPrint('User already matched to this job.');
+          return; // Exit if the user is already in the list
+        }
+
+        // Send an update request with the modified matchedUsers list
+        final updateBody = json.encode({'matchedUsers': matchedUsers});
+
+        final updateResponse =
+            await client.put(url, headers: requestHeaders, body: updateBody);
+
+        if (updateResponse.statusCode == 200) {
+          debugPrint('User $userId added to matched users for job $jobId');
+        } else {
+          debugPrint(
+              'Failed to update matched users: ${updateResponse.statusCode}');
+        }
+      } else {
+        debugPrint('Failed to fetch job data: ${getResponse.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error adding matched user: $e');
+    }
+  }
 }

@@ -335,11 +335,6 @@ class _FilterPageState extends State<FilterPage> {
                 if (!context.mounted) return;
 
                 /// Safe navigation check before popping
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context); // Go back safely
-                } else {
-                  print("No screen to pop!");
-                }
               },
               text: 'Add Filters',
             ),

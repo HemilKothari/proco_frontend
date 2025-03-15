@@ -19,6 +19,7 @@ class JobsResponse {
     required this.requirements,
     required this.imageUrl,
     required this.agentId,
+    this.matchedUsers,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -38,6 +39,7 @@ class JobsResponse {
             : [],
         imageUrl: json['imageUrl'] ?? '',
         agentId: json['agentId'] ?? '',
+        matchedUsers: json['matchedUsers'] ?? [],
         createdAt: json['createdAt'] != null && json['createdAt'] != ''
             ? DateTime.parse(json['createdAt'])
             : DateTime.now(),
@@ -58,6 +60,7 @@ class JobsResponse {
   final List<String> requirements;
   final String imageUrl;
   final String agentId;
+  final List<String>? matchedUsers;
   final DateTime createdAt;
   final DateTime updatedAt;
 
