@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                     clipBehavior: Clip.none,
                     children: [
                       SizedBox(
-                        height: 0.8.sh,
+                        height: 0.87.sh,
                         child: ClipRRect(
                           clipBehavior: Clip.antiAlias,
                           child: FutureBuilder<List<JobsResponse>>(
@@ -235,8 +235,37 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
+                      /*Positioned(
+                        bottom: 40,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildFAB(
+                                icon: Icons.rotate_left,
+                                color: const Color(0xFF08979F),
+                                onPressed: controller.undo),
+                            _buildFAB(
+                                icon: Icons.heart_broken,
+                                color: const Color(0xFFD23838),
+                                onPressed: () =>
+                                    controller.swipe(CardSwiperDirection.left)),
+                            _buildFAB(
+                                icon: Icons.star,
+                                color: const Color(0xFF089F20),
+                                onPressed: () => controller
+                                    .swipe(CardSwiperDirection.right)),
+                            _buildFAB(
+                                icon: Icons.bookmark,
+                                color: const Color(0xFF08979F),
+                                onPressed: () =>
+                                    controller.swipe(CardSwiperDirection.top)),
+                          ],
+                        ),
+                      ),*/
                       Positioned(
-                        bottom: 0,
+                        bottom: 0, // Adjust to move the icons up
                         left: 0,
                         right: 0,
                         child: Row(
@@ -273,7 +302,7 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-      bottomNavigationBar: Container(
+      /*bottomNavigationBar: Container(
         height:
             kBottomNavigationBarHeight, // Standard height for navigation bars
         width:
@@ -288,7 +317,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        child: BottomAppBar(
+        /* child: BottomAppBar(
           color: Colors.transparent, // Set transparent to use container's color
           elevation:
               0, // Remove BottomAppBar's elevation to avoid duplicate shadows
@@ -301,14 +330,14 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    /*Icon(
                       _getIconForIndex(index),
                       size: 36, // Get the appropriate icon
                       color: _currentIndex == index
                           ? const Color(0xFF08959D) // Selected icon color
                           : const Color(0xFF040326), // Unselected icon color
-                    ),
-                    AnimatedContainer(
+                    ),*/
+                    /* AnimatedContainer(
                       duration: Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                       margin: EdgeInsets.only(
@@ -321,31 +350,14 @@ class _HomePageState extends State<HomePage> {
                           ? const Color(
                               0xFF08959D) // Blue line for selected item
                           : Colors.transparent, // No line for unselected items
-                    ),
+                    ),*/
                   ],
                 ),
               );
             }),
           ),
-        ),
-      ),
+        ),*/
+      ),*/
     );
-  }
-
-  IconData _getIconForIndex(int index) {
-    switch (index) {
-      case 0:
-        return Icons.home;
-      case 1:
-        return Icons.search;
-      case 2:
-        return Icons.star;
-      case 3:
-        return Icons.chat_rounded;
-      case 4:
-        return Icons.person;
-      default:
-        return Icons.home;
-    }
   }
 }
