@@ -164,50 +164,44 @@ class _FilterPageState extends State<FilterPage> {
             if (showCustomInput)
               Column(
                 children: List.generate(
-                  customControllers.length,
+                  1,
                   (index) => Row(
                     children: [
-                            Expanded(
-                              child: TextField(
-                                controller: customControllers[index],
-                                keyboardType: TextInputType.text,
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => removeCustomField(index),
-                            ),
-                          ],
-                  )
-                )
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                // children: [ 
-                //   const SizedBox(height: 16),
-                //   TextField(
-                //     controller: customControllers[], // Use the controller here
-                //     decoration: const InputDecoration(
-                //       labelText: 'Enter custom option',
-                //       border: OutlineInputBorder(),
-                //     ),
-                //   ),
-                //   const SizedBox(height: 8),
-                //   ElevatedButton(
-                //     onPressed: () {
-                //       if (customControllers[index].text.isNotEmpty) {
-                //         setState(() {
-                //           // Using the controller's text value
-                //           options.add(customControllers[index].text);
-                //           selectedOptions.add(customControllers[index].text);
-                //           showCustomInput = false;
-                //           customControllers[index].clear(); // Clear input after adding
-                //         });
-                //       }
-                //     },
-                //     child: const Text('Add Custom Option'),
-                //   ),
-                // ],
+                      Expanded(
+                        child: SizedBox(
+                          height: 38,
+                          child: TextField(
+                          controller: customControllers[index], 
+                          onChanged: (value) {
+                            customControllers[index].value = TextEditingValue(text: value); 
+                          },
+                          maxLines: 1,
+                          decoration: const InputDecoration(
+                            labelText: 'Enter custom option',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 6)
+                          ),
+                        ),
+                        ),
+                      ),
+                      const SizedBox(width: 12), // Use width instead of height for horizontal spacing
+                      ElevatedButton(
+                        onPressed: () {
+                          if (customControllers[index].text.isNotEmpty) {
+                            setState(() {
+                              options.add(customControllers[index].text);
+                              selectedOptions.add(customControllers[index].text);
+                              showCustomInput = false;
+                              customControllers[index].clear(); // Clear input instead of assigning ""
+                            });
+                          }
+                        },
+                        child: const Text('Add Custom Option'),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-
             const SizedBox(height: 5),
             // Second Section: Opportunity Type with Toggle Switch
             const Text(
