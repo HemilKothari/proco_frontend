@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: Consumer<JobsNtifier>(
+      body: Consumer<JobsNotifier>(
         builder: (context, jobNotifier, child) {
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -273,22 +273,6 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
-      ),
-      bottomNavigationBar: Container(
-        height:
-            kBottomNavigationBarHeight, // Standard height for navigation bars
-        width:
-            double.infinity, // Ensures it occupies the full width of the screen
-        decoration: BoxDecoration(
-          color: Colors.white, // Background color
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2), // Optional shadow for effect
-              blurRadius: 5,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
       ),
     );
   }
