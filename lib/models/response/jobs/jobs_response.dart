@@ -7,7 +7,7 @@ List<JobsResponse> jobsResponseFromJson(String str) =>
 
 class JobsResponse {
   JobsResponse({
-    required this.id,
+    required this.id, 
     required this.title,
     required this.location,
     required this.company,
@@ -23,30 +23,31 @@ class JobsResponse {
     required this.createdAt,
     required this.updatedAt,
   });
-
-  factory JobsResponse.fromJson(Map<String, dynamic> json) => JobsResponse(
-        id: json['_id'] ?? '',
-        title: json['title'] ?? '',
-        location: json['location'] ?? '',
-        company: json['company'] ?? '',
-        hiring: json['hiring'] ?? false,
-        description: json['description'] ?? '',
-        salary: json['salary'] ?? '',
-        period: json['period'] ?? '',
-        contract: json['contract'] ?? '',
-        requirements: json['requirements'] != null
-            ? List<String>.from(json['requirements'].map((x) => x))
-            : [],
-        imageUrl: json['imageUrl'] ?? '',
-        agentId: json['agentId'] ?? '',
-        matchedUsers: json['matchedUsers'] ?? [],
-        createdAt: json['createdAt'] != null && json['createdAt'] != ''
-            ? DateTime.parse(json['createdAt'])
-            : DateTime.now(),
-        updatedAt: json['updatedAt'] != null && json['updatedAt'] != ''
-            ? DateTime.parse(json['updatedAt'])
-            : DateTime.now(),
-      );
+factory JobsResponse.fromJson(Map<String, dynamic> json) => JobsResponse(
+      id: json['_id'] ?? '',
+      title: json['title'] ?? '',
+      location: json['location'] ?? '',
+      company: json['company'] ?? '',
+      hiring: json['hiring'] ?? false,
+      description: json['description'] ?? '',
+      salary: json['salary'] ?? '',
+      period: json['period'] ?? '',
+      contract: json['contract'] ?? '',
+      requirements: json['requirements'] != null
+          ? List<String>.from(json['requirements'].map((x) => x.toString()))
+          : [],
+      imageUrl: json['imageUrl'] ?? '',
+      agentId: json['agentId'] ?? '',
+      matchedUsers: json['matchedUsers'] != null
+          ? List<String>.from(json['matchedUsers'].map((x) => x.toString()))
+          : [],
+      createdAt: json['createdAt'] != null && json['createdAt'] != ''
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null && json['updatedAt'] != ''
+          ? DateTime.parse(json['updatedAt'])
+          : DateTime.now(),
+    );
 
   final String id;
   final String title;
