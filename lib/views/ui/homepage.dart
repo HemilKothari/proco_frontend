@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
         child: CustomAppBar(
           actions: [
             Padding(
-              padding: EdgeInsets.only(right: 0.025.sh),
+              padding: EdgeInsets.only(right: 0.01.sh),
 
               /*child: Icon(
                 FontAwesome.filter,
@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(right: 0.025.sh),
+              padding: EdgeInsets.only(right: 0.01.sh),
               child: IconButton(
                 icon: const Icon(
                   FontAwesome.bell,
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: Consumer<JobsNotifier>(
+      body: Consumer<JobsNtifier>(
         builder: (context, jobNotifier, child) {
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -172,6 +172,7 @@ class _HomePageState extends State<HomePage> {
                                   controller: controller,
                                   scale: 0.5,
                                   cardsCount: jobList.length,
+                                  allowedSwipeDirection: AllowedSwipeDirection.only(left: true, right: true),
                                   cardBuilder: (context, index,
                                       percentThresholdX, percentThresholdY) {
                                     final job = jobList[index];
