@@ -118,6 +118,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                   controller: controller,
                                   scale: 0.5,
                                   cardsCount: jobList.length,
+                                  allowedSwipeDirection: AllowedSwipeDirection.only(left: true, right:true),
                                   cardBuilder: (context, index,
                                       percentThresholdX, percentThresholdY) {
                                     final job = jobList[index];
