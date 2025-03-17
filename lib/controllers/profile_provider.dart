@@ -7,7 +7,7 @@ class ProfileNotifier extends ChangeNotifier {
   // Fix: make nullable for proper push to home after login
 
   Future<ProfileRes?>? profile;
-  Future<List<SwipedRes?>>? swipedUsers;
+  Future<List<SwipedRes>>? swipedUsers;
 
   getProfile() async {
     profile = AuthHelper.getProfile();

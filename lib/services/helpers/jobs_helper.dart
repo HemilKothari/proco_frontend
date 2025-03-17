@@ -191,7 +191,7 @@ class JobsHelper {
     }
   }
 
-  static Future<List<String>> getSwipededUsers(String jobId) async {
+  static Future<List<String>> getSwipededUsersId(String jobId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
     final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId');
     final response = await client.get(url, headers: requestHeaders);

@@ -74,8 +74,8 @@ class JobsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getSwipedUsers(String jobId) {
-    swipedUsers = JobsHelper.getSwipededUsers(jobId);
+  void getSwipedUsersId(String jobId) {
+    swipedUsers = JobsHelper.getSwipededUsersId(jobId);
     notifyListeners();
   }
 }
