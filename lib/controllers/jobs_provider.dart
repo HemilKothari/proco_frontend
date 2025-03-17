@@ -12,7 +12,7 @@ class JobsNotifier extends ChangeNotifier {
   Future<JobsResponse>? recent;
   Future<GetJobRes>? job;
   Future<List<JobsResponse>>? userJobs;
-  Future<List<JobsResponse>>? matchedJobs;
+  Future<List<JobsResponse>>? swipedUsers;
 
   void getJobs() {
     jobList = JobsHelper.getJobs();
@@ -41,8 +41,8 @@ class JobsNotifier extends ChangeNotifier {
           icon: const Icon(Icons.check_circle),
         );
         await Future.delayed(const Duration(seconds: 1)).then((value) {
-            Get.offAll(() => const JobListingPage());
-          });
+          Get.offAll(() => const JobListingPage());
+        });
         // Refresh the job list after successful creation
         getJobs();
       });
@@ -59,25 +59,24 @@ class JobsNotifier extends ChangeNotifier {
   }
 
   Future<void> updateJob(String jobId, Map<String, dynamic> jobData) async {
-      await JobsHelper.updateJob(jobId, jobData);
-      getJobs(); // Refresh the job list after update
-    }
+    await JobsHelper.updateJob(jobId, jobData);
+    getJobs(); // Refresh the job list after update
+  }
 
   Future<void> deleteJob(String jobId) async {
-      await JobsHelper.deleteJob(jobId);
-      getJobs(); // Refresh the job list after deletion
-    }
+    await JobsHelper.deleteJob(jobId);
+    getJobs(); // Refresh the job list after deletion
+  }
 
   // Add the new function to fetch jobs for a specific user
-    void getUserJobs(String agentId) {
-      userJobs = JobsHelper.getUserJobs(agentId);
-      notifyListeners();
-    }
+  void getUserJobs(String agentId) {
+    userJobs = JobsHelper.getUserJobs(agentId);
+    notifyListeners();
+  }
 
-    void getMatchedJobs(String jobId) {
-      matchedJobs = JobsHelper.getUserJobs(jobId);
-      notifyListeners();
+  void getMatchedUsers(String jobId) {
+    swipedUsers = JobsHelper.getMatchedUsers(jobId);
 
-    }
+    notifyListeners();
+  }
 }
-

@@ -14,7 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthHelper {
   static https.Client client = https.Client();
 
-
   static Future<List<dynamic>> login(LoginModel model) async {
     ErrorRes? error;
     final requestHeaders = <String, String>{'Content-Type': 'application/json'};
@@ -32,8 +31,6 @@ class AuthHelper {
       final token = loginResponseModelFromJson(response.body).userToken;
       final userId = loginResponseModelFromJson(response.body).id;
       final profile = loginResponseModelFromJson(response.body).profile;
-
-      
 
       await prefs.setString('token', token);
       await prefs.setString('userId', userId);
@@ -126,4 +123,8 @@ class AuthHelper {
       throw Exception('Failed to get the profile');
     }
   }
+
+  // static Future<List<dynamic>> getUserProfiles() async {
+
+  // }
 }
