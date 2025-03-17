@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/jobs_provider.dart';
+import 'package:jobhub_v1/controllers/profile_provider.dart';
+import 'package:jobhub_v1/models/response/auth/swipe_res_model.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/app_style.dart';
@@ -31,31 +33,47 @@ class _MatchedUsersState extends State<MatchedUsers> {
   @override
   void initState() {
     super.initState();
-    final jobNotifier = Provider.of<JobsNotifier>(context, listen: false);
-    jobNotifier.getJobs();
+    final profileNotifier = Provider.of<ProfileNotifier>(context, listen: false);
+    //profileNotifier.getSwipedUsers(agentId);
   }
 
   // Helper widgets
-  Widget _buildInfoBox(String? text, double fontSize) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF08979F),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        child: Text(
-          text ?? '',
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
-        ),
-      ),
+  Widget _buildInfoBox(dynamic text, double fontSize) {
+  if (text == null || (text is String && text.isEmpty) || (text is List && text.isEmpty)) {
+    return SizedBox.shrink(); // Return empty widget if null or empty
+  }
+
+  if (text is String) {
+    return _buildSingleBox(text, fontSize);
+  } else if (text is List<String>) {
+    return Wrap(
+      spacing: 8.0, // Space between items
+      runSpacing: 4.0, // Space between lines
+      children: text.map((item) => _buildSingleBox(item, fontSize)).toList(),
     );
   }
+
+  return SizedBox.shrink(); // Fallback in case of unexpected input
+}
+
+Widget _buildSingleBox(String text, double fontSize) {
+  return Container(
+    decoration: BoxDecoration(
+      color: const Color(0xFF08979F),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+    child: Text(
+      text,
+      style: TextStyle(
+        fontSize: fontSize,
+        fontWeight: FontWeight.w500,
+        color: Colors.white,
+      ),
+    ),
+  );
+}
+
 
   Widget _buildFAB({
     required IconData icon,
@@ -95,8 +113,8 @@ class _MatchedUsersState extends State<MatchedUsers> {
           ),
         ),
       ),
-      body: Consumer<JobsNotifier>(
-        builder: (context, jobNotifier, child) {
+      body: Consumer<ProfileNotifier>(
+        builder: (context, profileNotifier, child) {
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Padding(
@@ -111,8 +129,8 @@ class _MatchedUsersState extends State<MatchedUsers> {
                         height: 0.87.sh,
                         child: ClipRRect(
                           clipBehavior: Clip.antiAlias,
-                          child: FutureBuilder<List<JobsResponse>>(
-                            future: jobNotifier.jobList,
+                          child: FutureBuilder<List<SwipedRes>>(
+                            future: profileNotifier.swipedUsers,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -127,7 +145,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                   snapshot.data!.isEmpty) {
                                 return Center(
                                   child: Text(
-                                    'No jobs available.',
+                                    'No users available.',
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       color: const Color(0xFF040326),
@@ -136,15 +154,15 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                   ),
                                 );
                               } else {
-                                final jobList = snapshot.data!;
+                                final userList = snapshot.data!;
                                 return CardSwiper(
                                   controller: controller,
                                   scale: 0.5,
-                                  cardsCount: jobList.length,
+                                  cardsCount: userList.length,
                                   allowedSwipeDirection: AllowedSwipeDirection.only(left: true, right:true),
                                   cardBuilder: (context, index,
                                       percentThresholdX, percentThresholdY) {
-                                    final job = jobList[index];
+                                    final user = userList[index];
                                     return Container(
                                       padding: EdgeInsets.all(8.w),
                                       decoration: BoxDecoration(
@@ -158,7 +176,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                         children: [
                                           SizedBox(height: 8),
                                           Text(
-                                            job.company ?? 'Unknown Company',
+                                            user.username ?? 'Unknown User',
                                             style: TextStyle(
                                               fontSize: 20.sp,
                                               fontWeight: FontWeight.bold,
@@ -172,14 +190,14 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                             borderRadius:
                                                 BorderRadius.circular(15),
                                             child: Image.network(
-                                              job.imageUrl,
+                                              user.profile,
                                               height: 0.45.sh,
                                               width: double.infinity,
                                               fit: BoxFit.contain,
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return Image.asset(
-                                                  'assets/images/default-placeholder.png',
+                                                  'assets/images/user-placeholder.png',
                                                   height: 0.45.sh,
                                                   width: double.infinity,
                                                   fit: BoxFit.contain,
@@ -188,10 +206,10 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                             ),
                                           ),
                                           SizedBox(height: 8),
-                                          _buildInfoBox(job.title, 12.sp),
+                                          _buildInfoBox(user.skills, 12.sp),
                                           SizedBox(height: 10),
                                           _buildInfoBox(
-                                              job.location ??
+                                              user.location ??
                                                   'Location Not Available',
                                               12.sp),
                                         ],
