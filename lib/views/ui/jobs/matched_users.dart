@@ -13,6 +13,7 @@ import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:jobhub_v1/views/ui/filters/filter_page.dart';
 import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
+import 'package:jobhub_v1/views/ui/jobs/user_job_page.dart';
 import 'package:jobhub_v1/views/ui/notification/notification_page.dart';
 import 'package:provider/provider.dart';
 
@@ -72,6 +73,28 @@ class _MatchedUsersState extends State<MatchedUsers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0.065.sh),
+        child: CustomAppBar(
+          text: 'Interested Users',
+          child: Padding(
+            padding: EdgeInsets.only(right: 0.010.sh),
+            child: IconButton(
+                icon: const Icon(
+                  FontAwesome.arrow_left,
+                  color: Color(0xFF08959D),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const JobListingPage()),
+                  );
+                },
+              ),
+          ),
+        ),
+      ),
       body: Consumer<JobsNotifier>(
         builder: (context, jobNotifier, child) {
           return SingleChildScrollView(
@@ -85,7 +108,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
                     clipBehavior: Clip.none,
                     children: [
                       SizedBox(
-                        height: 0.97.sh,
+                        height: 0.87.sh,
                         child: ClipRRect(
                           clipBehavior: Clip.antiAlias,
                           child: FutureBuilder<List<JobsResponse>>(
@@ -194,6 +217,10 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                 color: const Color(0xFFD23838),
                                 onPressed: () => controller
                                     .swipe(CardSwiperDirection.left)),
+                            _buildFAB(
+                                icon: Icons.rotate_left,
+                                color: const Color(0xFF08979F),
+                                onPressed: controller.undo),        
                             _buildFAB(
                                 icon: Icons.star,
                                 color: const Color(0xFF089F20),
