@@ -12,7 +12,7 @@ class JobsNotifier extends ChangeNotifier {
   Future<JobsResponse>? recent;
   Future<GetJobRes>? job;
   Future<List<JobsResponse>>? userJobs;
-  Future<List<JobsResponse>>? swipedUsers;
+  Future<List<String>>? swipedUsers;
 
   void getJobs() {
     jobList = JobsHelper.getJobs();
@@ -74,9 +74,8 @@ class JobsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getMatchedUsers(String jobId) {
-    swipedUsers = JobsHelper.getMatchedUsers(jobId);
-
+  void getSwipedUsers(String jobId) {
+    swipedUsers = JobsHelper.getSwipededUsers(jobId);
     notifyListeners();
   }
 }

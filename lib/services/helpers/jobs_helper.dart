@@ -5,7 +5,6 @@ import 'package:jobhub_v1/models/request/jobs/create_job.dart';
 import 'package:jobhub_v1/models/response/jobs/get_job.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/config.dart';
-import 'package:jobhub_v1/views/ui/jobs/matched_users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class JobsHelper {
@@ -192,23 +191,27 @@ class JobsHelper {
     }
   }
 
-  static Future<List<JobsResponse>> getMatchedUsers(String jobId) async {
+  static Future<List<String>> getSwipededUsers(String jobId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
     final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId');
     final response = await client.get(url, headers: requestHeaders);
+
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isEmpty) {
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      if (data.isEmpty || !data.containsKey('matchedUsers')) {
         debugPrint('No matched users found for this job: $jobId');
+        return [];
       }
-      return data.map((users) => JobsResponse.fromJson(users)).toList();
+      List<String> matchedUsers = List<String>.from(data['matchedUsers']);
+      return matchedUsers;
     } else {
       debugPrint('Failed to load matched users: ${response.statusCode}');
       throw Exception('Failed to load matched users');
     }
   }
 
-  static Future<void> addMatchedUsers(String jobId, String userId) async {
+  static Future<void> addSwipedUsers(String jobId, String userId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
 
     // Construct API endpoint

@@ -8,6 +8,7 @@ import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
 import 'package:jobhub_v1/models/request/auth/signup_model.dart';
 import 'package:jobhub_v1/models/response/auth/login_res_model.dart';
 import 'package:jobhub_v1/models/response/auth/profile_model.dart';
+import 'package:jobhub_v1/models/response/auth/swipe_res_model.dart';
 import 'package:jobhub_v1/services/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -124,7 +125,23 @@ class AuthHelper {
     }
   }
 
-  // static Future<List<dynamic>> getUserProfiles() async {
+  static Future<List<SwipedRes>> getUserProfiles(String agentId) async {
+    final requestHeaders = {'Content-Type': 'application/json'};
+    final url = Uri.https(Config.apiUrl, '${Config.profileUrl}/$agentId');
 
-  // }
+    final response = await client.get(url, headers: requestHeaders);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+
+      if (data.isEmpty) {
+        debugPrint('No users found for agent: $agentId');
+      }
+
+      return data.map((user) => SwipedRes.fromJson(user)).toList();
+    } else {
+      debugPrint('Failed to load user profiles: ${response.statusCode}');
+      throw Exception('Failed to load user profiles');
+    }
+  }
 }
