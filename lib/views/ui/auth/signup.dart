@@ -44,6 +44,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               text: 'Sign Up',
               child: GestureDetector(
                 onTap: () {
+                  //Get.offAll(() => const LoginPage(drawer: true));
                   Get.offAll(() => const LoginPage(drawer: true));
                 },
                 child: const Icon(CupertinoIcons.arrow_left),
@@ -130,7 +131,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       children: [
                         ReusableText(
                           text: 'Password should be at least 8 characters',
-                          style: appstyle(9, const Color(0xFF040326), FontWeight.w500),
+                          style: appstyle(
+                              9, const Color(0xFF040326), FontWeight.w500),
                         ),
                         ReusableText(
                           text: 'Login',

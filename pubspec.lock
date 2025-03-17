@@ -829,6 +829,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  typer:
+    dependency: "direct main"
+    description:
+      name: typer
+      sha256: "39a6a1ccaba510c76625ff77b6a3f60ad76c1823e67cad39daac24fc03cbd51e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.10"
   uuid:
     dependency: "direct main"
     description:

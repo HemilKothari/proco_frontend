@@ -29,7 +29,7 @@ dependencies:
   flutter_svg: ^2.0.5
   flutter_zoom_drawer: ^3.0.4+1
   flutter_chat_bubble: ^2.0.2
-  flutter_animate: ^4.1.1+1
+  flutter_animate: ^4.5.2
   image_cropper: ^4.0.0
   image_picker: ^0.8.7+4
   cached_network_image: ^3.2.3
@@ -38,6 +38,7 @@ dependencies:
   intl: ^0.18.1
   socket_io_client: ^2.0.2
   flutter_card_swiper: ^7.0.2
+  typer: ^1.0.10
 
 dev_dependencies:
   flutter_test:

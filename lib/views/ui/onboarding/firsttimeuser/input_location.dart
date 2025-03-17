@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jobhub_v1/views/ui/auth/signup.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
 // Import the HomePage
 
@@ -167,7 +168,7 @@ class _Page4State extends State<Page4> {
                           selectedState != null &&
                           selectedCountry != null) {
                         // Navigate to HomePage
-                        Get.offAll(() => HomePage());
+                        Get.offAll(() => RegistrationPage());
                       } else {
                         Get.snackbar(
                           'Error',
