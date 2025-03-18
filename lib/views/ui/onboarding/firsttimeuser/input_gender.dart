@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_college.dart';
 
-class Page2 extends StatelessWidget {
+class GenderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

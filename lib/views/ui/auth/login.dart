@@ -352,14 +352,6 @@ class _LoginPageState extends State<LoginPage> {
       await loginNotifier.userLogin(model);
 
       final prefs = await SharedPreferences.getInstance();
-      bool isFirstLogin = prefs.getBool('isFirstLogin') ?? true;
-
-      if (isFirstLogin) {
-        await prefs.setBool('isFirstLogin', false);
-        Get.offAll(() => Page1()); // First-time user redirection
-      } else {
-        Get.offAll(() => HomePage()); // Redirect returning user
-      }
     }
   }
 

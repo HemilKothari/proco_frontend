@@ -1,61 +1,96 @@
-// page1.dart
 import 'package:flutter/material.dart';
+import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_email.dart';
 import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_gender.dart';
 
-class Page1 extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class NamePage extends StatefulWidget {
+  const NamePage({super.key});
+
+  @override
+  _NamePageState createState() => _NamePageState();
+}
+
+class _NamePageState extends State<NamePage> {
+  final TextEditingController nameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF040326),
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              colors: [Colors.teal, Colors.blue],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      backgroundColor: Colors.white, // Clean white background
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title Text
+            Text(
+              "What should other\nProfessionals call you?",
+              style: TextStyle(
+                fontSize: 26.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "What should other Professionals Call You?",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
+            SizedBox(height: 50.h),
+
+            // Custom Text Field
+            TextField(
+              controller: nameController,
+              keyboardType: TextInputType.text,
+              style: TextStyle(fontSize: 18.sp),
+              decoration: InputDecoration(
+                hintText: "Full Name",
+                hintStyle: TextStyle(color: Colors.grey, fontSize: 16.sp),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent, width: 2),
                 ),
               ),
-              SizedBox(height: 20),
-              TextField(
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: "Full Name",
-                  hintStyle: TextStyle(color: Colors.white70),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              IconButton(
-                icon: Icon(Icons.arrow_circle_right, color: Colors.white),
-                iconSize: 50,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Page2()),
-                  );
+            ),
+            SizedBox(height: 50.h),
+
+            // Arrow Button
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  if (nameController.text.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EmailPage(),
+                      ),
+                    );
+                  }
                 },
+                child: Container(
+                  width: 60.w,
+                  height: 60.h,
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue.withOpacity(0.3),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_rounded,
+                    color: Colors.white,
+                    size: 30.sp,
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
