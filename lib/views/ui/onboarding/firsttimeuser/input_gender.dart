@@ -1,6 +1,8 @@
 // page2.dart
 import 'package:flutter/material.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_college.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GenderPage extends StatelessWidget {
   @override
@@ -9,27 +11,30 @@ class GenderPage extends StatelessWidget {
       backgroundColor: const Color(0xFF040326),
       body: Center(
         child: Container(
-          padding: EdgeInsets.all(20),
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
             gradient: LinearGradient(
-              colors: [Colors.teal, Colors.blue],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Please Specify Your Gender and Date of Birth",
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
                 style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  fontSize: 18,
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 15),
               DropdownButtonFormField<String>(
                 items: ['Male', 'Female', 'Other']
                     .map((gender) => DropdownMenuItem(
@@ -40,15 +45,15 @@ class GenderPage extends StatelessWidget {
                 onChanged: (value) {},
                 decoration: InputDecoration(
                   hintText: "Gender",
-                  hintStyle: TextStyle(color: Colors.white70),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
+                  hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
+                  border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
+                  ),
                 ),
-                dropdownColor: Colors.indigo[700],
+                dropdownColor: Colors.white70,
                 style: TextStyle(color: Colors.white),
               ),
               SizedBox(height: 20),
@@ -56,25 +61,38 @@ class GenderPage extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: "DD/MM/YYYY",
-                  hintStyle: TextStyle(color: Colors.white70),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
+                  hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
+                  border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
                   ),
                 ),
               ),
               SizedBox(height: 20),
-              IconButton(
-                icon: Icon(Icons.arrow_circle_right, color: Colors.white),
-                iconSize: 50,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Page3()),
-                  );
-                },
+
+              Center(
+                child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Page3()),
+                      );
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height:50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
               ),
             ],
           ),

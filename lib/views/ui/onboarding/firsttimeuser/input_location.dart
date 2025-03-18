@@ -28,142 +28,104 @@ class _Page4State extends State<Page4> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      backgroundColor: const Color(0xFF040326),
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF08979F), Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(20),
           ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 30),
-                Center(
-                  child: Text(
-                    'Enter Location Details',
-                    style: TextStyle(
-                      fontSize: 30.sp,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Enter Location Details',
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: cityController,
+                style: TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: 'Enter City',
+                  hintStyle: TextStyle(color: Colors.white60, fontSize: 16),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
                   ),
                 ),
-                const SizedBox(height: 50),
-                Text(
-                  'City',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: selectedState,
+                items: states.map((state) {
+                  return DropdownMenuItem<String>(
+                    value: state,
+                    child: Text(state),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedState = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: cityController,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Enter your city',
-                    hintStyle: TextStyle(color: Colors.white60),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.2),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
                   ),
+                  hintText: 'Select your State',
+                  hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  'State',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
+                dropdownColor: Colors.white70,
+                style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: selectedCountry,
+                items: countries.map((country) {
+                  return DropdownMenuItem<String>(
+                    value: country,
+                    child: Text(country),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedCountry = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
-                ),
-                const SizedBox(height: 10),
-                DropdownButtonFormField<String>(
-                  value: selectedState,
-                  items: states.map((state) {
-                    return DropdownMenuItem<String>(
-                      value: state,
-                      child: Text(state),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedState = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.2),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText: 'Select your state',
-                    hintStyle: TextStyle(color: Colors.white60),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
                   ),
-                  dropdownColor: Colors.deepPurple.shade700,
-                  style: const TextStyle(color: Colors.white),
+                  hintText: 'Select your Country',
+                  hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  'Country',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                DropdownButtonFormField<String>(
-                  value: selectedCountry,
-                  items: countries.map((country) {
-                    return DropdownMenuItem<String>(
-                      value: country,
-                      child: Text(country),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCountry = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.2),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText: 'Select your country',
-                    hintStyle: TextStyle(color: Colors.white60),
-                  ),
-                  dropdownColor: Colors.deepPurple.shade700,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                const SizedBox(height: 40),
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color(0xFF4A00E0), // Button background
-                      padding: EdgeInsets.symmetric(
-                        vertical: 15.h,
-                        horizontal: 50.w,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () {
+                dropdownColor: Colors.white70,
+                style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 40),
+              Center(
+                child: GestureDetector(
+                    onTap: () {
                       if (cityController.text.isNotEmpty &&
                           selectedState != null &&
                           selectedCountry != null) {
@@ -178,18 +140,21 @@ class _Page4State extends State<Page4> {
                         );
                       }
                     },
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height: 50,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              ),
+            ],
           ),
         ),
       ),

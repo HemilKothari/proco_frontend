@@ -18,79 +18,80 @@ class _NamePageState extends State<NamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Clean white background
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title Text
-            Text(
-              "What should other\nProfessionals call you?",
-              style: TextStyle(
-                fontSize: 26.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+      backgroundColor: const Color(0xFF040326),
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-            SizedBox(height: 50.h),
-
-            // Custom Text Field
-            TextField(
-              controller: nameController,
-              keyboardType: TextInputType.text,
-              style: TextStyle(fontSize: 18.sp),
-              decoration: InputDecoration(
-                hintText: "Full Name",
-                hintStyle: TextStyle(color: Colors.grey, fontSize: 16.sp),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent, width: 2),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title Text
+              Text(
+                "What should other\nProfessionals call you?",
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
-            ),
-            SizedBox(height: 50.h),
+              SizedBox(height: 15),
 
-            // Arrow Button
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  if (nameController.text.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EmailPage(),
-                      ),
-                    );
-                  }
-                },
-                child: Container(
-                  width: 60.w,
-                  height: 60.h,
-                  decoration: BoxDecoration(
-                    color: Colors.blueAccent,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blue.withOpacity(0.3),
-                        blurRadius: 10,
-                        spreadRadius: 2,
-                      ),
-                    ],
+              // Custom Text Field
+              TextField(
+                controller: nameController,
+                keyboardType: TextInputType.text,
+                style: TextStyle(fontSize: 18.sp, color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: "Full Name",
+                  hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
                   ),
-                  child: Icon(
-                    Icons.arrow_forward_rounded,
-                    color: Colors.white,
-                    size: 30.sp,
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2),
                   ),
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 20),
+              // Arrow Button
+              Center(
+                child: GestureDetector(
+                    onTap: () {
+                      if (nameController.text.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EmailPage(),
+                          ),
+                        );
+                      }
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height:50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              )
+            ],
+          ),
         ),
       ),
     );

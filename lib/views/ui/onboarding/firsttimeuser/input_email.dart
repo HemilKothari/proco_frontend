@@ -13,101 +13,92 @@ class _EmailPageState extends State<EmailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // Dark aesthetic background
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 60),
-
-            // Small White Back Arrow (Top Left)
-            GestureDetector(
-              onTap: () {
-                Navigator.pop(context); // Go back to previous page
-              },
-              child: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-                size: 20,
-              ),
+      backgroundColor: const Color(0xFF040326), // Dark aesthetic background
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-
-            const SizedBox(height: 80),
-
-            // Header Text
-            const Text(
-              "What's your email?",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Subtitle Text
-            Text(
-              "This will help us keep your account secure.",
-              style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 40),
-
-            // Email Input Field
-            Form(
-              key: _formKey,
-              child: TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Enter your email',
-                  hintStyle: TextStyle(color: Colors.grey[600]),
-                  filled: true,
-                  fillColor: Colors.grey[900],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                validator: (email) {
-                  if (email == null || email.isEmpty || !email.contains('@')) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-            ),
-
-            const SizedBox(height: 100),
-
-            // Next Button (Arrow at Bottom)
-            Align(
-              alignment: Alignment.center,
-              child: GestureDetector(
-                onTap: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => GenderPage()),
-                    );
-                  }
-                },
-                child: const CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.arrow_downward_rounded,
-                    color: Colors.black,
-                    size: 30,
-                  ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 60),
+              // Header Text
+              const Text(
+                "What's your email?",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 15),
+
+              // Email Input Field
+              Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Enter your email',
+                    hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 2),
+                    ),
+                  ),
+                  validator: (email) {
+                    if (email == null ||
+                        email.isEmpty ||
+                        !email.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
+              SizedBox(height: 20),
+
+              // Next Button (Arrow at Bottom)
+              Center(
+                child: GestureDetector(
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GenderPage()),
+                      );
+                    }
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height:50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              ), 
+            ],
+          ),
         ),
       ),
     );
