@@ -16,8 +16,8 @@ class _Page4State extends State<Page4> {
   String? selectedCountry;
 
   // Example lists for dropdowns
-  final List<String> states = ['State 1', 'State 2', 'State 3'];
-  final List<String> countries = ['Country 1', 'Country 2', 'Country 3'];
+  final List<String> states = ['Maharashtra', 'Tamil Nadu', 'Rajasthan'];
+  final List<String> countries = ['India', 'USA', 'UK'];
 
   @override
   void dispose() {
