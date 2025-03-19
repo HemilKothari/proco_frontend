@@ -193,21 +193,21 @@ class JobsHelper {
 
   static Future<List<String>> getSwipededUsersId(String jobId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId');
+    final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/$jobId');
     final response = await client.get(url, headers: requestHeaders);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
 
-      if (data.isEmpty || !data.containsKey('matchedUsers')) {
-        debugPrint('No matched users found for this job: $jobId');
+      if (data.isEmpty || !data.containsKey('swipedUsers')) {
+        debugPrint('No swiped users found for this job: $jobId');
         return [];
       }
-      List<String> matchedUsers = List<String>.from(data['matchedUsers']);
-      return matchedUsers;
+      List<String> swipedUsers = List<String>.from(data['swipedUsers']);
+      return swipedUsers;
     } else {
-      debugPrint('Failed to load matched users: ${response.statusCode}');
-      throw Exception('Failed to load matched users');
+      debugPrint('Failed to load swiped users: ${response.statusCode}');
+      throw Exception('Failed to load swiped users');
     }
   }
 
@@ -215,7 +215,7 @@ class JobsHelper {
     final requestHeaders = {'Content-Type': 'application/json'};
 
     // Construct API endpoint
-    final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId/match');
+    final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/$jobId');
 
     try {
       // Fetch the existing job data first
@@ -223,33 +223,33 @@ class JobsHelper {
 
       if (getResponse.statusCode == 200) {
         final Map<String, dynamic> jobData = json.decode(getResponse.body);
-        List<dynamic> matchedUsers = jobData['matchedUsers'] ?? [];
+        List<dynamic> swipedUsers = jobData['swipedUsers'] ?? [];
 
         // Check if user is already in the list
-        if (!matchedUsers.contains(userId)) {
-          matchedUsers.add(userId); // Append the new user ID
+        if (!swipedUsers.contains(userId)) {
+          swipedUsers.add(userId); // Append the new user ID
         } else {
-          debugPrint('User already matched to this job.');
+          debugPrint('User already swiped to this job.');
           return; // Exit if the user is already in the list
         }
 
-        // Send an update request with the modified matchedUsers list
-        final updateBody = json.encode({'matchedUsers': matchedUsers});
+        // Send an update request with the modified swipedUsers list
+        final updateBody = json.encode({'swipedUsers': swipedUsers});
 
         final updateResponse =
             await client.put(url, headers: requestHeaders, body: updateBody);
 
         if (updateResponse.statusCode == 200) {
-          debugPrint('User $userId added to matched users for job $jobId');
+          debugPrint('User $userId added to swiped users for job $jobId');
         } else {
           debugPrint(
-              'Failed to update matched users: ${updateResponse.statusCode}');
+              'Failed to update swiped users: ${updateResponse.statusCode}');
         }
       } else {
         debugPrint('Failed to fetch job data: ${getResponse.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error adding matched user: $e');
+      debugPrint('Error adding swiped user: $e');
     }
   }
 }

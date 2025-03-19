@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:jobhub_v1/constants/app_constants.dart';
-import 'package:jobhub_v1/controllers/jobs_provider.dart';
 import 'package:jobhub_v1/controllers/profile_provider.dart';
 import 'package:jobhub_v1/models/response/auth/swipe_res_model.dart';
-import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/app_style.dart';
-import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
-import 'package:jobhub_v1/views/common/heading_widget.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:jobhub_v1/views/ui/filters/filter_page.dart';
-import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
 import 'package:jobhub_v1/views/ui/jobs/user_job_page.dart';
-import 'package:jobhub_v1/views/ui/notification/notification_page.dart';
 import 'package:provider/provider.dart';
 
 class MatchedUsers extends StatefulWidget {
@@ -33,47 +22,49 @@ class _MatchedUsersState extends State<MatchedUsers> {
   @override
   void initState() {
     super.initState();
-    final profileNotifier = Provider.of<ProfileNotifier>(context, listen: false);
+    final profileNotifier =
+        Provider.of<ProfileNotifier>(context, listen: false);
     //profileNotifier.getSwipedUsers(agentId);
   }
 
   // Helper widgets
   Widget _buildInfoBox(dynamic text, double fontSize) {
-  if (text == null || (text is String && text.isEmpty) || (text is List && text.isEmpty)) {
-    return SizedBox.shrink(); // Return empty widget if null or empty
+    if (text == null ||
+        (text is String && text.isEmpty) ||
+        (text is List && text.isEmpty)) {
+      return SizedBox.shrink(); // Return empty widget if null or empty
+    }
+
+    if (text is String) {
+      return _buildSingleBox(text, fontSize);
+    } else if (text is List<String>) {
+      return Wrap(
+        spacing: 8.0, // Space between items
+        runSpacing: 4.0, // Space between lines
+        children: text.map((item) => _buildSingleBox(item, fontSize)).toList(),
+      );
+    }
+
+    return SizedBox.shrink(); // Fallback in case of unexpected input
   }
 
-  if (text is String) {
-    return _buildSingleBox(text, fontSize);
-  } else if (text is List<String>) {
-    return Wrap(
-      spacing: 8.0, // Space between items
-      runSpacing: 4.0, // Space between lines
-      children: text.map((item) => _buildSingleBox(item, fontSize)).toList(),
+  Widget _buildSingleBox(String text, double fontSize) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF08979F),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
+      ),
     );
   }
-
-  return SizedBox.shrink(); // Fallback in case of unexpected input
-}
-
-Widget _buildSingleBox(String text, double fontSize) {
-  return Container(
-    decoration: BoxDecoration(
-      color: const Color(0xFF08979F),
-      borderRadius: BorderRadius.circular(8.0),
-    ),
-    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontSize: fontSize,
-        fontWeight: FontWeight.w500,
-        color: Colors.white,
-      ),
-    ),
-  );
-}
-
 
   Widget _buildFAB({
     required IconData icon,
@@ -98,18 +89,18 @@ Widget _buildSingleBox(String text, double fontSize) {
           child: Padding(
             padding: EdgeInsets.only(right: 0.010.sh),
             child: IconButton(
-                icon: const Icon(
-                  FontAwesome.arrow_left,
-                  color: Color(0xFF08959D),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const JobListingPage()),
-                  );
-                },
+              icon: const Icon(
+                FontAwesome.arrow_left,
+                color: Color(0xFF08959D),
               ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const JobListingPage()),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -159,7 +150,9 @@ Widget _buildSingleBox(String text, double fontSize) {
                                   controller: controller,
                                   scale: 0.5,
                                   cardsCount: userList.length,
-                                  allowedSwipeDirection: AllowedSwipeDirection.only(left: true, right:true),
+                                  allowedSwipeDirection:
+                                      AllowedSwipeDirection.only(
+                                          left: true, right: true),
                                   cardBuilder: (context, index,
                                       percentThresholdX, percentThresholdY) {
                                     final user = userList[index];
@@ -233,12 +226,12 @@ Widget _buildSingleBox(String text, double fontSize) {
                             _buildFAB(
                                 icon: Icons.heart_broken,
                                 color: const Color(0xFFD23838),
-                                onPressed: () => controller
-                                    .swipe(CardSwiperDirection.left)),
+                                onPressed: () =>
+                                    controller.swipe(CardSwiperDirection.left)),
                             _buildFAB(
                                 icon: Icons.rotate_left,
                                 color: const Color(0xFF08979F),
-                                onPressed: controller.undo),        
+                                onPressed: controller.undo),
                             _buildFAB(
                                 icon: Icons.star,
                                 color: const Color(0xFF089F20),
