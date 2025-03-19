@@ -9,6 +9,7 @@ import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:jobhub_v1/views/ui/jobs/user_job_page.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MatchedUsers extends StatefulWidget {
   const MatchedUsers({super.key});
@@ -21,12 +22,18 @@ class _MatchedUsersState extends State<MatchedUsers> {
   int _currentIndex = 0;
   final CardSwiperController controller = CardSwiperController();
 
+  getJobId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('jobId') ?? "";
+  }
+
   @override
   void initState() {
     super.initState();
+    String jobId = getJobId();
     final profileNotifier =
         Provider.of<JobsNotifier>(context, listen: false);
-    //profileNotifier.getSwipedUsers(agentId);
+    profileNotifier.getSwipedUsersId(jobId);
   }
 
   // Helper widgets
