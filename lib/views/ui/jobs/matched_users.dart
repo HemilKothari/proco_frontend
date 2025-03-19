@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:jobhub_v1/controllers/exports.dart';
 import 'package:jobhub_v1/controllers/profile_provider.dart';
 import 'package:jobhub_v1/models/response/auth/swipe_res_model.dart';
+import 'package:jobhub_v1/models/response/bookmarks/all_bookmarks.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:jobhub_v1/views/ui/jobs/user_job_page.dart';
@@ -23,7 +25,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
   void initState() {
     super.initState();
     final profileNotifier =
-        Provider.of<ProfileNotifier>(context, listen: false);
+        Provider.of<JobsNotifier>(context, listen: false);
     //profileNotifier.getSwipedUsers(agentId);
   }
 
@@ -104,7 +106,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
           ),
         ),
       ),
-      body: Consumer<ProfileNotifier>(
+      body: Consumer<JobsNotifier>(
         builder: (context, profileNotifier, child) {
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
