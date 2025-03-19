@@ -30,10 +30,13 @@ class _MatchedUsersState extends State<MatchedUsers> {
   @override
   void initState() {
     super.initState();
-    String jobId = getJobId();
-    final profileNotifier =
-        Provider.of<JobsNotifier>(context, listen: false);
-    profileNotifier.getSwipedUsersId(jobId);
+    _initializeJobId();
+  }
+
+  void _initializeJobId() async {
+    String jobId = await getJobId();
+    final profileNotifier = Provider.of<JobsNotifier>(context, listen: false);
+    profileNotifier.getSwipedUsersId(jobId); 
   }
 
   // Helper widgets
