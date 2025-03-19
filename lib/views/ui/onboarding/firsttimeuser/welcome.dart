@@ -20,7 +20,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF001F3F),
+      backgroundColor: const Color(0xFF040326),
       body: Stack(
         children: [
           Column(
@@ -29,31 +29,38 @@ class WelcomePage extends StatelessWidget {
               Expanded(
                 child: Center(
                   child: Text(
-                    'Welcome',
+                    "Welcome to \nConnect with \nLike Minded Professionals",
+                    textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
+                      color: const Color(0xFF08979F),
+                      fontSize: 54,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
+              //SizedBox(height: 20),
+              // Arrow Button
               Padding(
-                padding: const EdgeInsets.only(bottom: 50.0),
+                padding: EdgeInsets.only(bottom: 20.0),
                 child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => NamePage()),
-                    );
-                  },
-                  child: Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+                    onTap: () {
+                      Navigator.of(context).push(_createPageRoute(NamePage()));
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              )
             ],
           ),
 
@@ -70,14 +77,35 @@ class WelcomePage extends StatelessWidget {
                 );
               },
               child: Icon(
-                Icons.arrow_forward_ios, // Small right arrow
-                color: Colors.white,
+                Icons.arrow_back_ios, // Small right arrow
+                color: const Color(0xFF08979F),
                 size: 20, // Small size for a subtle look
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  // Page transition function
+  Route _createPageRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 400), // Animation speed
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0); // Start from right
+        const end = Offset.zero;
+        const curve = Curves.easeInOut;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
     );
   }
 }
