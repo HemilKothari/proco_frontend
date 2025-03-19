@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jobhub_v1/views/ui/auth/signup.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
+import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_pass.dart';
 // Import the HomePage
 
 class Page4 extends StatefulWidget {
@@ -130,7 +131,7 @@ class _Page4State extends State<Page4> {
                           selectedState != null &&
                           selectedCountry != null) {
                         // Navigate to HomePage
-                        Get.offAll(() => RegistrationPage());
+                        Get.offAll(() => PasswordPage());
                       } else {
                         Get.snackbar(
                           'Error',

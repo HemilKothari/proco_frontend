@@ -22,25 +22,26 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
-  final TextEditingController college = TextEditingController();
   final TextEditingController gender = TextEditingController();
+  final TextEditingController college = TextEditingController();
+  final TextEditingController branch = TextEditingController();
   final TextEditingController city = TextEditingController();
   final TextEditingController state = TextEditingController();
   final TextEditingController country = TextEditingController();
-  final TextEditingController branch = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
   @override
   void dispose() {
     name.dispose();
     email.dispose();
-    password.dispose();
-    college.dispose();
     gender.dispose();
+    college.dispose();
+    branch.dispose();
+
     city.dispose();
     state.dispose();
     country.dispose();
-    branch.dispose();
+    password.dispose();
     super.dispose();
   }
 
@@ -81,7 +82,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     FontWeight.w600,
                   ),
                 ),
-                /*const HeightSpacer(size: 50),
+                const HeightSpacer(size: 50),
                 CustomTextField(
                   controller: name,
                   keyboardType: TextInputType.text,
@@ -93,7 +94,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       return null;
                     }
                   },
-                ),*/
+                ),
                 const HeightSpacer(size: 20),
                 CustomTextField(
                   controller: email,
@@ -164,13 +165,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     final model = SignupModel(
                       username: name.text,
                       email: email.text,
-                      password: password.text,
-                      college: college.text,
                       gender: gender.text,
+                      college: college.text,
+                      branch: branch.text,
                       city: city.text,
                       country: country.text,
                       state: state.text,
-                      branch: branch.text,
+                      password: password.text,
                     );
 
                     signupNotifier.upSignup(model);

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:jobhub_v1/views/ui/auth/signup.dart';
 import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_gender.dart';
 
-class EmailPage extends StatefulWidget {
+class PasswordPage extends StatefulWidget {
   @override
-  _EmailPageState createState() => _EmailPageState();
+  _PasswordPageState createState() => _PasswordPageState();
 }
 
-class _EmailPageState extends State<EmailPage> {
-  final TextEditingController emailController = TextEditingController();
+class _PasswordPageState extends State<PasswordPage> {
+  final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class _EmailPageState extends State<EmailPage> {
               const SizedBox(height: 60),
               // Header Text
               const Text(
-                "What's your email?",
+                "Create a secure password",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 26,
@@ -42,15 +44,16 @@ class _EmailPageState extends State<EmailPage> {
               ),
               const SizedBox(height: 15),
 
-              // Email Input Field
+              // Password Input Field
               Form(
                 key: _formKey,
                 child: TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
+                  controller: passwordController,
+                  keyboardType: TextInputType.text,
+                  obscureText: obscureText,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Enter your email',
+                    hintText: 'Enter your password',
                     hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
                     border: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
@@ -58,12 +61,25 @@ class _EmailPageState extends State<EmailPage> {
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 2),
                     ),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          obscureText = !obscureText;
+                        });
+                      },
+                      child: Icon(
+                        obscureText ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                  validator: (email) {
-                    if (email == null ||
-                        email.isEmpty ||
-                        !email.contains('@')) {
-                      return 'Please enter a valid email';
+                  validator: (password) {
+                    if (password == null ||
+                        password.isEmpty ||
+                        password.length < 8 ||
+                        !RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@\$!%*?&#]).{8,}$')
+                            .hasMatch(password)) {
+                      return 'Password must be at least 8 characters, include upper, lower, number & special character';
                     }
                     return null;
                   },
@@ -79,7 +95,8 @@ class _EmailPageState extends State<EmailPage> {
                     if (_formKey.currentState!.validate()) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => GenderPage()),
+                        MaterialPageRoute(
+                            builder: (context) => RegistrationPage()),
                       );
                     }
                   },
