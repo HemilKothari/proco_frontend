@@ -35,6 +35,18 @@ class _NamePageState extends State<NamePage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Small Back Arrow at the Top Left
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context); // Go back to previous page
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+
               // Title Text
               Text(
                 "What should other\nProfessionals call you?",
@@ -68,17 +80,13 @@ class _NamePageState extends State<NamePage> {
                 child: GestureDetector(
                     onTap: () {
                       if (nameController.text.isNotEmpty) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EmailPage(),
-                          ),
-                        );
+                        Navigator.of(context)
+                            .push(_createPageRoute(EmailPage()));
                       }
                     },
                     child: Container(
                       width: 50, // Adjust size as per design
-                      height:50,
+                      height: 50,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                       ),
@@ -94,6 +102,20 @@ class _NamePageState extends State<NamePage> {
           ),
         ),
       ),
+    );
+  }
+
+  // Page transition function
+  Route _createPageRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 400), // Animation speed
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
     );
   }
 }

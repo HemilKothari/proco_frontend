@@ -46,6 +46,18 @@ class _Page4State extends State<Page4> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Small Back Arrow at the Top Left
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context); // Go back to previous page
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+
               Text(
                 'Enter Location Details',
                 style: TextStyle(
@@ -60,7 +72,7 @@ class _Page4State extends State<Page4> {
                 style: TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   hintText: 'Enter City',
-                  hintStyle: TextStyle(color: Colors.white60, fontSize: 16),
+                  hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
@@ -131,7 +143,8 @@ class _Page4State extends State<Page4> {
                           selectedState != null &&
                           selectedCountry != null) {
                         // Navigate to HomePage
-                        Get.offAll(() => PasswordPage());
+                        Navigator.of(context)
+                            .push(_createPageRoute(PasswordPage()));
                       } else {
                         Get.snackbar(
                           'Error',
@@ -159,6 +172,20 @@ class _Page4State extends State<Page4> {
           ),
         ),
       ),
+    );
+  }
+
+   // Page transition function
+  Route _createPageRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 400), // Animation speed
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
     );
   }
 }

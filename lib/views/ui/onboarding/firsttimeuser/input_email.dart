@@ -30,7 +30,17 @@ class _EmailPageState extends State<EmailPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 60),
+              // Small Back Arrow at the Top Left
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context); // Go back to previous page
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
               // Header Text
               const Text(
                 "What's your email?",
@@ -77,10 +87,8 @@ class _EmailPageState extends State<EmailPage> {
                 child: GestureDetector(
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GenderPage()),
-                      );
+                      Navigator.of(context)
+                            .push(_createPageRoute(GenderPage()));
                     }
                   },
                   child: Container(
@@ -102,6 +110,20 @@ class _EmailPageState extends State<EmailPage> {
           ),
         ),
       ),
+    );
+  }
+
+   // Page transition function
+  Route _createPageRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 400), // Animation speed
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
     );
   }
 }

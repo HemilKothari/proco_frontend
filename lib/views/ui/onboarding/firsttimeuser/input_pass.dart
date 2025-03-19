@@ -32,7 +32,17 @@ class _PasswordPageState extends State<PasswordPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 60),
+              // Small Back Arrow at the Top Left
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context); // Go back to previous page
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
               // Header Text
               const Text(
                 "Create a secure password",
@@ -79,7 +89,7 @@ class _PasswordPageState extends State<PasswordPage> {
                         password.length < 8 ||
                         !RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@\$!%*?&#]).{8,}$')
                             .hasMatch(password)) {
-                      return 'Password must be at least 8 characters, include upper, lower, number & special character';
+                      return 'Password must be at least 8 characters\n(include upper, lower, number & special character)';
                     }
                     return null;
                   },
@@ -93,11 +103,8 @@ class _PasswordPageState extends State<PasswordPage> {
                 child: GestureDetector(
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RegistrationPage()),
-                      );
+                      Navigator.of(context)
+                            .push(_createPageRoute(RegistrationPage()));
                     }
                   },
                   child: Container(
@@ -119,6 +126,20 @@ class _PasswordPageState extends State<PasswordPage> {
           ),
         ),
       ),
+    );
+  }
+
+   // Page transition function
+  Route _createPageRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 400), // Animation speed
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
     );
   }
 }

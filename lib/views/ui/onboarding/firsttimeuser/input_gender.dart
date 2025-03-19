@@ -25,6 +25,18 @@ class GenderPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Small Back Arrow at the Top Left
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context); // Go back to previous page
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              
               Text(
                 "Please Specify Your Gender and Date of Birth",
                 textAlign: TextAlign.left,
@@ -75,10 +87,8 @@ class GenderPage extends StatelessWidget {
               Center(
                 child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Page3()),
-                      );
+                      Navigator.of(context)
+                            .push(_createPageRoute(Page3()));
                     },
                     child: Container(
                       width: 50, // Adjust size as per design
@@ -98,6 +108,20 @@ class GenderPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // Page transition function
+  Route _createPageRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 400), // Animation speed
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
     );
   }
 }

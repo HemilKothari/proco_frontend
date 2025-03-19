@@ -26,6 +26,18 @@ class Page3 extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Small Back Arrow at the Top Left
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context); // Go back to previous page
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+
               Text(
                 "Which College Do You Belong To?",
                 textAlign: TextAlign.center,
@@ -68,10 +80,8 @@ class Page3 extends StatelessWidget {
               Center(
                 child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Page4()),
-                      );
+                      Navigator.of(context)
+                            .push(_createPageRoute(Page4()));
                     },
                     child: Container(
                       width: 50, // Adjust size as per design
@@ -91,6 +101,20 @@ class Page3 extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+   // Page transition function
+  Route _createPageRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 400), // Animation speed
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
     );
   }
 }
