@@ -2,6 +2,7 @@ import 'dart:convert'; // For encoding data to JSON
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as https;
 import 'package:jobhub_v1/models/request/jobs/create_job.dart';
+import 'package:jobhub_v1/models/response/auth/swipe_res_model.dart';
 import 'package:jobhub_v1/models/response/jobs/get_job.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/config.dart';
@@ -191,7 +192,7 @@ class JobsHelper {
     }
   }
 
-  static Future<List<String>> getSwipededUsersId(String jobId) async {
+  static Future<List<SwipedRes>> getSwipededUsersId(String jobId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
     final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/$jobId');
     final response = await client.get(url, headers: requestHeaders);
@@ -203,7 +204,7 @@ class JobsHelper {
         debugPrint('No swiped users found for this job: $jobId');
         return [];
       }
-      List<String> swipedUsers = List<String>.from(data['swipedUsers']);
+      List<SwipedRes> swipedUsers = List<SwipedRes>.from(data['swipedUsers']);
       return swipedUsers;
     } else {
       debugPrint('Failed to load swiped users: ${response.statusCode}');

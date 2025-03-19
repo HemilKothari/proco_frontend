@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/models/request/jobs/create_job.dart';
+import 'package:jobhub_v1/models/response/auth/swipe_res_model.dart';
 import 'package:jobhub_v1/models/response/jobs/get_job.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/helpers/jobs_helper.dart';
@@ -12,7 +13,7 @@ class JobsNotifier extends ChangeNotifier {
   Future<JobsResponse>? recent;
   Future<GetJobRes>? job;
   Future<List<JobsResponse>>? userJobs;
-  Future<List<String>>? swipedUsers;
+  Future<List<SwipedRes>>? swipedUsers;
 
   void getJobs() {
     jobList = JobsHelper.getJobs();
