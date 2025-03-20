@@ -103,6 +103,7 @@ class AuthHelper {
     final token = prefs.getString('token');
 
     if (token == null) {
+      debugPrint("Token Missing");
       return null;
     }
 
