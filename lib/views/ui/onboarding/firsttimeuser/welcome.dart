@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jobhub_v1/views/ui/auth/signup_new.dart';
 import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_name.dart';
 import 'package:jobhub_v1/views/ui/onboarding/widgets/page_three.dart'; // Import PageThree
 
@@ -29,11 +30,11 @@ class WelcomePage extends StatelessWidget {
               Expanded(
                 child: Center(
                   child: Text(
-                    "Welcome to \nConnect with \nLike Minded Professionals",
+                    "Welcome",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: const Color(0xFF08979F),
-                      fontSize: 54,
+                      fontSize: 48,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -45,7 +46,7 @@ class WelcomePage extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: 20.0),
                 child: GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(_createPageRoute(NamePage()));
+                      Navigator.of(context).push(_createPageRoute(SignUpScreen()));
                     },
                     child: Container(
                       width: 50, // Adjust size as per design

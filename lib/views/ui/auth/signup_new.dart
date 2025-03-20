@@ -57,8 +57,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     if (signUpProvider.activeIndex > 0) {
                       signUpProvider.changeStep(signUpProvider.activeIndex - 1);
                     } else {
-                      Navigator.of(context)
-                          .pop(); // 👈 Pops context when activeIndex == 0
+                      Navigator.of(context).pop();
                     }
                   },
                   child: const Icon(

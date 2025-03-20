@@ -6,6 +6,7 @@ import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/ui/auth/login.dart';
 import 'package:jobhub_v1/views/ui/auth/signup.dart';
+import 'package:jobhub_v1/views/ui/auth/signup_new.dart';
 import 'package:jobhub_v1/views/ui/mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,7 +74,7 @@ class PageThree extends StatelessWidget {
                   const SizedBox(height: 30),
                   GestureDetector(
                     onTap: () {
-                      Get.to(() => const RegistrationPage());
+                      Get.to(() => const SignUpScreen());
                     },
                     child: Container(
                       width: width * 0.67, // Increased width for a longer box

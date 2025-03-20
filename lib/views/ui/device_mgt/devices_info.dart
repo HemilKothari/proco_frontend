@@ -7,6 +7,7 @@ import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
+import 'package:jobhub_v1/views/ui/auth/login.dart';
 import 'package:jobhub_v1/views/ui/device_mgt/widgets/device_info.dart';
 import 'package:provider/provider.dart';
 
@@ -72,7 +73,7 @@ class DeviceManagement extends StatelessWidget {
                       zoomNotifier.currentIndex = 0;
                       loginNotifier.logout();
                       onBoarding.isLastPage = false;
-                      Get.to(() => defaultHome);
+                      Get.offAll(() => LoginPage(drawer: true));
                     },
                     child: Align(
                       alignment: Alignment.bottomCenter,
