@@ -14,22 +14,41 @@ class ProfileRes {
     required this.isAgent,
     required this.skills,
     required this.updatedAt,
-    required this.location,
-    required this.phone,
     required this.profile,
+    this.phone = "1234567890",
+    this.location = "",
+    this.college = "",
+    this.gender = "",
+    this.branch = "",
+    this.city = "",
+    this.state = "",
+    this.country = "",
+    this.isFirstTimeUser = true,
   });
 
   factory ProfileRes.fromJson(Map<String, dynamic> json) => ProfileRes(
-        id: json['_id'],
-        username: json['username'],
-        email: json['email'],
-        isAdmin: json['isAdmin'],
-        isAgent: json['isAgent'],
-        skills: List<String>.from(json['skills'].map((x) => x)),
-        updatedAt: DateTime.parse(json['updatedAt']),
-        location: json['location'],
-        phone: json['phone'],
-        profile: json['profile'],
+        id: json['_id'] ?? "",
+        username: json['username'] ?? "",
+        email: json['email'] ?? "",
+        isAdmin: json['isAdmin'] ?? false,
+        isAgent: json['isAgent'] ?? false,
+        skills: json['skills'] != null
+            ? List<String>.from(json['skills'].map((x) => x))
+            : [],
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'])
+            : DateTime.now(),
+        profile: json['profile'] ??
+            "https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Clip-Art-Transparent-PNG.png",
+        phone: json['phone'] ?? "1234567890",
+        location: json['location'] ?? "",
+        college: json['college'] ?? "",
+        gender: json['gender'] ?? "",
+        branch: json['branch'] ?? "",
+        city: json['city'] ?? "",
+        state: json['state'] ?? "",
+        country: json['country'] ?? "",
+        isFirstTimeUser: json['isFirstTimeUser'] ?? true,
       );
 
   final String id;
@@ -39,9 +58,16 @@ class ProfileRes {
   final bool isAgent;
   final List<String> skills;
   final DateTime updatedAt;
-  final String location;
-  final String phone;
   final String profile;
+  final String phone;
+  final String location;
+  final String college;
+  final String gender;
+  final String branch;
+  final String city;
+  final String state;
+  final String country;
+  final bool isFirstTimeUser;
 
   Map<String, dynamic> toJson() => {
         '_id': id,
@@ -49,10 +75,17 @@ class ProfileRes {
         'email': email,
         'isAdmin': isAdmin,
         'isAgent': isAgent,
-        'skills': List<dynamic>.from(skills.map((x) => x)),
+        'skills': skills,
         'updatedAt': updatedAt.toIso8601String(),
-        'location': location,
-        'phone': phone,
         'profile': profile,
+        'phone': phone,
+        'location': location,
+        'college': college,
+        'gender': gender,
+        'branch': branch,
+        'city': city,
+        'state': state,
+        'country': country,
+        'isFirstTimeUser': isFirstTimeUser,
       };
 }
