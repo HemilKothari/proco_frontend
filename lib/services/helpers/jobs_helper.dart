@@ -51,16 +51,41 @@ class JobsHelper {
     final requestHeaders = {'Content-Type': 'application/json'};
     final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/$agentId');
     final response = await client.get(url, headers: requestHeaders);
+
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List;
+
       if (data.isEmpty) {
         debugPrint('No jobs found for user: $agentId');
+        return [];
       }
-      return data.map((job) => JobsResponse.fromJson(job)).toList();
+
+      List<JobsResponse> jobs =
+          data.map((job) => JobsResponse.fromJson(job)).toList();
+
+      // Extract job IDs and store in SharedPreferences
+      List<String> jobIds =
+          jobs.map((job) => job.id).toList(); // Assuming `id` is a string
+      await saveJobIdsToPrefs(jobIds);
+
+      return jobs;
     } else {
       debugPrint('Failed to load jobs: ${response.statusCode}');
       throw Exception('Failed to load user jobs');
     }
+  }
+
+// Save all job IDs in SharedPreferences
+  static Future<void> saveJobIdsToPrefs(List<String> jobIds) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('savedJobIds', jobIds);
+    print("Saved job IDs: $jobIds");
+  }
+
+  static Future<void> setCurrentJobId(String jobId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentJobId', jobId);
+    print("Current job set to: $jobId");
   }
 
   static Future<JobsResponse> getRecent() async {
@@ -192,62 +217,75 @@ class JobsHelper {
     }
   }
 
+  // static Future<List<SwipedRes>> getSwipededUsersId(String jobId) async {
+  //   final requestHeaders = {'Content-Type': 'application/json'};
+  //   final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/$jobId');
+  //   final response = await client.get(url, headers: requestHeaders);
+  //   print("Response Received $response");
+
+  //   if (response.statusCode == 200) {
+  //     final Map<String, dynamic> data = json.decode(response.body);
+
+  //     if (data.isEmpty || !data.containsKey('swipedUsers')) {
+  //       debugPrint('No swiped users found for this job: $jobId');
+  //       print("No swiped users");
+  //       return [];
+  //     }
+  //     List<SwipedRes> swipedUsers = List<SwipedRes>.from(data['swipedUsers']);
+  //     return swipedUsers;
+  //   } else {
+  //     debugPrint('Failed to load swiped users: ${response.statusCode}');
+  //     throw Exception('Failed to load swiped users');
+  //   }
+  // }
   static Future<List<SwipedRes>> getSwipededUsersId(String jobId) async {
-    final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/$jobId');
-    final response = await client.get(url, headers: requestHeaders);
+    try {
+      final requestHeaders = {'Content-Type': 'application/json'};
+      final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/');
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
+      final response = await client.get(url, headers: requestHeaders);
 
-      if (data.isEmpty || !data.containsKey('swipedUsers')) {
-        debugPrint('No swiped users found for this job: $jobId');
-        return [];
+      if (response.statusCode == 200) {
+        print("Response Received: ${response.body}");
+
+        final List<dynamic> data = json.decode(response.body);
+
+        if (data.isEmpty) {
+          debugPrint('No swiped users found for this job: $jobId');
+          print("No swiped users found");
+          return [];
+        }
+
+        //Convert the List<dynamic> into List<SwipedRes>
+        List<SwipedRes> swipedUsers =
+            data.map((user) => SwipedRes.fromJson(user)).toList();
+
+        return swipedUsers;
+      } else {
+        debugPrint('Failed to load swiped users: ${response.statusCode}');
+        throw Exception('Failed to load swiped users');
       }
-      List<SwipedRes> swipedUsers = List<SwipedRes>.from(data['swipedUsers']);
-      return swipedUsers;
-    } else {
-      debugPrint('Failed to load swiped users: ${response.statusCode}');
-      throw Exception('Failed to load swiped users');
+    } catch (e) {
+      debugPrint('Error fetching swiped users: $e');
+      print("Exception: $e");
+      return []; // Return an empty list in case of an error
     }
   }
 
   static Future<void> addSwipedUsers(String jobId, String userId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-
-    // Construct API endpoint
-    final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/$jobId');
+    final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/');
 
     try {
-      // Fetch the existing job data first
-      final getResponse = await client.get(url, headers: requestHeaders);
+      final requestBody = json.encode({'jobId': jobId, 'userId': userId});
+      final response =
+          await client.post(url, headers: requestHeaders, body: requestBody);
 
-      if (getResponse.statusCode == 200) {
-        final Map<String, dynamic> jobData = json.decode(getResponse.body);
-        List<dynamic> swipedUsers = jobData['swipedUsers'] ?? [];
-
-        // Check if user is already in the list
-        if (!swipedUsers.contains(userId)) {
-          swipedUsers.add(userId); // Append the new user ID
-        } else {
-          debugPrint('User already swiped to this job.');
-          return; // Exit if the user is already in the list
-        }
-
-        // Send an update request with the modified swipedUsers list
-        final updateBody = json.encode({'swipedUsers': swipedUsers});
-
-        final updateResponse =
-            await client.put(url, headers: requestHeaders, body: updateBody);
-
-        if (updateResponse.statusCode == 200) {
-          debugPrint('User $userId added to swiped users for job $jobId');
-        } else {
-          debugPrint(
-              'Failed to update swiped users: ${updateResponse.statusCode}');
-        }
+      if (response.statusCode == 200) {
+        debugPrint('User $userId added to swiped users for job $jobId');
       } else {
-        debugPrint('Failed to fetch job data: ${getResponse.statusCode}');
+        debugPrint(
+            'Failed to add swiped user: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       debugPrint('Error adding swiped user: $e');

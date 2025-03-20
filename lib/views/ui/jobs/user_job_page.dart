@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jobhub_v1/controllers/jobs_provider.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
+import 'package:jobhub_v1/services/helpers/jobs_helper.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/ui/jobs/add_job.dart';
@@ -53,6 +54,12 @@ class _JobListingPageState extends State<JobListingPage> {
     }
   }
 
+  void setCurrentJobId(String jobId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentJobId', jobId);
+    print("Current job set to: $jobId");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +75,7 @@ class _JobListingPageState extends State<JobListingPage> {
               ),
               onPressed: () {
                 debugPrint('Add button tapped');
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AddJobPage()),
@@ -240,8 +248,8 @@ class JobCard extends StatelessWidget {
                     color: Color(0xFF08959D),
                   ),
                   onPressed: () {
-                    // Action to perform when the edit icon is tapped.
                     debugPrint('Edit button tapped');
+
                     // Navigate to another screen or perform some action here
                     // For example:
                     /*Navigator.push(
@@ -257,6 +265,7 @@ class JobCard extends StatelessWidget {
             GestureDetector(
               child: Image.network(job.imageUrl),
               onTap: () => {
+                setCurrentJobId(job.id),
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const MatchedUsers()),
@@ -288,6 +297,12 @@ class JobCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  setCurrentJobId(String jobId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentJobId', jobId);
+    print("Current job set to: $jobId");
   }
 }
 

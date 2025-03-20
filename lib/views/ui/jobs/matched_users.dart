@@ -24,7 +24,9 @@ class _MatchedUsersState extends State<MatchedUsers> {
 
   getJobId() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('jobId') ?? "";
+    Set<String> keys = prefs.getKeys();
+    print(keys);
+    return prefs.getString('currentJobId') ?? "";
   }
 
   @override
@@ -35,8 +37,10 @@ class _MatchedUsersState extends State<MatchedUsers> {
 
   void _initializeJobId() async {
     String jobId = await getJobId();
+    print("JOB ID FOUND: $jobId");
+    if (!mounted) return;
     final profileNotifier = Provider.of<JobsNotifier>(context, listen: false);
-    profileNotifier.getSwipedUsersId(jobId); 
+    profileNotifier.getSwipedUsersId(jobId);
   }
 
   // Helper widgets
@@ -163,7 +167,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                   scale: 0.5,
                                   cardsCount: userList.length,
                                   allowedSwipeDirection:
-                                      AllowedSwipeDirection.only(
+                                      const AllowedSwipeDirection.only(
                                           left: true, right: true),
                                   cardBuilder: (context, index,
                                       percentThresholdX, percentThresholdY) {
