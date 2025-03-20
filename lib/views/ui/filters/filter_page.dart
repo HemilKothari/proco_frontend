@@ -361,3 +361,294 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:jobhub_v1/views/common/height_spacer.dart';
+
+// class FilterPage extends StatefulWidget {
+//   const FilterPage({Key? key}) : super(key: key);
+
+//   @override
+//   _FilterPageState createState() => _FilterPageState();
+// }
+
+// class _FilterPageState extends State<FilterPage> {
+//   final List<String> options = [
+//     'Web Development',
+//     'App Development',
+//     'Graphic Designer',
+//     'Finance',
+//     'Consulting',
+//     'Marketing',
+//     'Competitive Programming',
+//     'Cyber Security',
+//     'Blockchain',
+//     'Research',
+//     'UI/UX',
+//     'Animator',
+//   ];
+//   final Map<String, bool> opportunityTypes = {
+//     'Internship': false,
+//     'Research': false,
+//     'Freelance': false,
+//     'Competition': false,
+//   };
+//   final List<String> states = [
+//     "California",
+//     "Texas",
+//     "Florida",
+//     "New York",
+//     "Illinois",
+//     "Pennsylvania",
+//     "Ohio",
+//     "Georgia",
+//     "North Carolina",
+//     "Michigan"
+//   ];
+//   final List<String> selectedOptions = [];
+//   bool showCustomInput = false;
+//   String customInputValue = "";
+//   double selectedDistance = 10.0;
+//   String selectedLocationOption = "";
+//   double locationDistance = 10.0;
+//   String selectedState = "";
+//   String enteredCountry = "";
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text(
+//           'Filters',
+//           style: TextStyle(
+//             color: Color(0xFF08959D),
+//           ),
+//         ),
+//         backgroundColor: const Color(0xFF040326),
+//         leading: IconButton(
+//           icon: const Icon(
+//             Icons.arrow_back,
+//             color: Color(0xFF08959D),
+//           ),
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//         ),
+//       ),
+//       body: SingleChildScrollView(
+//         child: Padding(
+//           padding: const EdgeInsets.all(16.0),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               const Text(
+//                 'Which Area To Explore?',
+//                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+//               ),
+//               const SizedBox(height: 20),
+//               // Exclude ScrollBar for this Wrap section
+//               Wrap(
+//                 spacing: 8,
+//                 runSpacing: 8,
+//                 children: [
+//                   ...options.map((option) {
+//                     final isSelected = selectedOptions.contains(option);
+//                     return ChoiceChip(
+//                       label: Text(
+//                         option,
+//                         style: TextStyle(
+//                           color: isSelected ? Colors.white : Colors.black,
+//                         ),
+//                       ),
+//                       selected: isSelected,
+//                       selectedColor: const Color(0xFF040326),
+//                       backgroundColor: Colors.grey[200],
+//                       checkmarkColor: Colors.teal,
+//                       onSelected: (selected) {
+//                         setState(() {
+//                           if (selected) {
+//                             selectedOptions.add(option);
+//                           } else {
+//                             selectedOptions.remove(option);
+//                           }
+//                         });
+//                       },
+//                     );
+//                   }).toList(),
+//                   GestureDetector(
+//                     onTap: () {
+//                       setState(() {
+//                         showCustomInput = true;
+//                       });
+//                     },
+//                     child: Container(
+//                       padding: const EdgeInsets.symmetric(
+//                           horizontal: 12, vertical: 8),
+//                       decoration: BoxDecoration(
+//                         color: Colors.teal,
+//                         borderRadius: BorderRadius.circular(20),
+//                       ),
+//                       child: const Text(
+//                         'CUSTOM',
+//                         style: TextStyle(color: Colors.black),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//               if (showCustomInput)
+//                 Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     const SizedBox(height: 16),
+//                     TextField(
+//                       onChanged: (value) {
+//                         customInputValue = value;
+//                       },
+//                       decoration: const InputDecoration(
+//                         labelText: 'Enter custom option',
+//                         border: OutlineInputBorder(),
+//                       ),
+//                     ),
+//                     const SizedBox(height: 8),
+//                     ElevatedButton(
+//                       onPressed: () {
+//                         if (customInputValue.isNotEmpty) {
+//                           setState(() {
+//                             options.add(customInputValue);
+//                             selectedOptions.add(customInputValue);
+//                             showCustomInput = false;
+//                             customInputValue = "";
+//                           });
+//                         }
+//                       },
+//                       child: const Text('Add Custom Option'),
+//                     ),
+//                   ],
+//                 ),
+//               const SizedBox(height: 5),
+//               const Text(
+//                 'What Opportunity Type?',
+//                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+//               ),
+//               const SizedBox(height: 10),
+//               Column(
+//                 children: opportunityTypes.keys.map((opportunity) {
+//                   return Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Text(
+//                         opportunity,
+//                         style: const TextStyle(fontSize: 18),
+//                       ),
+//                       Switch(
+//                         value: opportunityTypes[opportunity]!,
+//                         activeColor: Colors.teal,
+//                         onChanged: (value) {
+//                           setState(() {
+//                             opportunityTypes[opportunity] = value;
+//                           });
+//                         },
+//                       ),
+//                     ],
+//                   );
+//                 }).toList(),
+//               ),
+//               const SizedBox(height: 20),
+//               const Text(
+//                 'Select Location Type:',
+//                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+//               ),
+//               const SizedBox(height: 10),
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   _buildLocationToggle("City"),
+//                   _buildLocationToggle("State"),
+//                   _buildLocationToggle("Country"),
+//                 ],
+//               ),
+//               const SizedBox(height: 20),
+//               if (selectedLocationOption == "City")
+//                 Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     const Text(
+//                       "Distance (in kms):",
+//                       style:
+//                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//                     ),
+//                     const SizedBox(height: 8),
+//                     Slider(
+//                       value: locationDistance,
+//                       min: 0,
+//                       max: 100,
+//                       divisions: 20,
+//                       activeColor: Colors.teal,
+//                       inactiveColor: Colors.grey,
+//                       label: '${locationDistance.toInt()} km',
+//                       onChanged: (value) {
+//                         setState(() {
+//                           locationDistance = value;
+//                         });
+//                       },
+//                     ),
+//                     Text('${locationDistance.toInt()} km'),
+//                   ],
+//                 ),
+//               if (selectedLocationOption == "State")
+//                 DropdownButton<String>(
+//                   value: selectedState.isEmpty ? null : selectedState,
+//                   items: states.map((state) {
+//                     return DropdownMenuItem(
+//                       value: state,
+//                       child: Text(state),
+//                     );
+//                   }).toList(),
+//                   hint: const Text("Choose a state"),
+//                   onChanged: (value) {
+//                     setState(() {
+//                       selectedState = value!;
+//                     });
+//                   },
+//                 ),
+//               if (selectedLocationOption == "Country")
+//                 TextField(
+//                   onChanged: (value) {
+//                     setState(() {
+//                       enteredCountry = value;
+//                     });
+//                   },
+//                   decoration: const InputDecoration(
+//                     border: OutlineInputBorder(),
+//                     hintText: "Type country name",
+//                   ),
+//                 ),
+//               const HeightSpacer(size: 20),
+//             ],
+//           ),
+//         ),
+//       ),
+//       bottomNavigationBar: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//       ),
+//     );
+//   }
+
+//   Widget _buildLocationToggle(String option) {
+//     return Row(
+//       children: [
+//         Text(option, style: const TextStyle(fontSize: 16)),
+//         Switch(
+//           value: selectedLocationOption == option,
+//           activeColor: Colors.teal,
+//           onChanged: (value) {
+//             setState(() {
+//               selectedLocationOption = value ? option : "";
+//             });
+//           },
+//         ),
+//       ],
+//     );
+//   }
+// }

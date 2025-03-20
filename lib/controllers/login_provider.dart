@@ -8,6 +8,7 @@ import 'package:jobhub_v1/services/helpers/auth_helper.dart';
 import 'package:jobhub_v1/views/ui/mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class LoginNotifier extends ChangeNotifier {
   bool _obscureText = true;
 

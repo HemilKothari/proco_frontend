@@ -7,6 +7,7 @@ import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/ui/jobs/add_job.dart';
 import 'package:jobhub_v1/views/ui/jobs/matched_users.dart';
+import 'package:jobhub_v1/views/ui/jobs/matched_users.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

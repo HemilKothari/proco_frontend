@@ -6,12 +6,16 @@ import 'package:jobhub_v1/models/request/auth/login_model.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/custom_btn.dart';
 import 'package:jobhub_v1/views/common/custom_textfield.dart';
+import 'package:jobhub_v1/views/common/custom_textfield_input.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/ui/auth/signup.dart';
+import 'package:jobhub_v1/views/ui/auth/signup_new.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
-
+import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_name.dart';
+import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/welcome.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
 /*class LoginPage extends StatefulWidget {
@@ -157,9 +161,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }*/
-import 'package:shared_preferences/shared_preferences.dart'; // Add this import
+// Add this import
 
-class LoginPage extends StatefulWidget {
+/*class LoginPage extends StatefulWidget {
   const LoginPage({required this.drawer, super.key});
   final bool drawer;
 
@@ -311,6 +315,180 @@ class _LoginPageState extends State<LoginPage> {
                     text: 'Login',
                   ),
                 ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+*/
+class LoginPage extends StatefulWidget {
+  const LoginPage({required this.drawer, super.key});
+  final bool drawer;
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin(LoginNotifier loginNotifier) async {
+    if (loginNotifier.validateAndSave()) {
+      final model = LoginModel(
+        email: email.text,
+        password: password.text,
+      );
+
+      // Call login function without expecting a return value
+      await loginNotifier.userLogin(model);
+
+      final prefs = await SharedPreferences.getInstance();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<LoginNotifier>(
+      builder: (context, loginNotifier, child) {
+        loginNotifier.getPrefs();
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(0.065.sh),
+            child: CustomAppBar(
+              text: 'Login',
+              child: widget.drawer
+                  ? Padding(
+                      padding: EdgeInsets.all(8.0.h),
+                      child: const DrawerWidget(),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ),
+          backgroundColor: const Color(0xFF040326),
+          body: Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              padding: EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Form(
+                key: loginNotifier.loginFormKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ReusableText(
+                      text: 'Welcome Back!',
+                      style: TextStyle(
+                        fontSize: 26.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    ReusableText(
+                      text: 'Fill the details to \nlogin to your account',
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const HeightSpacer(size: 20),
+                    CustomTextFieldInput(
+                      controller: email,
+                      keyboardType: TextInputType.emailAddress,
+                      hintText: 'Email',
+                      validator: (email) {
+                        if (email!.isEmpty || !email.contains('@')) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const HeightSpacer(size: 20),
+                    CustomTextFieldInput(
+                      controller: password,
+                      keyboardType: TextInputType.text,
+                      hintText: 'Password',
+                      obscureText: loginNotifier.obscureText,
+                      validator: (password) {
+                        if (password!.isEmpty) {
+                          return 'Please enter a valid password';
+                        }
+                        return null;
+                      },
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          loginNotifier.obscureText =
+                              !loginNotifier.obscureText;
+                        },
+                        child: Icon(
+                          loginNotifier.obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
+                    const HeightSpacer(size: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.offAll(() => WelcomePage());
+                        },
+                        child: ReusableText(
+                          text: 'Register',
+                          style: appstyle(14, Colors.white, FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                    const HeightSpacer(size: 20),
+                    Center(
+                      child: GestureDetector(
+                          onTap: () {
+                            _handleLogin(loginNotifier);
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width *
+                                0.4, // 60% of screen width
+                            height: MediaQuery.of(context).size.height *
+                                0.06, // 6% of screen height
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(32),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(
+                                    0xFF040326), // 👈 Black text for contrast
+                              ),
+                            ),
+                          )),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

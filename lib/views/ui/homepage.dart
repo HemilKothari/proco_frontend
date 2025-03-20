@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/jobs_provider.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/app_style.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
-import 'package:jobhub_v1/views/common/heading_widget.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:jobhub_v1/views/ui/filters/filter_page.dart';
-import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
 import 'package:jobhub_v1/views/ui/notification/notification_page.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,6 +27,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final jobNotifier = Provider.of<JobsNotifier>(context, listen: false);
     jobNotifier.getJobs();
+  }
+
+  Future<String> getCurrentUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId') ?? "";
   }
 
   // Helper widgets
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
         child: CustomAppBar(
           actions: [
             Padding(
-              padding: EdgeInsets.only(right: 0.025.sh),
+              padding: EdgeInsets.only(right: 0.01.sh),
 
               /*child: Icon(
                 FontAwesome.filter,
@@ -91,7 +91,6 @@ class _HomePageState extends State<HomePage> {
                   color: Color(0xFF08959D),
                 ),
                 onPressed: () {
-                  
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const FilterPage()),
@@ -100,7 +99,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(right: 0.025.sh),
+              padding: EdgeInsets.only(right: 0.01.sh),
               child: IconButton(
                 icon: const Icon(
                   FontAwesome.bell,
@@ -143,95 +142,120 @@ class _HomePageState extends State<HomePage> {
                         height: 0.87.sh,
                         child: ClipRRect(
                           clipBehavior: Clip.antiAlias,
-                          child: FutureBuilder<List<JobsResponse>>(
-                            future: jobNotifier.jobList,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
+                          child: FutureBuilder<String>(
+                            future:
+                                getCurrentUserId(), // Fetch logged-in user's agentId
+                            builder: (context, userSnapshot) {
+                              if (!userSnapshot.hasData) {
                                 return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                  child: Text('Error: ${snapshot.error}'),
-                                );
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return Center(
-                                  child: Text(
-                                    'No jobs available.',
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: const Color(0xFF040326),
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                final jobList = snapshot.data!;
-                                return CardSwiper(
-                                  controller: controller,
-                                  scale: 0.5,
-                                  cardsCount: jobList.length,
-                                  cardBuilder: (context, index,
-                                      percentThresholdX, percentThresholdY) {
-                                    final job = jobList[index];
-                                    return Container(
-                                      padding: EdgeInsets.all(8.w),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF040326),
-                                        borderRadius:
-                                            BorderRadius.circular(20.w),
+                                    child:
+                                        CircularProgressIndicator()); // Show loading until agentId is fetched
+                              }
+
+                              final String currentUserId = userSnapshot.data!;
+                              return FutureBuilder<List<JobsResponse>>(
+                                future: jobNotifier.jobList,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text('Error: ${snapshot.error}'),
+                                    );
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    return Center(
+                                      child: Text(
+                                        'No jobs available.',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          color: const Color(0xFF040326),
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                       ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          SizedBox(height: 8),
-                                          Text(
-                                            job.company ?? 'Unknown Company',
-                                            style: TextStyle(
-                                              fontSize: 20.sp,
-                                              fontWeight: FontWeight.bold,
-                                              color: const Color(0xFF08979F),
-                                              fontFamily: 'Poppins',
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          //SizedBox(height: 4),
-                                          ClipRRect(
+                                    );
+                                  } else {
+                                    final jobList = snapshot.data!
+                                        .where((job) =>
+                                            job.agentId != currentUserId &&
+                                            job.hiring ==
+                                                true) // Filter out user's jobs
+                                        .toList();
+                                    return CardSwiper(
+                                      controller: controller,
+                                      scale: 0.5,
+                                      cardsCount: jobList.length,
+                                      allowedSwipeDirection:
+                                          AllowedSwipeDirection.only(
+                                              left: true, right: true),
+                                      cardBuilder: (context,
+                                          index,
+                                          percentThresholdX,
+                                          percentThresholdY) {
+                                        final job = jobList[index];
+                                        return Container(
+                                          padding: EdgeInsets.all(8.w),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF040326),
                                             borderRadius:
-                                                BorderRadius.circular(15),
-                                            child: Image.network(
-                                              job.imageUrl,
-                                              height: 0.45.sh,
-                                              width: double.infinity,
-                                              fit: BoxFit.contain,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  'assets/images/default-placeholder.png',
+                                                BorderRadius.circular(20.w),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              SizedBox(height: 8),
+                                              Text(
+                                                job.company ??
+                                                    'Unknown Company',
+                                                style: TextStyle(
+                                                  fontSize: 20.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      const Color(0xFF08979F),
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              //SizedBox(height: 4),
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                child: Image.network(
+                                                  job.imageUrl,
                                                   height: 0.45.sh,
                                                   width: double.infinity,
                                                   fit: BoxFit.contain,
-                                                );
-                                              },
-                                            ),
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Image.asset(
+                                                      'assets/images/default-placeholder.png',
+                                                      height: 0.45.sh,
+                                                      width: double.infinity,
+                                                      fit: BoxFit.contain,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              _buildInfoBox(job.title, 12.sp),
+                                              SizedBox(height: 10),
+                                              _buildInfoBox(
+                                                  job.location ??
+                                                      'Location Not Available',
+                                                  12.sp),
+                                            ],
                                           ),
-                                          SizedBox(height: 8),
-                                          _buildInfoBox(job.title, 12.sp),
-                                          SizedBox(height: 10),
-                                          _buildInfoBox(
-                                              job.location ??
-                                                  'Location Not Available',
-                                              12.sp),
-                                        ],
-                                      ),
+                                        );
+                                      },
+                                      isLoop: true,
                                     );
-                                  },
-                                  isLoop: true,
-                                );
-                              }
+                                  }
+                                },
+                              );
                             },
                           ),
                         ),

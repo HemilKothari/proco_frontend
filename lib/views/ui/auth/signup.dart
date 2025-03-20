@@ -22,12 +22,25 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
+  final TextEditingController gender = TextEditingController();
+  final TextEditingController college = TextEditingController();
+  final TextEditingController branch = TextEditingController();
+  final TextEditingController city = TextEditingController();
+  final TextEditingController state = TextEditingController();
+  final TextEditingController country = TextEditingController();
   final TextEditingController password = TextEditingController();
 
   @override
   void dispose() {
     name.dispose();
     email.dispose();
+    gender.dispose();
+    college.dispose();
+    branch.dispose();
+
+    city.dispose();
+    state.dispose();
+    country.dispose();
     password.dispose();
     super.dispose();
   }
@@ -44,6 +57,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               text: 'Sign Up',
               child: GestureDetector(
                 onTap: () {
+                  //Get.offAll(() => const LoginPage(drawer: true));
                   Get.offAll(() => const LoginPage(drawer: true));
                 },
                 child: const Icon(CupertinoIcons.arrow_left),
@@ -130,7 +144,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       children: [
                         ReusableText(
                           text: 'Password should be at least 8 characters',
-                          style: appstyle(9, const Color(0xFF040326), FontWeight.w500),
+                          style: appstyle(
+                              9, const Color(0xFF040326), FontWeight.w500),
                         ),
                         ReusableText(
                           text: 'Login',
@@ -150,12 +165,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     final model = SignupModel(
                       username: name.text,
                       email: email.text,
+                      gender: gender.text,
+                      college: college.text,
+                      branch: branch.text,
+                      city: city.text,
+                      country: country.text,
+                      state: state.text,
                       password: password.text,
                     );
 
-                    signupNotifier.upSignup(model);
+                    signupNotifier.submitSignup();
                   },
-                  text: 'Sign Up',
+                  text: 'Lets Go!',
                 ),
               ],
             ),
