@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -10,7 +8,6 @@ import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/app_style.dart';
 import 'package:jobhub_v1/views/common/custom_btn.dart';
 import 'package:jobhub_v1/views/common/custom_textfield.dart';
-import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/common/reusable_text.dart';
 import 'package:provider/provider.dart';
@@ -330,7 +327,8 @@ class _AddJobPageState extends State<AddJobPage> {
                         );
                         // JobsNotifier.createJob(jobData);
                         // print('Job Data: ${jsonEncode(jobData.toJson())}');
-                        JobsNotifier.createJob(jobData);
+                        if (!mounted) return;
+                        JobsNotifier.createJob(jobData, context);
                       },
                       text: 'List Query',
                     ),

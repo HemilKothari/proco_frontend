@@ -23,6 +23,12 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => context.read<ProfileNotifier>().getProfile());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
@@ -36,11 +42,10 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       body: Consumer<ProfileNotifier>(
-        builder: (context, profileNitifier, child) {
-          profileNitifier.getProfile();
-          // Fix: make nullable for proper push to home after login
-          return FutureBuilder<ProfileRes?>( 
-            future: profileNitifier.profile,
+        builder: (context, profileNotifier, child) {
+          // profileNotifier.getProfile();
+          return FutureBuilder<ProfileRes?>(
+            future: profileNotifier.profile,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -49,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
               } else if (snapshot.hasError) {
                 return Text('Error ${snapshot.error}');
               } else {
-                final UserData = snapshot.data;
+                final userData = snapshot.data;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ListView(
@@ -68,14 +73,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(20),
                                   ),
-                                  child: UserData!.profile == 'null'
+                                  child: userData!.profile == "null"
                                       ? Image.asset(
                                           'assets/images/user.png',
                                         )
                                       : CachedNetworkImage(
                                           width: 80.w,
                                           height: 100.h,
-                                          imageUrl: UserData.profile,
+                                          imageUrl: userData.profile,
                                         ),
                                 ),
                                 const WidthSpacer(width: 20),
@@ -84,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     ReusableText(
-                                      text: UserData.username,
+                                      text: userData.username,
                                       style: appstyle(
                                         20,
                                         Color(kDark.value),
@@ -99,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ),
                                         const WidthSpacer(width: 5),
                                         ReusableText(
-                                          text: UserData.location,
+                                          text: userData.location,
                                           style: appstyle(
                                             16,
                                             Color(kDarkGrey.value),
@@ -114,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                profile = UserData.skills;
+                                profile = userData.skills;
                                 Get.to(() => const ProfileUpdate());
                               },
                               child: const Icon(
@@ -134,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: ReusableText(
-                            text: UserData.email,
+                            text: userData.email,
                             style: appstyle(
                               16,
                               Color(kDark.value),
@@ -160,7 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               const WidthSpacer(width: 15),
                               ReusableText(
-                                text: UserData.phone,
+                                text: userData.phone,
                                 style: appstyle(
                                   16,
                                   Color(kDark.value),
@@ -197,10 +202,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   vertical: 8.h,
                                 ),
                                 child: ListView.builder(
-                                  itemCount: UserData.skills.length,
+                                  itemCount: userData.skills.length,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
-                                    final skill = UserData.skills[index];
+                                    final skill = userData.skills[index];
                                     return Padding(
                                       padding: const EdgeInsets.all(8),
                                       child: Container(

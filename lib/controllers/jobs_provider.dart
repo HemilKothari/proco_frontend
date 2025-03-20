@@ -30,7 +30,7 @@ class JobsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createJob(CreateJobsRequest model) async {
+  Future<void> createJob(CreateJobsRequest model, context) async {
     try {
       await JobsHelper.createJob(model).then((_) async {
         // Show success message

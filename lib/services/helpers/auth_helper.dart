@@ -112,7 +112,7 @@ class AuthHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.https(Config.apiUrl, Config.profileUrl);
+    final url = Uri.https(Config.apiUrl, '/api/users');
     final response = await client.get(
       url,
       headers: requestHeaders,
