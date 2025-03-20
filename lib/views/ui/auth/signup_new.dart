@@ -61,23 +61,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           .pop(); // 👈 Pops context when activeIndex == 0
                     }
                   },
-                  child: const Icon(CupertinoIcons.arrow_left),
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    color: const Color(0xFF08979F),
+                    size: 20,
+                  ),
                 ),
               ),
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: IndexedStack(
-                index: signUpProvider.activeIndex,
-                children: [
-                  _namePage(signUpProvider),
-                  _emailPage(signUpProvider),
-                  _passwordPage(signUpProvider),
-                  _collegePage(signUpProvider),
-                  _genderPage(signUpProvider),
-                  _locationPage(signUpProvider),
-                ],
-              ),
+            body: IndexedStack(
+              index: signUpProvider.activeIndex,
+              children: [
+                _namePage(signUpProvider),
+                _emailPage(signUpProvider),
+                _passwordPage(signUpProvider),
+                _collegePage(signUpProvider),
+                _genderPage(signUpProvider),
+                _locationPage(signUpProvider),
+              ],
             ),
           );
         },
@@ -105,6 +106,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                "What should other\nProfessionals call you?",
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 15),
               CustomTextFieldInput(
                 controller: nameController,
                 hintText: 'Full Name',
@@ -140,162 +150,359 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   /// Step 2: Email
   Widget _emailPage(SignUpNotifier signUpProvider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomTextFieldInput(
-          controller: emailController,
-          hintText: 'Email',
-          keyboardType: TextInputType.emailAddress,
+    return Scaffold(
+      backgroundColor: const Color(0xFF040326),
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "What's your email?",
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 15),
+              CustomTextFieldInput(
+                controller: emailController,
+                hintText: 'Email',
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                    onTap: () {
+                      signUpProvider.signupModel.email = emailController.text;
+                      signUpProvider.changeStep(2);
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              )
+            ],
+          ),
         ),
-        const SizedBox(height: 20),
-        CustomButton(
-          onTap: () {
-            signUpProvider.signupModel.email = emailController.text;
-            signUpProvider.changeStep(2);
-          },
-          text: 'Next',
-        ),
-      ],
+      ),
     );
   }
 
   /// Step 3: Password
   Widget _passwordPage(SignUpNotifier signUpProvider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomTextFieldInput(
-          controller: passwordController,
-          hintText: 'Password',
-          keyboardType: TextInputType.text,
-          obscureText: signUpProvider.obscureText,
-          validator: (password) {
-            if (!signUpProvider.passwordValidator(password!)) {
-              return 'At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.';
-            }
-            return null;
-          },
-          suffixIcon: GestureDetector(
-            onTap: () {
-              signUpProvider.obscureText = !signUpProvider.obscureText;
-            },
-            child: Icon(
-              signUpProvider.obscureText
-                  ? Icons.visibility
-                  : Icons.visibility_off,
+    return Scaffold(
+      backgroundColor: const Color(0xFF040326),
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Create a secure password",
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 15),
+              CustomTextFieldInput(
+                controller: passwordController,
+                hintText: 'Password',
+                keyboardType: TextInputType.text,
+                obscureText: signUpProvider.obscureText,
+                validator: (password) {
+                  if (!signUpProvider.passwordValidator(password!)) {
+                    return 'At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.';
+                  }
+                  return null;
+                },
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    signUpProvider.obscureText = !signUpProvider.obscureText;
+                  },
+                  child: Icon(
+                    signUpProvider.obscureText
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                    onTap: () {
+                      if (!signUpProvider
+                          .passwordValidator(passwordController.text)) {
+                        Get.snackbar(
+                          'Invalid Password',
+                          'Password must have at least one uppercase, one lowercase, one digit, and one special character.',
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                      } else {
+                        signUpProvider.signupModel.password =
+                            passwordController.text;
+                        signUpProvider.changeStep(3);
+                      }
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              )
+            ],
           ),
         ),
-        const SizedBox(height: 10),
-        if (!signUpProvider.passwordValidator(passwordController.text) &&
-            passwordController.text.isNotEmpty)
-          Text(
-            'Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character.',
-            style: TextStyle(color: Colors.red, fontSize: 12),
-          ),
-        const SizedBox(height: 20),
-        CustomButton(
-          onTap: () {
-            if (!signUpProvider.passwordValidator(passwordController.text)) {
-              Get.snackbar(
-                'Invalid Password',
-                'Password must have at least one uppercase, one lowercase, one digit, and one special character.',
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
-            } else {
-              signUpProvider.signupModel.password = passwordController.text;
-              signUpProvider.changeStep(3);
-            }
-          },
-          text: 'Next',
-        ),
-      ],
+      ),
     );
   }
 
   /// Step 4: College & Branch
   Widget _collegePage(SignUpNotifier signUpProvider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomTextFieldInput(
-          controller: collegeController,
-          hintText: 'College',
-          keyboardType: TextInputType.text,
+    return Scaffold(
+      backgroundColor: const Color(0xFF040326),
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Which College do you belong to?",
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 15),
+              CustomTextFieldInput(
+                controller: collegeController,
+                hintText: 'College',
+                keyboardType: TextInputType.text,
+              ),
+              CustomTextFieldInput(
+                controller: branchController,
+                hintText: 'Branch',
+                keyboardType: TextInputType.text,
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                    onTap: () {
+                      signUpProvider.signupModel.college =
+                          collegeController.text;
+                      signUpProvider.signupModel.branch = branchController.text;
+                      signUpProvider.changeStep(4);
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              )
+            ],
+          ),
         ),
-        CustomTextFieldInput(
-          controller: branchController,
-          hintText: 'Branch',
-          keyboardType: TextInputType.text,
-        ),
-        const SizedBox(height: 20),
-        CustomButton(
-          onTap: () {
-            signUpProvider.signupModel.college = collegeController.text;
-            signUpProvider.signupModel.branch = branchController.text;
-            signUpProvider.changeStep(4);
-          },
-          text: 'Next',
-        ),
-      ],
+      ),
     );
   }
 
   /// Step 5: Gender
   Widget _genderPage(SignUpNotifier signUpProvider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomTextFieldInput(
-          controller: genderController,
-          hintText: 'Gender',
-          keyboardType: TextInputType.text,
+    return Scaffold(
+      backgroundColor: const Color(0xFF040326),
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Please specify your Gender",
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 15),
+              CustomTextFieldInput(
+                controller: genderController,
+                hintText: 'Gender',
+                keyboardType: TextInputType.text,
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                    onTap: () {
+                      signUpProvider.signupModel.gender = genderController.text;
+                      signUpProvider.changeStep(5);
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              )
+            ],
+          ),
         ),
-        const SizedBox(height: 20),
-        CustomButton(
-          onTap: () {
-            signUpProvider.signupModel.gender = genderController.text;
-            signUpProvider.changeStep(5);
-          },
-          text: 'Next',
-        ),
-      ],
+      ),
     );
   }
 
   /// Step 6: Location (City, State, Country)
   Widget _locationPage(SignUpNotifier signUpProvider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomTextFieldInput(
-          controller: cityController,
-          hintText: 'City',
-          keyboardType: TextInputType.text,
+    return Scaffold(
+      backgroundColor: const Color(0xFF040326),
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Enter Location details",
+                style: TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 15),
+              CustomTextFieldInput(
+                controller: cityController,
+                hintText: 'City',
+                keyboardType: TextInputType.text,
+              ),
+              CustomTextFieldInput(
+                controller: stateController,
+                hintText: 'State',
+                keyboardType: TextInputType.text,
+              ),
+              CustomTextFieldInput(
+                controller: countryController,
+                hintText: 'Country',
+                keyboardType: TextInputType.text,
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                    onTap: () {
+                      signUpProvider.signupModel.city = cityController.text;
+                      signUpProvider.signupModel.state = stateController.text;
+                      signUpProvider.signupModel.country =
+                          countryController.text;
+                      signUpProvider.submitSignup();
+                    },
+                    child: Container(
+                      width: 50, // Adjust size as per design
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/Sign_in_circle.png', // Replace with your image path
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )),
+              )
+            ],
+          ),
         ),
-        CustomTextFieldInput(
-          controller: stateController,
-          hintText: 'State',
-          keyboardType: TextInputType.text,
-        ),
-        CustomTextFieldInput(
-          controller: countryController,
-          hintText: 'Country',
-          keyboardType: TextInputType.text,
-        ),
-        const SizedBox(height: 20),
-        CustomButton(
-          onTap: () {
-            signUpProvider.signupModel.city = cityController.text;
-            signUpProvider.signupModel.state = stateController.text;
-            signUpProvider.signupModel.country = countryController.text;
-            signUpProvider.submitSignup();
-          },
-          text: 'Sign Up',
-        ),
-      ],
+      ),
     );
   }
 }
