@@ -5,12 +5,17 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        ZoomDrawer.of(context)!.toggle();
+        final drawer = ZoomDrawer.of(context);
+        if (drawer != null) {
+          drawer.toggle();
+        } else {
+          debugPrint(
+              "Error: ZoomDrawer is null. Ensure it's wrapped properly.");
+        }
       },
       child: Image.asset(
         'assets/images/Vector.png',

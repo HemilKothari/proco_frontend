@@ -174,7 +174,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       password: password.text,
                     );
 
-                    signupNotifier.upSignup(model);
+                    signupNotifier.submitSignup();
                   },
                   text: 'Lets Go!',
                 ),

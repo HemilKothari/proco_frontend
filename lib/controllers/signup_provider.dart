@@ -1,21 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/models/request/auth/signup_model.dart';
 import 'package:jobhub_v1/services/helpers/auth_helper.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/ui/auth/login.dart';
 
 class SignUpNotifier extends ChangeNotifier {
-  bool _obscureText = true;
+  final SignupModel signupModel = SignupModel();
 
+  /// Step index (for multi-step navigation)
+  int _activeIndex = 0;
+  int get activeIndex => _activeIndex;
+
+  set activeIndex(int index) {
+    if (_activeIndex != index) {
+      _activeIndex = index;
+      notifyListeners(); // Notify UI only if index actually changes
+    }
+  }
+
+  void changeStep(int index) {
+    activeIndex = index; // Use the setter
+  }
+
+  /// Password visibility toggle
+  bool _obscureText = true;
   bool get obscureText => _obscureText;
 
   set obscureText(bool newState) {
-    _obscureText = newState;
-    notifyListeners();
+    if (_obscureText != newState) {
+      _obscureText = newState;
+      notifyListeners(); // Only notify if there's an actual change
+    }
   }
 
+  /// Password validation
   bool passwordValidator(String password) {
     if (password.isEmpty) return false;
     const pattern =
@@ -24,21 +42,27 @@ class SignUpNotifier extends ChangeNotifier {
     return regex.hasMatch(password);
   }
 
-  final signupFormKey = GlobalKey<FormState>();
-
-  bool validateAndSave() {
-    final form = signupFormKey.currentState;
-
-    if (form!.validate()) {
-      form.save();
-      return true;
-    } else {
-      return false;
+  /// Form submission
+  void submitSignup() {
+    if (signupModel.username.isEmpty ||
+        signupModel.email.isEmpty ||
+        signupModel.password.isEmpty ||
+        signupModel.college.isEmpty ||
+        signupModel.branch.isEmpty ||
+        signupModel.gender.isEmpty ||
+        signupModel.city.isEmpty ||
+        signupModel.state.isEmpty ||
+        signupModel.country.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please fill in all fields',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
     }
-  }
 
-  upSignup(SignupModel model) {
-    AuthHelper.signup(model).then((response) {
+    AuthHelper.signup(signupModel).then((response) {
       if (response[0]) {
         Get.offAll(
           () => const LoginPage(drawer: true),
@@ -47,11 +71,10 @@ class SignUpNotifier extends ChangeNotifier {
         );
       } else {
         Get.snackbar(
-          'Sign up Failed',
+          'Sign Up Failed',
           response[1],
-          colorText: Color(kLight.value),
           backgroundColor: Colors.red,
-          icon: const Icon(Icons.add_alert),
+          colorText: Colors.white,
         );
       }
     });

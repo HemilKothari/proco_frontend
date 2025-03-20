@@ -10,6 +10,7 @@ import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/ui/auth/signup.dart';
+import 'package:jobhub_v1/views/ui/auth/signup_new.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
 import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_name.dart';
 import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/welcome.dart';
@@ -431,7 +432,7 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
                       onTap: () {
-                        Get.offAll(() => WelcomePage());
+                        Get.offAll(() => SignUpScreen());
                       },
                       child: ReusableText(
                         text: 'Register',
