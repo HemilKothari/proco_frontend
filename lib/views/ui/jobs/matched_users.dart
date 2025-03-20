@@ -110,11 +110,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
                 color: Color(0xFF08959D),
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const JobListingPage()),
-                );
+                Navigator.pop(context);
               },
             ),
           ),

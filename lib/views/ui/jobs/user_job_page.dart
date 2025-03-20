@@ -264,8 +264,8 @@ class JobCard extends StatelessWidget {
             const SizedBox(height: 4),
             GestureDetector(
               child: Image.network(job.imageUrl),
-              onTap: () => {
-                setCurrentJobId(job.id),
+              onTap: () async => {
+                await setCurrentJobId(job.id),
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const MatchedUsers()),
