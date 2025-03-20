@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/jobs_provider.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/app_style.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
-import 'package:jobhub_v1/views/common/heading_widget.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:jobhub_v1/views/ui/filters/filter_page.dart';
-import 'package:jobhub_v1/views/ui/jobs/job_page.dart';
 import 'package:jobhub_v1/views/ui/notification/notification_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -186,9 +180,9 @@ class _HomePageState extends State<HomePage> {
                                   } else {
                                     final jobList = snapshot.data!
                                         .where((job) =>
-                                            job.agentId !=
-                                            currentUserId &&
-                                            job.hiring == true) // Filter out user's jobs
+                                            job.agentId != currentUserId &&
+                                            job.hiring ==
+                                                true) // Filter out user's jobs
                                         .toList();
                                     return CardSwiper(
                                       controller: controller,
@@ -266,8 +260,37 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
+                      /*Positioned(
+                        bottom: 40,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildFAB(
+                                icon: Icons.rotate_left,
+                                color: const Color(0xFF08979F),
+                                onPressed: controller.undo),
+                            _buildFAB(
+                                icon: Icons.heart_broken,
+                                color: const Color(0xFFD23838),
+                                onPressed: () =>
+                                    controller.swipe(CardSwiperDirection.left)),
+                            _buildFAB(
+                                icon: Icons.star,
+                                color: const Color(0xFF089F20),
+                                onPressed: () => controller
+                                    .swipe(CardSwiperDirection.right)),
+                            _buildFAB(
+                                icon: Icons.bookmark,
+                                color: const Color(0xFF08979F),
+                                onPressed: () =>
+                                    controller.swipe(CardSwiperDirection.top)),
+                          ],
+                        ),
+                      ),*/
                       Positioned(
-                        bottom: 0,
+                        bottom: 0, // Adjust to move the icons up
                         left: 0,
                         right: 0,
                         child: Row(
@@ -304,6 +327,62 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
+      /*bottomNavigationBar: Container(
+        height:
+            kBottomNavigationBarHeight, // Standard height for navigation bars
+        width:
+            double.infinity, // Ensures it occupies the full width of the screen
+        decoration: BoxDecoration(
+          color: Colors.white, // Background color
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2), // Optional shadow for effect
+              blurRadius: 5,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        /* child: BottomAppBar(
+          color: Colors.transparent, // Set transparent to use container's color
+          elevation:
+              0, // Remove BottomAppBar's elevation to avoid duplicate shadows
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(5, (index) {
+              return GestureDetector(
+                onTap: () => setState(() => _currentIndex = index),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    /*Icon(
+                      _getIconForIndex(index),
+                      size: 36, // Get the appropriate icon
+                      color: _currentIndex == index
+                          ? const Color(0xFF08959D) // Selected icon color
+                          : const Color(0xFF040326), // Unselected icon color
+                    ),*/
+                    /* AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      margin: EdgeInsets.only(
+                          top: 4), // Space between icon and line
+                      height: 3, // Height of the blue line
+                      width: _currentIndex == index
+                          ? 48
+                          : 0, // Line width for selected item
+                      color: _currentIndex == index
+                          ? const Color(
+                              0xFF08959D) // Blue line for selected item
+                          : Colors.transparent, // No line for unselected items
+                    ),*/
+                  ],
+                ),
+              );
+            }),
+          ),
+        ),*/
+      ),*/
     );
   }
 }

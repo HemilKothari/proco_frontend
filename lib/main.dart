@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jobhub_v1/controllers/exports.dart';
+import 'package:jobhub_v1/controllers/filter_provider.dart';
 import 'package:jobhub_v1/firebase_options.dart';
 import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/ui/mainscreen.dart';
@@ -36,6 +37,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => ImageUpoader()),
         ChangeNotifierProvider(create: (context) => ProfileNotifier()),
         ChangeNotifierProvider(create: (context) => ChatNotifier()),
+        ChangeNotifierProvider(create: (context) => FilterNotifier()),
       ],
       child: const MyApp(),
     ),
@@ -57,7 +59,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Dbestech JobHub',
+          title: 'ProCo',
           theme: ThemeData(
             scaffoldBackgroundColor: Color(kLight.value),
             iconTheme: IconThemeData(color: Color(kDark.value)),

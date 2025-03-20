@@ -8,12 +8,12 @@ import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
 import 'package:jobhub_v1/models/request/auth/signup_model.dart';
 import 'package:jobhub_v1/models/response/auth/login_res_model.dart';
 import 'package:jobhub_v1/models/response/auth/profile_model.dart';
+import 'package:jobhub_v1/models/response/auth/swipe_res_model.dart';
 import 'package:jobhub_v1/services/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthHelper {
   static https.Client client = https.Client();
-
 
   static Future<List<dynamic>> login(LoginModel model) async {
     ErrorRes? error;
@@ -32,8 +32,6 @@ class AuthHelper {
       final token = loginResponseModelFromJson(response.body).userToken;
       final userId = loginResponseModelFromJson(response.body).id;
       final profile = loginResponseModelFromJson(response.body).profile;
-
-      
 
       await prefs.setString('token', token);
       await prefs.setString('userId', userId);
@@ -105,6 +103,7 @@ class AuthHelper {
     final token = prefs.getString('token');
 
     if (token == null) {
+      debugPrint("Token Missing");
       return null;
     }
 
@@ -124,6 +123,26 @@ class AuthHelper {
       return profile;
     } else {
       throw Exception('Failed to get the profile');
+    }
+  }
+
+  static Future<List<SwipedRes>> getUserProfiles(String agentId) async {
+    final requestHeaders = {'Content-Type': 'application/json'};
+    final url = Uri.https(Config.apiUrl, '${Config.profileUrl}/$agentId');
+
+    final response = await client.get(url, headers: requestHeaders);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+
+      if (data.isEmpty) {
+        debugPrint('No users found for agent: $agentId');
+      }
+
+      return data.map((user) => SwipedRes.fromJson(user)).toList();
+    } else {
+      debugPrint('Failed to load user profiles: ${response.statusCode}');
+      throw Exception('Failed to load user profiles');
     }
   }
 }

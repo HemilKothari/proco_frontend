@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/exports.dart';
 import 'package:jobhub_v1/models/request/jobs/create_job.dart';
@@ -34,7 +35,9 @@ class _AddJobPageState extends State<AddJobPage> {
   // final requirementsController = TextEditingController();
   final periodController = TextEditingController();
   // List to hold multiple requirements controllers
-  List<TextEditingController> requirementsControllers = [TextEditingController()];
+  List<TextEditingController> requirementsControllers = [
+    TextEditingController()
+  ];
   bool isHiring = true;
 
   @override
@@ -89,7 +92,7 @@ class _AddJobPageState extends State<AddJobPage> {
     //   'hiring': isHiring,
     //   'imageUrl': imageUrlController.text,
     // };
-    
+
     // JobsNotifier.createJob(jobData);
 
     // To do: Call the API to send `jobData` to the backend
@@ -117,8 +120,16 @@ class _AddJobPageState extends State<AddJobPage> {
         child: CustomAppBar(
           text: 'List Query',
           child: Padding(
-            padding: EdgeInsets.all(12.0.h),
-            child: const DrawerWidget(),
+            padding: EdgeInsets.all(10.0.h),
+            child: IconButton(
+              icon: const Icon(
+                FontAwesome.arrow_left,
+                color: Color(0xFF08959D),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ),
         ),
       ),
@@ -166,7 +177,6 @@ class _AddJobPageState extends State<AddJobPage> {
                         }
                       },
                     ),
-
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: companyController,
@@ -179,7 +189,7 @@ class _AddJobPageState extends State<AddJobPage> {
                           return null;
                         }
                       },
-                    ), 
+                    ),
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: descriptionController,
@@ -301,8 +311,8 @@ class _AddJobPageState extends State<AddJobPage> {
                         final prefs = await SharedPreferences.getInstance();
                         var userId = prefs.getString('userId');
                         final requirementsList = requirementsControllers
-                                .map((controller) => controller.text)
-                                .toList();
+                            .map((controller) => controller.text)
+                            .toList();
 
                         // const userId = "6777c8d3b4c508d712aac2f3";
                         final jobData = CreateJobsRequest(
@@ -316,13 +326,12 @@ class _AddJobPageState extends State<AddJobPage> {
                           contract: contractController.text,
                           requirements: requirementsList,
                           imageUrl: imageUrlController.text,
-                          agentId: userId?? '',
-                      );
-                      // JobsNotifier.createJob(jobData);
-                      // print('Job Data: ${jsonEncode(jobData.toJson())}');
-                      JobsNotifier.createJob(jobData);
-
-                      },    
+                          agentId: userId ?? '',
+                        );
+                        // JobsNotifier.createJob(jobData);
+                        // print('Job Data: ${jsonEncode(jobData.toJson())}');
+                        JobsNotifier.createJob(jobData);
+                      },
                       text: 'List Query',
                     ),
                   ],
