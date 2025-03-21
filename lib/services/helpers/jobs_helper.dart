@@ -291,4 +291,58 @@ class JobsHelper {
       debugPrint('Error adding swiped user: $e');
     }
   }
+
+  static Future<List<SwipedRes>> getMatchedUsersId(String jobId) async {
+    try {
+      final requestHeaders = {'Content-Type': 'application/json'};
+      final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/match/$jobId');
+
+      final response = await client.get(url, headers: requestHeaders);
+
+      if (response.statusCode == 200) {
+        print("Response Received: ${response.body}");
+
+        final List<dynamic> data = json.decode(response.body);
+
+        if (data.isEmpty) {
+          debugPrint('No matched users found for this job: $jobId');
+          print("No matched users found");
+          return [];
+        }
+
+        //Convert the List<dynamic> into List<SwipedRes>
+        List<SwipedRes> matchedUsers =
+            data.map((user) => SwipedRes.fromJson(user)).toList();
+
+        return matchedUsers;
+      } else {
+        debugPrint('Failed to load matched users: ${response.statusCode}');
+        throw Exception('Failed to load matched users');
+      }
+    } catch (e) {
+      debugPrint('Error fetching matched users: $e');
+      print("Exception: $e");
+      return []; // Return an empty list in case of an error
+    }
+  }
+
+  static Future<void> addMatchedUsers(String jobId, String userId) async {
+    final requestHeaders = {'Content-Type': 'application/json'};
+    final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/match/');
+
+    try {
+      final requestBody = json.encode({'jobId': jobId, 'userId': userId});
+      final response =
+          await client.post(url, headers: requestHeaders, body: requestBody);
+
+      if (response.statusCode == 200) {
+        debugPrint('User $userId added to match users for job $jobId');
+      } else {
+        debugPrint(
+            'Failed to add matched user: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error adding matched user: $e');
+    }
+  }
 }
