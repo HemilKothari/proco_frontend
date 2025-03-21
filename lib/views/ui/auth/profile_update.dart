@@ -51,9 +51,15 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
         child: CustomAppBar(
           text: 'Update Profile',
           child: GestureDetector(
-            onTap: Get.back,
-            child: const Icon(CupertinoIcons.arrow_left),
-          ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    color: const Color(0xFF08979F),
+                    size: 20,
+                  ),
+                ),
         ),
       ),
       body: Consumer<LoginNotifier>(
