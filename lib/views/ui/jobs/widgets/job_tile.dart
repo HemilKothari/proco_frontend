@@ -21,7 +21,7 @@ class VerticalTileWidget extends StatelessWidget {
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
-          height: hieght * 0.15,
+          height: height * 0.15,
           width: width,
           color: Color(kLightGrey.value),
           child: Column(

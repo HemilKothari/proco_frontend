@@ -18,7 +18,7 @@ class PageThree extends StatelessWidget {
     return Scaffold(
       body: Container(
         width: width,
-        height: hieght,
+        height: height,
         color: const Color(0xFF040326),
         child: Stack(
           children: [
@@ -53,7 +53,7 @@ class PageThree extends StatelessWidget {
                     },
                     child: Container(
                       width: width * 0.67, // Increased width for a longer box
-                      height: hieght * 0.06, // Slightly taller height
+                      height: height * 0.06, // Slightly taller height
                       decoration: BoxDecoration(
                         color: Color(kLight.value),
                         borderRadius:
@@ -78,7 +78,7 @@ class PageThree extends StatelessWidget {
                     },
                     child: Container(
                       width: width * 0.67, // Increased width for a longer box
-                      height: hieght * 0.06, // Slightly taller height
+                      height: height * 0.06, // Slightly taller height
                       decoration: BoxDecoration(
                         color: Color(kLight.value),
                         borderRadius:

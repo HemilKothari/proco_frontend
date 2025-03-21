@@ -8,13 +8,13 @@ class CustomOutlineBtn extends StatelessWidget {
     required this.color,
     super.key,
     this.width,
-    this.hieght,
+    this.height,
     this.onTap,
     this.color2,
   });
 
   final double? width;
-  final double? hieght;
+  final double? height;
   final String text;
   final void Function()? onTap;
   final Color color;
@@ -26,7 +26,7 @@ class CustomOutlineBtn extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: width,
-        height: hieght,
+        height: height,
         decoration: BoxDecoration(
           color: color2,
           border: Border.all(color: color),

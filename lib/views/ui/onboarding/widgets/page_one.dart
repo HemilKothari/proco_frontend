@@ -13,7 +13,7 @@ class PageOne extends StatelessWidget {
     return Scaffold(
       body: Container(
         width: width,
-        height: hieght,
+        height: height,
         color: Color(kDarkPurple.value),
         child: Column(
           children: [
@@ -59,7 +59,7 @@ class PageOne extends StatelessWidget {
     return Scaffold(
       body: Container(
         width: width,
-        height: hieght,
+        height: height,
         color: const Color(0xFF040326), // Updated background color
         child: Column(
           children: [
