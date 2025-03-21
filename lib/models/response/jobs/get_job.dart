@@ -18,9 +18,9 @@ class GetJobRes {
     required this.requirements,
     required this.imageUrl,
     required this.agentId,
+    this.swipedUsers,
     this.matchedUsers,
     required this.updatedAt,
-    
   });
 
   factory GetJobRes.fromJson(Map<String, dynamic> json) => GetJobRes(
@@ -37,6 +37,7 @@ class GetJobRes {
         imageUrl: json['imageUrl'],
         // Fix: added this to fix 'Null' Type error
         agentId: json['agentId'] ?? '',
+        swipedUsers: json['swipedUsers'] ?? [],
         matchedUsers: json['matchedUsers'] ?? [],
         updatedAt: DateTime.parse(json['updatedAt']),
       );
@@ -53,6 +54,7 @@ class GetJobRes {
   final List<String> requirements;
   final String imageUrl;
   final String agentId;
+  final List<String>? swipedUsers;
   final List<String>? matchedUsers;
   final DateTime updatedAt;
 
@@ -69,6 +71,7 @@ class GetJobRes {
         'requirements': List<dynamic>.from(requirements.map((x) => x)),
         'imageUrl': imageUrl,
         'agentId': agentId,
+        'swipedUsers': swipedUsers,
         'matchedUsers': matchedUsers,
         'updatedAt': updatedAt.toIso8601String(),
       };

@@ -5,7 +5,6 @@ import 'package:jobhub_v1/models/request/filters/create_filter.dart';
 import 'package:jobhub_v1/models/response/filters/filter_response.dart';
 import 'package:jobhub_v1/models/response/filters/get_filter.dart';
 import 'package:jobhub_v1/services/helpers/filter_helper.dart';
-import 'package:jobhub_v1/views/ui/filters/filter_page.dart';
 
 class FilterNotifier extends ChangeNotifier {
   Future<List<FilterResponse>>? filterList;

@@ -324,6 +324,8 @@ class _AddJobPageState extends State<AddJobPage> {
                           requirements: requirementsList,
                           imageUrl: imageUrlController.text,
                           agentId: userId ?? '',
+                          matchedUsers: [],
+                          swipedUsers: [],
                         );
                         // JobsNotifier.createJob(jobData);
                         // print('Job Data: ${jsonEncode(jobData.toJson())}');

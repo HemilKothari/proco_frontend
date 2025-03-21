@@ -35,15 +35,15 @@ class CustomTextFieldInput extends StatelessWidget {
             borderSide: BorderSide(color: Colors.red, width: 0.5),
           ),
           focusedBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2),
-                    ),
+            borderSide: BorderSide(color: Colors.white, width: 2),
+          ),
           focusedErrorBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.zero,
             borderSide: BorderSide(color: Colors.red, width: 0.5),
           ),
           border: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
+            borderSide: BorderSide(color: Colors.white),
+          ),
         ),
         controller: controller,
         cursorHeight: 25,
