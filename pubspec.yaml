@@ -31,7 +31,7 @@ dependencies:
   flutter_chat_bubble: ^2.0.2
   flutter_animate: ^4.5.2
   image_cropper: ^4.0.0
-  image_picker: ^0.8.7+4
+  image_picker: ^1.1.2
   cached_network_image: ^3.2.3
   firebase_storage: ^11.2.1
   uuid: ^3.0.7

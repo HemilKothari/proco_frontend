@@ -44,7 +44,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Consumer<ProfileNotifier>(
         builder: (context, profileNotifier, child) {
-          // profileNotifier.getProfile();
           return FutureBuilder<ProfileRes?>(
             future: profileNotifier.profile,
             builder: (context, snapshot) {
@@ -58,299 +57,315 @@ class _ProfilePageState extends State<ProfilePage> {
                 final userData = snapshot.data;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      Container(
-                        width: width,
-                        height: height * 0.12,
-                        //color: Color(kLight.value),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: width,
+                            height: height * 0.12,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(20),
-                                  ),
-                                  child: userData!.profile == "null"
-                                      ? Image.asset(
-                                          'assets/images/user.png',
-                                        )
-                                      : CachedNetworkImage(
-                                          width: 80.w,
-                                          height: 100.h,
-                                          imageUrl: userData.profile,
-                                        ),
-                                ),
-                                const WidthSpacer(width: 20),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                Row(
                                   children: [
-                                    ReusableText(
-                                      text: userData.username,
-                                      style: appstyle(
-                                        20,
-                                        Colors.white,
-                                        FontWeight.w600,
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(20),
                                       ),
+                                      child: userData!.profile == "null"
+                                          ? Image.asset(
+                                              'assets/images/user.png',
+                                            )
+                                          : CachedNetworkImage(
+                                              width: 80.w,
+                                              height: 100.h,
+                                              imageUrl: userData.profile,
+                                            ),
                                     ),
-                                    Row(
+                                    const WidthSpacer(width: 20),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        const Icon(
-                                          MaterialIcons.location_pin,
-                                          color: Colors.white70,
-                                        ),
-                                        const WidthSpacer(width: 5),
                                         ReusableText(
-                                          text: userData.city,
+                                          text: userData.username,
                                           style: appstyle(
-                                            16,
-                                            Colors.white70,
+                                            20,
+                                            Colors.white,
                                             FontWeight.w600,
                                           ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            ReusableText(
+                                              text: userData.city,
+                                              style: appstyle(
+                                                16,
+                                                Colors.white70,
+                                                FontWeight.w600,
+                                              ),
+                                            ),
+                                            const WidthSpacer(width: 5),
+                                            ReusableText(
+                                              text: userData.state,
+                                              style: appstyle(
+                                                16,
+                                                Colors.white70,
+                                                FontWeight.w600,
+                                              ),
+                                            ),
+                                            const WidthSpacer(width: 5),
+                                            ReusableText(
+                                              text: userData.country,
+                                              style: appstyle(
+                                                16,
+                                                Colors.white70,
+                                                FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                profile = userData.skills;
-                                Get.to(() => const ProfileUpdate());
-                              },
-                              child: const Icon(
-                                color: Colors.white,
-                                Feather.edit,
-                                size: 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const HeightSpacer(size: 20),
-                      Container(
-                        padding: EdgeInsets.only(left: 8.w),
-                        width: width,
-                        height: height * 0.06,
-                        //color: const Color(0xFF08979F),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF08979F),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              const Icon(
-                                MaterialIcons.email,
-                                color: Colors.white,
-                              ),
-                              const WidthSpacer(width: 5),
-                              ReusableText(
-                                text: userData.email,
-                                style: appstyle(
-                                  16,
-                                  Colors.white,
-                                  FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const HeightSpacer(size: 20),
-                      Container(
-                        padding: EdgeInsets.only(left: 8.w),
-                        width: width,
-                        height: height * 0.06,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF08979F),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              const Icon(
-                                MaterialIcons.phone,
-                                color: Colors.white,
-                              ),
-                              const WidthSpacer(width: 5),
-                              ReusableText(
-                                text: userData.phone,
-                                style: appstyle(
-                                  16,
-                                  Colors.white,
-                                  FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const HeightSpacer(size: 20),
-                      Container(
-                        padding: EdgeInsets.only(left: 8.w),
-                        width: width,
-                        height: height * 0.06,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF08979F),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              const Icon(
-                                MaterialIcons.wc,
-                                color: Colors.white,
-                              ),
-                              const WidthSpacer(width: 5),
-                              ReusableText(
-                                text: userData.gender,
-                                style: appstyle(
-                                  16,
-                                  Colors.white,
-                                  FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const HeightSpacer(size: 20),
-                      Container(
-                        padding: EdgeInsets.only(left: 8.w),
-                        width: width,
-                        height: height * 0.06,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF08979F),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              const Icon(
-                                MaterialIcons.apartment,
-                                color: Colors.white,
-                              ),
-                              const WidthSpacer(width: 5),
-                              ReusableText(
-                                text: userData.college,
-                                style: appstyle(
-                                  16,
-                                  Colors.white,
-                                  FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const HeightSpacer(size: 20),
-                      Container(
-                        padding: EdgeInsets.only(left: 8.w),
-                        width: width,
-                        height: height * 0.06,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF08979F),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              const Icon(
-                                MaterialIcons.school,
-                                color: Colors.white,
-                              ),
-                              const WidthSpacer(width: 5),
-                              ReusableText(
-                                text: userData.branch,
-                                style: appstyle(
-                                  16,
-                                  Colors.white,
-                                  FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const HeightSpacer(size: 20),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: const Color(0xFF08979F),
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(8.h),
-                              child: Center(
-                                child: ReusableText(
-                                  text: 'Skills',
-                                  style: appstyle(
-                                    16,
-                                    Colors.white,
-                                    FontWeight.w600,
+                                GestureDetector(
+                                  onTap: () {
+                                    profile = userData.skills;
+                                    Get.to(() => const ProfileUpdate());
+                                  },
+                                  child: const Icon(
+                                    color: Colors.white,
+                                    Feather.edit,
+                                    size: 18,
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+                          const HeightSpacer(size: 20),
+                          Container(
+                            padding: EdgeInsets.only(left: 8.w),
+                            width: width,
+                            height: height * 0.06,
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF08979F),
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    MaterialIcons.email,
+                                    color: Colors.white,
+                                  ),
+                                  const WidthSpacer(width: 5),
+                                  ReusableText(
+                                    text: userData.email,
+                                    style: appstyle(
+                                      16,
+                                      Colors.white,
+                                      FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const HeightSpacer(size: 3),
-                            SizedBox(
-                              height: height * 0.45,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8.w,
-                                  vertical: 8.h,
+                          ),
+                          const HeightSpacer(size: 20),
+                          Container(
+                            padding: EdgeInsets.only(left: 8.w),
+                            width: width,
+                            height: height * 0.06,
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF08979F),
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    MaterialIcons.phone,
+                                    color: Colors.white,
+                                  ),
+                                  const WidthSpacer(width: 5),
+                                  ReusableText(
+                                    text: userData.phone,
+                                    style: appstyle(
+                                      16,
+                                      Colors.white,
+                                      FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const HeightSpacer(size: 20),
+                          Container(
+                            padding: EdgeInsets.only(left: 8.w),
+                            width: width,
+                            height: height * 0.06,
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF08979F),
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    MaterialIcons.wc,
+                                    color: Colors.white,
+                                  ),
+                                  const WidthSpacer(width: 5),
+                                  ReusableText(
+                                    text: userData.gender,
+                                    style: appstyle(
+                                      16,
+                                      Colors.white,
+                                      FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const HeightSpacer(size: 20),
+                          Container(
+                            padding: EdgeInsets.only(left: 8.w),
+                            width: width,
+                            height: height * 0.06,
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF08979F),
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    MaterialIcons.apartment,
+                                    color: Colors.white,
+                                  ),
+                                  const WidthSpacer(width: 5),
+                                  ReusableText(
+                                    text: userData.college,
+                                    style: appstyle(
+                                      16,
+                                      Colors.white,
+                                      FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const HeightSpacer(size: 20),
+                          Container(
+                            padding: EdgeInsets.only(left: 8.w),
+                            width: width,
+                            height: height * 0.06,
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF08979F),
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    MaterialIcons.school,
+                                    color: Colors.white,
+                                  ),
+                                  const WidthSpacer(width: 5),
+                                  ReusableText(
+                                    text: userData.branch,
+                                    style: appstyle(
+                                      16,
+                                      Colors.white,
+                                      FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const HeightSpacer(size: 20),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: const Color(0xFF08979F),
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(8.h),
+                                  child: Center(
+                                    child: ReusableText(
+                                      text: 'Skills',
+                                      style: appstyle(
+                                        16,
+                                        Colors.white,
+                                        FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                child: ListView.builder(
-                                  itemCount: userData.skills.length,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    final skill = userData.skills[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 10.w,
-                                        ),
-                                        width: width,
-                                        height: height * 0.06,
-                                        decoration: const BoxDecoration(
-                                          //color: const Color(0xFF040326),
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0xFF040326),
-                                              width: 2.0,
+                                const HeightSpacer(size: 3),
+                                SizedBox(
+                                  height: height * 0.45,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w,
+                                      vertical: 8.h,
+                                    ),
+                                    child: ListView.builder(
+                                      itemCount: userData.skills.length,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        final skill = userData.skills[index];
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w,
                                             ),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            ReusableText(
-                                              text: skill,
-                                              style: appstyle(
-                                                16,
-                                                Color(0xFF040326),
-                                                FontWeight.normal,
+                                            width: width,
+                                            height: height * 0.06,
+                                            decoration: const BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color: Color(0xFF040326),
+                                                  width: 2.0,
+                                                ),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                            child: Row(
+                                              children: [
+                                                ReusableText(
+                                                  text: skill,
+                                                  style: appstyle(
+                                                    16,
+                                                    Color(0xFF040326),
+                                                    FontWeight.normal,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 );
               }
