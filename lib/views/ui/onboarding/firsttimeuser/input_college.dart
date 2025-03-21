@@ -1,9 +1,7 @@
 // page3.dart
 import 'package:flutter/material.dart';
-import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/views/ui/homepage.dart';
 import 'package:jobhub_v1/views/ui/onboarding/firsttimeuser/input_location.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Page3 extends StatelessWidget {
   @override
@@ -12,39 +10,24 @@ class Page3 extends StatelessWidget {
       backgroundColor: const Color(0xFF040326),
       body: Center(
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.8,
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [const Color(0xFF08979F), const Color(0xFF040326)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
             borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              colors: [Colors.teal, Colors.blue],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Small Back Arrow at the Top Left
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context); // Go back to previous page
-                },
-                child: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-
               Text(
                 "Which College Do You Belong To?",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 26.sp,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
               SizedBox(height: 20),
@@ -52,12 +35,9 @@ class Page3 extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: "College Name",
-                  hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 2),
+                  hintStyle: TextStyle(color: Colors.white70),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
@@ -66,55 +46,28 @@ class Page3 extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: "Branch (eg: SoC)",
-                  hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 2),
+                  hintStyle: TextStyle(color: Colors.white70),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
               SizedBox(height: 20),
-
-              Center(
-                child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context)
-                            .push(_createPageRoute(Page4()));
-                    },
-                    child: Container(
-                      width: 50, // Adjust size as per design
-                      height:50,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/Sign_in_circle.png', // Replace with your image path
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    )),
+              SizedBox(height: 20),
+              IconButton(
+                icon: Icon(Icons.arrow_circle_right, color: Colors.white),
+                iconSize: 50,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Page4()),
+                  );
+                },
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-   // Page transition function
-  Route _createPageRoute(Widget page) {
-    return PageRouteBuilder(
-      transitionDuration: Duration(milliseconds: 400), // Animation speed
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
-      },
     );
   }
 }

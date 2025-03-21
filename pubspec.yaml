@@ -29,18 +29,16 @@ dependencies:
   flutter_svg: ^2.0.5
   flutter_zoom_drawer: ^3.0.4+1
   flutter_chat_bubble: ^2.0.2
-  flutter_animate: ^4.5.2
+  flutter_animate: ^4.1.1+1
   image_cropper: ^4.0.0
-  image_picker: ^1.1.2
+  image_picker: ^0.8.7+4
   cached_network_image: ^3.2.3
   firebase_storage: ^11.2.1
   uuid: ^3.0.7
   intl: ^0.18.1
   socket_io_client: ^2.0.2
   flutter_card_swiper: ^7.0.2
-  typer: ^1.0.10
-  im_stepper: ^1.0.1+1
-  form_field_validator: ^1.1.0
+  flutter_typer: ^1.0.0 
 
 dev_dependencies:
   flutter_test:
