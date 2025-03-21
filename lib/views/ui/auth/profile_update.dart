@@ -103,15 +103,15 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         }
 
         final updateReq = ProfileUpdateReq(
-          city: _cityController.text,
-          state: _stateController.text,
-          country: _countryController.text,
+          city: _cityController.text.trim(),
+          state: _stateController.text.trim(),
+          country: _countryController.text.trim(),
           phone: phoneNumber,
           profile:
               null, // You can implement profile picture functionality separately
           skills: skills,
-          college: _collegeController.text,
-          branch: _branchController.text,
+          college: _collegeController.text.trim(),
+          branch: _branchController.text.trim(),
         );
 
         debugPrint("Profile update data: ${updateReq.toJson()}");

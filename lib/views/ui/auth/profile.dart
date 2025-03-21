@@ -385,7 +385,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     Future.microtask(() => context.read<ProfileNotifier>().getProfile());
   }
