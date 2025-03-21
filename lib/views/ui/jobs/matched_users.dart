@@ -43,6 +43,12 @@ class _MatchedUsersState extends State<MatchedUsers> {
     profileNotifier.getSwipedUsersId(jobId);
   }
 
+  Future<String> getCurrentJobId() async {
+    String jobId = await getJobId();
+    print("JOB ID FOUND: $jobId");
+    return jobId;
+  }
+
   // Helper widgets
   Widget _buildInfoBox(dynamic text, double fontSize) {
     if (text == null ||
@@ -131,102 +137,130 @@ class _MatchedUsersState extends State<MatchedUsers> {
                       SizedBox(
                         height: 0.87.sh,
                         child: ClipRRect(
-                          clipBehavior: Clip.antiAlias,
-                          child: FutureBuilder<List<SwipedRes>>(
-                            future: profileNotifier.swipedUsers,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                  child: Text('Error: ${snapshot.error}'),
-                                );
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return Center(
-                                  child: Text(
-                                    'No users available.',
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: const Color(0xFF040326),
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                final userList = snapshot.data!;
-                                return CardSwiper(
-                                  controller: controller,
-                                  scale: 0.5,
-                                  cardsCount: userList.length,
-                                  allowedSwipeDirection:
-                                      const AllowedSwipeDirection.only(
-                                          left: true, right: true),
-                                  cardBuilder: (context, index,
-                                      percentThresholdX, percentThresholdY) {
-                                    final user = userList[index];
-                                    return Container(
-                                      padding: EdgeInsets.all(8.w),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF040326),
-                                        borderRadius:
-                                            BorderRadius.circular(20.w),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          SizedBox(height: 8),
-                                          Text(
-                                            user.username ?? 'Unknown User',
-                                            style: TextStyle(
-                                              fontSize: 20.sp,
-                                              fontWeight: FontWeight.bold,
-                                              color: const Color(0xFF08979F),
-                                              fontFamily: 'Poppins',
-                                            ),
-                                            textAlign: TextAlign.center,
+                            clipBehavior: Clip.antiAlias,
+                            child: FutureBuilder<String>(
+                              future: getCurrentJobId(),
+                              builder: (context, userSnapshot) {
+                                if (!userSnapshot.hasData) {
+                                  return const Center(
+                                      child:
+                                          CircularProgressIndicator()); // Show loading until agentId is fetched
+                                }
+
+                                final String currentJobId = userSnapshot.data!;
+                                return FutureBuilder<List<SwipedRes>>(
+                                  future: profileNotifier.swipedUsers,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text('Error: ${snapshot.error}'),
+                                      );
+                                    } else if (!snapshot.hasData ||
+                                        snapshot.data!.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                          'No users available.',
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: const Color(0xFF040326),
+                                            fontWeight: FontWeight.w400,
                                           ),
-                                          //SizedBox(height: 4),
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            child: Image.network(
-                                              user.profile,
-                                              height: 0.45.sh,
-                                              width: double.infinity,
-                                              fit: BoxFit.contain,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  'assets/images/user-placeholder.png',
-                                                  height: 0.45.sh,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.contain,
-                                                );
-                                              },
+                                        ),
+                                      );
+                                    } else {
+                                      final userList = snapshot.data!;
+                                      return CardSwiper(
+                                        controller: controller,
+                                        scale: 0.5,
+                                        cardsCount: userList.length,
+                                        allowedSwipeDirection:
+                                            const AllowedSwipeDirection.only(
+                                                left: true, right: true),
+                                        onSwipe: (previousIndex, currentIndex,
+                                            direction) {
+                                          if (direction ==
+                                              CardSwiperDirection.right) {
+                                            final userId =
+                                                userList[previousIndex].id;
+                                            profileNotifier.addMatchedUsers(
+                                                currentJobId,
+                                                userId); // Store swiped user
+                                          }
+                                          return true; // Continue swipe action
+                                        },
+                                        cardBuilder: (context,
+                                            index,
+                                            percentThresholdX,
+                                            percentThresholdY) {
+                                          final user = userList[index];
+                                          return Container(
+                                            padding: EdgeInsets.all(8.w),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF040326),
+                                              borderRadius:
+                                                  BorderRadius.circular(20.w),
                                             ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          _buildInfoBox(user.skills, 12.sp),
-                                          SizedBox(height: 10),
-                                          _buildInfoBox(
-                                              user.location ??
-                                                  'Location Not Available',
-                                              12.sp),
-                                        ],
-                                      ),
-                                    );
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SizedBox(height: 8),
+                                                Text(
+                                                  user.username ??
+                                                      'Unknown User',
+                                                  style: TextStyle(
+                                                    fontSize: 20.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        const Color(0xFF08979F),
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                //SizedBox(height: 4),
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  child: Image.network(
+                                                    user.profile,
+                                                    height: 0.45.sh,
+                                                    width: double.infinity,
+                                                    fit: BoxFit.contain,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                        'assets/images/user-placeholder.png',
+                                                        height: 0.45.sh,
+                                                        width: double.infinity,
+                                                        fit: BoxFit.contain,
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8),
+                                                _buildInfoBox(
+                                                    user.skills, 12.sp),
+                                                SizedBox(height: 10),
+                                                _buildInfoBox(
+                                                    user.location ??
+                                                        'Location Not Available',
+                                                    12.sp),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        isLoop: true,
+                                      );
+                                    }
                                   },
-                                  isLoop: true,
                                 );
-                              }
-                            },
-                          ),
-                        ),
+                              },
+                            )),
                       ),
                       Positioned(
                         bottom: 0, // Adjust to move the icons up

@@ -329,11 +329,15 @@ class JobsHelper {
   static Future<void> addMatchedUsers(String jobId, String userId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
     final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/match/');
+    debugPrint("jobId: $jobId");
+    debugPrint("userId: $userId");
 
     try {
       final requestBody = json.encode({'jobId': jobId, 'userId': userId});
       final response =
           await client.post(url, headers: requestHeaders, body: requestBody);
+
+      debugPrint('Response: ${response.body}');
 
       if (response.statusCode == 200) {
         debugPrint('User $userId added to match users for job $jobId');
