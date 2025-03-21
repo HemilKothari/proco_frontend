@@ -1,16 +1,12 @@
 name: jobhub_v1
 description: A new Flutter project.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.1 <4.0.0'
-
-
-  
-
+  sdk: ">=3.1.1 <4.0.0"
 
 dependencies:
   flutter:
@@ -38,18 +34,16 @@ dependencies:
   intl: ^0.18.1
   socket_io_client: ^2.0.2
   flutter_card_swiper: ^7.0.2
-  flutter_typer: ^1.0.0 
+  im_stepper: ^1.0.1+1
+  form_field_validator: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
   flutter_lints: ^2.0.0
 
-
 flutter:
-
   uses-material-design: true
 
   assets:

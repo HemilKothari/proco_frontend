@@ -1,303 +1,526 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/exports.dart';
 import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
-import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/custom_btn.dart';
-import 'package:jobhub_v1/views/common/custom_textfield.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:image_picker/image_picker.dart'; // Import image_picker
-import 'package:jobhub_v1/views/common/width_spacer.dart';
-import 'package:provider/provider.dart';
+import 'package:jobhub_v1/services/helpers/auth_helper.dart';
+import 'package:jobhub_v1/views/ui/mainscreen.dart';
 
-class ProfileUpdate extends StatefulWidget {
-  const ProfileUpdate({
-    super.key,
-  });
+class UpdateProfilePage extends StatefulWidget {
+  const UpdateProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<ProfileUpdate> createState() => _ProfileUpdateState();
+  State<UpdateProfilePage> createState() => _UpdateProfilePageState();
 }
 
-class _ProfileUpdateState extends State<ProfileUpdate> {
-  TextEditingController phone = TextEditingController();
-  TextEditingController city = TextEditingController(); // City field
-  TextEditingController state = TextEditingController(); // State field
-  TextEditingController country = TextEditingController(); // Country field
-  TextEditingController college = TextEditingController(); // College field
-  TextEditingController branch = TextEditingController(); // Branch field
-  TextEditingController skill0 = TextEditingController();
-  TextEditingController skill1 = TextEditingController();
-  TextEditingController skill2 = TextEditingController();
-  TextEditingController skill3 = TextEditingController();
-  TextEditingController skill4 = TextEditingController();
-  final ImagePicker _picker = ImagePicker(); // Instance of ImagePicker
+class _UpdateProfilePageState extends State<UpdateProfilePage> {
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _collegeController = TextEditingController();
+  final TextEditingController _branchController = TextEditingController();
+
+  List<String> skills = [];
+  final TextEditingController _skillController = TextEditingController();
+
+  bool isLoading = true;
+  bool isUpdating = false;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
 
   @override
   void dispose() {
-    phone.dispose();
-    city.dispose();
-    state.dispose();
-    country.dispose();
-    college.dispose();
-    branch.dispose();
-    skill0.dispose();
-    skill1.dispose();
-    skill2.dispose();
-    skill3.dispose();
-    skill4.dispose();
+    // Dispose controllers to prevent memory leaks
+    _cityController.dispose();
+    _stateController.dispose();
+    _countryController.dispose();
+    _phoneController.dispose();
+    _collegeController.dispose();
+    _branchController.dispose();
+    _skillController.dispose();
     super.dispose();
   }
 
-  Future<void> _pickImage(ImageUpoader imageUploader) async {
-    final pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery); // Or ImageSource.camera
-    if (pickedFile != null) {
-      imageUploader.imageFil
-          .add(pickedFile.path); // Add picked image path to imageUploader
-      setState(() {}); // Rebuild to show the picked image
+  void _loadProfile() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      debugPrint("Loading profile data...");
+      final profileData = await AuthHelper.getProfile();
+
+      if (profileData != null) {
+        debugPrint("Profile data loaded successfully");
+        setState(() {
+          _cityController.text = profileData.city ?? '';
+          _stateController.text = profileData.state ?? '';
+          _countryController.text = profileData.country ?? '';
+          _phoneController.text = profileData.phone ?? '';
+          _collegeController.text = profileData.college ?? '';
+          _branchController.text = profileData.branch ?? '';
+          skills = List<String>.from(profileData.skills ?? []);
+        });
+      } else {
+        debugPrint("Profile data is null");
+        setState(() {
+          errorMessage = "Could not load profile data";
+        });
+      }
+    } catch (e) {
+      debugPrint("Error loading profile: $e");
+      setState(() {
+        errorMessage = "Error loading profile: $e";
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _updateProfile() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isUpdating = true;
+        errorMessage = null;
+      });
+
+      debugPrint("Updating profile...");
+
+      try {
+        // Validate phone number format
+        final phoneNumber = _phoneController.text.trim();
+        if (phoneNumber.isEmpty || !isValidPhoneNumber(phoneNumber)) {
+          throw Exception("Please enter a valid phone number");
+        }
+
+        final updateReq = ProfileUpdateReq(
+          city: _cityController.text,
+          state: _stateController.text,
+          country: _countryController.text,
+          phone: phoneNumber,
+          profile:
+              null, // You can implement profile picture functionality separately
+          skills: skills,
+          college: _collegeController.text,
+          branch: _branchController.text,
+        );
+
+        debugPrint("Profile update data: ${updateReq.toJson()}");
+
+        final response = await AuthHelper.updateProfile(updateReq);
+
+        if (response == true) {
+          debugPrint("Profile updated successfully");
+          Get.snackbar(
+            'Success',
+            'Profile updated successfully',
+            colorText: Colors.white,
+            backgroundColor: Colors.green,
+            icon: const Icon(Icons.check_circle, color: Colors.white),
+            duration: const Duration(seconds: 3),
+          );
+
+          // Navigate to main screen after delay
+          await Future.delayed(const Duration(seconds: 2));
+          if (mounted) {
+            debugPrint("Navigating to MainScreen");
+            Get.offAll(() => const MainScreen());
+          }
+        } else {
+          debugPrint("Profile update failed");
+          setState(() {
+            errorMessage = "Profile update failed. Please try again.";
+          });
+
+          Get.snackbar(
+            'Update Failed',
+            'Please check your information and try again',
+            colorText: Colors.white,
+            backgroundColor: Colors.orange,
+            icon: const Icon(Icons.warning, color: Colors.white),
+            duration: const Duration(seconds: 4),
+          );
+        }
+      } catch (e) {
+        debugPrint("Error updating profile: $e");
+
+        setState(() {
+          errorMessage = "Error: ${e.toString()}";
+        });
+
+        Get.snackbar(
+          'Error',
+          'An error occurred: ${e.toString()}',
+          colorText: Colors.white,
+          backgroundColor: Colors.red,
+          icon: const Icon(Icons.error, color: Colors.white),
+          duration: const Duration(seconds: 5),
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } finally {
+        if (mounted) {
+          setState(() {
+            isUpdating = false;
+          });
+        }
+      }
+    } else {
+      debugPrint("Form validation failed");
+      Get.snackbar(
+        'Validation Error',
+        'Please fill in all required fields correctly',
+        colorText: Colors.white,
+        backgroundColor: Colors.red,
+        icon: const Icon(Icons.error, color: Colors.white),
+      );
+    }
+  }
+
+  // Basic phone validation
+  bool isValidPhoneNumber(String phone) {
+    // This is a simple validation, enhance as needed
+    return phone.length >= 10 && RegExp(r'^\d{10,15}$').hasMatch(phone);
+  }
+
+  void _addSkill() {
+    final skill = _skillController.text.trim();
+    if (skill.isNotEmpty && !skills.contains(skill)) {
+      setState(() {
+        skills.add(skill);
+        _skillController.clear();
+      });
+      debugPrint("Added skill: $skill");
+    } else if (skills.contains(skill)) {
+      Get.snackbar(
+        'Duplicate Skill',
+        'This skill is already in your list',
+        colorText: Colors.white,
+        backgroundColor: Colors.orange,
+        duration: const Duration(seconds: 2),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50.h),
-        child: CustomAppBar(
-          text: 'Update Profile',
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(
-              Icons.arrow_back_ios,
-              color: const Color(0xFF08979F),
-              size: 20,
-            ),
+      appBar: AppBar(
+        title: const Text('Update Profile'),
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: isLoading ? null : _loadProfile,
+            tooltip: 'Reload Profile',
           ),
-        ),
+        ],
       ),
-      body: Consumer<LoginNotifier>(
-        builder: (context, loginNotifier, child) {
-          return ListView(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ReusableText(
-                    text: 'Personal Details',
-                    style: appstyle(35, Color(kDark.value), FontWeight.bold),
-                  ),
-                  Consumer<ImageUpoader>(
-                    builder: (context, imageUploader, child) {
-                      return imageUploader.imageFil.isEmpty
-                          ? GestureDetector(
-                              onTap: () => _pickImage(imageUploader),
-                              child: CircleAvatar(
-                                backgroundColor: Color(kLightBlue.value),
-                                child: const Center(
-                                  child: Icon(Icons.photo_filter_rounded),
-                                ),
-                              ),
-                            )
-                          : GestureDetector(
-                              onTap: () {
-                                imageUploader.imageFil.clear();
-                                setState(() {});
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Color(kLightBlue.value),
-                                backgroundImage:
-                                    FileImage(File(imageUploader.imageFil[0])),
-                              ),
-                            );
-                    },
-                  ),
-                ],
-              ),
-              const HeightSpacer(size: 20),
-              Form(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : errorMessage != null &&
+                  errorMessage!.contains("Could not load profile data")
+              ? _buildErrorView()
+              : _buildFormView(),
+    );
+  }
+
+  Widget _buildErrorView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 60, color: Colors.red),
+          const SizedBox(height: 16),
+          Text(
+            errorMessage ?? 'An error occurred',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: _loadProfile,
+            child: const Text('Try Again'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormView() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Error message if any
+            if (errorMessage != null &&
+                !errorMessage!.contains("Could not load profile data"))
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  border: Border.all(color: Colors.red.shade200),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            controller: city,
-                            hintText: 'City',
-                            keyboardType: TextInputType.text,
-                            validator: (city) {
-                              if (city!.isEmpty) {
-                                return 'Please enter a valid city';
-                              } else {
-                                return null;
-                              }
-                            },
-                          ),
-                        ),
-                        const WidthSpacer(width: 10),
-                        Expanded(
-                          child: CustomTextField(
-                            controller: state,
-                            hintText: 'State',
-                            keyboardType: TextInputType.text,
-                            validator: (state) {
-                              if (state!.isEmpty) {
-                                return 'Please enter a valid state';
-                              } else {
-                                return null;
-                              }
-                            },
-                          ),
-                        ),
-                        const WidthSpacer(width: 10),
-                        Expanded(
-                          child: CustomTextField(
-                            controller: country,
-                            hintText: 'Country',
-                            keyboardType: TextInputType.text,
-                            validator: (country) {
-                              if (country!.isEmpty) {
-                                return 'Please enter a valid country';
-                              } else {
-                                return null;
-                              }
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: phone,
-                      hintText: 'Phone Number',
-                      keyboardType: TextInputType.phone,
-                      validator: (phone) {
-                        if (phone!.isEmpty) {
-                          return 'Please enter a valid phone';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: college,
-                      hintText: 'College',
-                      keyboardType: TextInputType.text,
-                      validator: (college) {
-                        if (college!.isEmpty) {
-                          return 'Please enter a valid college name';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: branch,
-                      hintText: 'Branch',
-                      keyboardType: TextInputType.text,
-                      validator: (branch) {
-                        if (branch!.isEmpty) {
-                          return 'Please enter a valid branch';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    const HeightSpacer(size: 10),
-                    ReusableText(
-                      text: 'Professional Skills',
-                      style: appstyle(30, Color(kDark.value), FontWeight.bold),
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: skill0,
-                      hintText: 'Professional Skill 1',
-                      keyboardType: TextInputType.text,
-                      validator: (skill0) {
-                        if (skill0!.isEmpty) {
-                          return 'Please enter a valid skill';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: skill1,
-                      hintText: 'Professional Skill 2',
-                      keyboardType: TextInputType.text,
-                      validator: (skill1) {
-                        if (skill1!.isEmpty) {
-                          return 'Please enter a valid skill';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: skill2,
-                      hintText: 'Professional Skill 3',
-                      keyboardType: TextInputType.text,
-                      validator: (skill2) {
-                        if (skill2!.isEmpty) {
-                          return 'Please enter a valid skill';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    const HeightSpacer(size: 20),
-                    Consumer<ImageUpoader>(
-                      builder: (context, imageUploader, child) {
-                        return CustomButton(
-                          onTap: () {
-                            // Check if image is missing and assign the default image URL
-                            String profileImage = imageUploader
-                                    .imageFil.isNotEmpty
-                                ? imageUploader
-                                    .imageFil[0] // Use the picked image
-                                : "https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Clip-Art-Transparent-PNG.png"; // Default image URL
-
-                            final model = ProfileUpdateReq(
-                              city: city.text,
-                              state: state.text,
-                              country: country.text,
-                              phone: phone.text,
-                              profile:
-                                  profileImage, // Use the profile image (either uploaded or default)
-                              skills: [
-                                skill0.text,
-                                skill1.text,
-                                skill2.text,
-                              ],
-                              college: college.text,
-                              branch: branch.text,
-                            );
-
-                            loginNotifier.updateProfile(
-                                model); // Call the update function
-                          },
-                          text: 'Update Profile',
-                        );
-                      },
+                    const Icon(Icons.error_outline, color: Colors.red),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        errorMessage!,
+                        style: TextStyle(color: Colors.red.shade700),
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          );
-        },
+
+            // Personal Information
+            _buildSectionHeader('Personal Information'),
+
+            // Phone
+            TextFormField(
+              controller: _phoneController,
+              decoration: const InputDecoration(
+                labelText: 'Phone Number *',
+                hintText: 'Enter your 10-digit phone number',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.phone),
+              ),
+              keyboardType: TextInputType.phone,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your phone number';
+                }
+                if (!isValidPhoneNumber(value)) {
+                  return 'Please enter a valid phone number';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Location
+            _buildSectionHeader('Location'),
+
+            // City
+            TextFormField(
+              controller: _cityController,
+              decoration: const InputDecoration(
+                labelText: 'City *',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.location_city),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your city';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // State
+            TextFormField(
+              controller: _stateController,
+              decoration: const InputDecoration(
+                labelText: 'State *',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.map),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your state';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Country
+            TextFormField(
+              controller: _countryController,
+              decoration: const InputDecoration(
+                labelText: 'Country *',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.public),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your country';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Education
+            _buildSectionHeader('Education'),
+
+            // College
+            TextFormField(
+              controller: _collegeController,
+              decoration: const InputDecoration(
+                labelText: 'College',
+                hintText: 'Enter your college/university name',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.school),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Branch
+            TextFormField(
+              controller: _branchController,
+              decoration: const InputDecoration(
+                labelText: 'Branch',
+                hintText: 'Enter your field of study',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.subject),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Skills
+            _buildSectionHeader('Skills'),
+
+            // Add Skills
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _skillController,
+                    decoration: const InputDecoration(
+                      labelText: 'Add a skill',
+                      hintText: 'e.g., Flutter, React, Project Management',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.psychology),
+                    ),
+                    onFieldSubmitted: (_) => _addSkill(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: _addSkill,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 16),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Display Skills
+            _buildSkillsList(),
+            const SizedBox(height: 24),
+
+            // Update Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: isUpdating ? null : _updateProfile,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                child: isUpdating
+                    ? const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Text('Updating...', style: TextStyle(fontSize: 16)),
+                        ],
+                      )
+                    : const Text(
+                        'Update Profile',
+                        style: TextStyle(fontSize: 16),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildSkillsList() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            skills.isEmpty
+                ? 'No skills added yet'
+                : 'Your Skills (${skills.length})',
+            style: TextStyle(
+              color: skills.isEmpty ? Colors.grey : Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: skills.map((skill) {
+              return Chip(
+                label: Text(skill),
+                backgroundColor: Colors.blue.shade100,
+                deleteIconColor: Colors.blue.shade700,
+                onDeleted: () {
+                  setState(() {
+                    skills.remove(skill);
+                  });
+                  debugPrint("Removed skill: $skill");
+                },
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }

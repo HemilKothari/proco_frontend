@@ -385,7 +385,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     Future.microtask(() => context.read<ProfileNotifier>().getProfile());
   }
@@ -499,7 +499,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         GestureDetector(
-          onTap: () => Get.to(() => const ProfileUpdate()),
+          onTap: () => Get.to(() => const UpdateProfilePage()),
           child: const Icon(Feather.edit, color: Colors.white, size: 18),
         ),
       ],
