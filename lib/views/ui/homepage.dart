@@ -191,6 +191,17 @@ class _HomePageState extends State<HomePage> {
                                       allowedSwipeDirection:
                                           AllowedSwipeDirection.only(
                                               left: true, right: true),
+                                      onSwipe: (previousIndex, currentIndex,
+                                          direction) {
+                                        if (direction ==
+                                            CardSwiperDirection.right) {
+                                          final jobId =
+                                              jobList[previousIndex].id;
+                                          jobNotifier.addSwipedUsers(jobId,
+                                              currentUserId); // Store swiped user
+                                        }
+                                        return true; // Continue swipe action
+                                      },
                                       cardBuilder: (context,
                                           index,
                                           percentThresholdX,
