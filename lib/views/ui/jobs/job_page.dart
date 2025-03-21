@@ -86,7 +86,7 @@ class _JobPageState extends State<JobPage> {
                           const HeightSpacer(size: 30),
                           Container(
                             width: width,
-                            height: hieght * 0.27,
+                            height: height * 0.27,
                             color: Color(kLightGrey.value),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -162,7 +162,7 @@ class _JobPageState extends State<JobPage> {
                           ),
                           const HeightSpacer(size: 10),
                           SizedBox(
-                            height: hieght * 0.6,
+                            height: height * 0.6,
                             child: ListView.builder(
                               itemCount: job.requirements.length,
                               physics: const NeverScrollableScrollPhysics(),
@@ -212,7 +212,7 @@ class _JobPageState extends State<JobPage> {
                             },
                             color2: Color(kOrange.value),
                             width: width,
-                            hieght: hieght * 0.06,
+                            height: height * 0.06,
                             text: 'Apply Now',
                             color: Color(kLight.value),
                           ),

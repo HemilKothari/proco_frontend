@@ -15,7 +15,7 @@ class ProfileRes {
     required this.skills,
     required this.updatedAt,
     required this.profile,
-    this.phone = "1234567890",
+    this.phone = "",
     this.location = "",
     this.college = "",
     this.gender = "",

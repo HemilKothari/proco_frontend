@@ -264,7 +264,14 @@ class JobCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             GestureDetector(
-              child: Image.network(job.imageUrl),
+              child: Image.network(
+                job.imageUrl,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/images/default-placeholder.png',
+                  );
+                },
+              ),
               onTap: () async => {
                 await setCurrentJobId(job.id),
                 Navigator.push(

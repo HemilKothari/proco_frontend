@@ -24,7 +24,7 @@ class VerticalShimmer extends StatelessWidget {
       ],
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-        height: hieght * 0.15,
+        height: height * 0.15,
         width: width,
         color: Color(kLightGrey.value),
       ),

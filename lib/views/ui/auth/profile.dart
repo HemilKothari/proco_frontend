@@ -31,6 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF040326),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(0.065.sh),
         child: CustomAppBar(
@@ -62,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Container(
                         width: width,
-                        height: hieght * 0.12,
+                        height: height * 0.12,
                         color: Color(kLight.value),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -134,7 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Container(
                         padding: EdgeInsets.only(left: 8.w),
                         width: width,
-                        height: hieght * 0.06,
+                        height: height * 0.06,
                         color: Color(kLightGrey.value),
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -152,7 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Container(
                         padding: EdgeInsets.only(left: 8.w),
                         width: width,
-                        height: hieght * 0.06,
+                        height: height * 0.06,
                         color: Color(kLightGrey.value),
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -195,7 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             const HeightSpacer(size: 3),
                             SizedBox(
-                              height: hieght * 0.5,
+                              height: height * 0.5,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 8.w,
@@ -213,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           horizontal: 10.w,
                                         ),
                                         width: width,
-                                        height: hieght * 0.06,
+                                        height: height * 0.06,
                                         color: Color(kLight.value),
                                         child: Row(
                                           children: [

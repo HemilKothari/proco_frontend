@@ -41,7 +41,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 children: const [PageOne(), PageThree()],
               ),
               Positioned(
-                bottom: hieght * 0.12,
+                bottom: height * 0.12,
                 left: 0,
                 right: 0,
                 child: onBoardNotifier.isLastPage

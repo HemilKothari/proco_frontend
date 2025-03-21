@@ -17,7 +17,7 @@ class CustomButton extends StatelessWidget {
       child: Container(
         color: const Color(0xFF040326),
         width: width,
-        height: hieght * 0.065,
+        height: height * 0.065,
         child: Center(
           child: ReusableText(
             text: text,
