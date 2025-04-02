@@ -10,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MesssagingHelper {
   static https.Client client = https.Client();
 
-  // Apply for job
   static Future<List<dynamic>> sendMessage(SendMessage model) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
