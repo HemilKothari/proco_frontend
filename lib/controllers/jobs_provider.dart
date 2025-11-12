@@ -43,7 +43,7 @@ class JobsNotifier extends ChangeNotifier {
           icon: const Icon(Icons.check_circle),
         );
         await Future.delayed(const Duration(seconds: 1)).then((value) {
-          Get.offAll(() => const JobListingPage());
+          Get.back();
         });
         // Refresh the job list after successful creation
         getJobs();
