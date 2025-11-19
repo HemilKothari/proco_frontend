@@ -18,7 +18,6 @@ It connects to the ProCo Server API and provides the UI for authentication, job 
 
 - **Flutter**
 - **Dart**
-- **Provider / GetX / Your chosen state management**
 - **REST API Integration**
 
 ---
