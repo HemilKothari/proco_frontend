@@ -58,7 +58,7 @@ class _JobListingPageState extends State<JobListingPage> {
   void setCurrentJobId(String jobId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('currentJobId', jobId);
-    print("Current job set to: $jobId");
+    debugPrint("Current job set to: $jobId");
   }
 
   @override

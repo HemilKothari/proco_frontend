@@ -19,7 +19,7 @@ class MesssagingHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.https(Config.apiUrl, Config.messagingUrl);
+    final url = Uri.http(Config.apiUrl, Config.messagingUrl);
     final response = await client.post(
       url,
       headers: requestHeaders,

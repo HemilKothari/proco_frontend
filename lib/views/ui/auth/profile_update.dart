@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
-import 'package:jobhub_v1/services/helpers/auth_helper.dart';
+import 'package:jobhub_v1/services/helpers/user_helper.dart';
 import 'package:jobhub_v1/views/ui/mainscreen.dart';
 
 class UpdateProfilePage extends StatefulWidget {
@@ -55,7 +55,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
     try {
       debugPrint("Loading profile data...");
-      final profileData = await AuthHelper.getProfile();
+      final profileData = await UserHelper.getProfile();
 
       if (profileData != null) {
         debugPrint("Profile data loaded successfully");
@@ -116,7 +116,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
         debugPrint("Profile update data: ${updateReq.toJson()}");
 
-        final response = await AuthHelper.updateProfile(updateReq);
+        final response = await UserHelper.updateProfile(updateReq);
 
         if (response == true) {
           debugPrint("Profile updated successfully");

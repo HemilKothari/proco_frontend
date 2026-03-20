@@ -353,7 +353,7 @@ class _LoginPageState extends State<LoginPage> {
       // Call login function without expecting a return value
       await loginNotifier.userLogin(model);
 
-      final prefs = await SharedPreferences.getInstance();
+      // final prefs = await SharedPreferences.getInstance();
     }
   }
 
@@ -379,7 +379,7 @@ class _LoginPageState extends State<LoginPage> {
           body: Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
-              padding: EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [const Color(0xFF08979F), const Color(0xFF040326)],

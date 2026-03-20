@@ -3,11 +3,9 @@ import 'package:get/get.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/main.dart';
 import 'package:jobhub_v1/models/request/auth/login_model.dart';
-import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
 import 'package:jobhub_v1/services/helpers/auth_helper.dart';
 import 'package:jobhub_v1/views/ui/mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class LoginNotifier extends ChangeNotifier {
   bool _obscureText = true;
@@ -87,7 +85,7 @@ class LoginNotifier extends ChangeNotifier {
   Future<void> userLogin(LoginModel model) async {
     await AuthHelper.login(model).then((response) async {
       if (response[0]) {
-        Get.snackbar( 
+        Get.snackbar(
           'Login Success',
           'Enjoy your search for a job',
           colorText: Color(kLight.value),
@@ -118,32 +116,6 @@ class LoginNotifier extends ChangeNotifier {
     await prefs.remove('userId');
     await Future.delayed(const Duration(seconds: 1)).then((value) {
       Get.offAll(() => defaultHome);
-    });
-  }
-
-  updateProfile(ProfileUpdateReq model) async {
-    await AuthHelper.updateProfile(model).then((response) {
-      if (response) {
-        Get.snackbar(
-          'Profile Update',
-          'Enjoy your search for a job',
-          colorText: Color(kLight.value),
-          backgroundColor: Color(kLightBlue.value),
-          icon: const Icon(Icons.add_alert),
-        );
-
-        Future.delayed(const Duration(seconds: 3)).then((value) {
-          Get.offAll(() => const MainScreen());
-        });
-      } else {
-        Get.snackbar(
-          'Updating Failed',
-          'Please try again',
-          colorText: Color(kLight.value),
-          backgroundColor: Color(kOrange.value),
-          icon: const Icon(Icons.add_alert),
-        );
-      }
     });
   }
 }
