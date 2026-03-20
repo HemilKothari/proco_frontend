@@ -31,6 +31,7 @@ class Job {
     required this.period,
     required this.contract,
     required this.imageUrl,
+    required this.hiring,
     required this.agentId,
   });
 
@@ -43,6 +44,7 @@ class Job {
         period: json['period'],
         contract: json['contract'],
         imageUrl: json['imageUrl'],
+        hiring: json['hiring'] ?? true,
         agentId: json['agentId'] ?? '',
       );
   final String id;
@@ -53,5 +55,6 @@ class Job {
   final String period;
   final String contract;
   final String imageUrl;
+  final bool hiring;
   final String agentId;
 }

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 import 'package:jobhub_v1/controllers/exports.dart';
 import 'package:jobhub_v1/models/request/chat/create_chat.dart';
 import 'package:jobhub_v1/models/response/jobs/swipe_res_model.dart';
 import 'package:jobhub_v1/services/helpers/chat_helper.dart';
-import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jobhub_v1/models/request/chat/create_chat.dart';
 
 class MatchedUsers extends StatefulWidget {
   const MatchedUsers({super.key});
@@ -19,316 +16,548 @@ class MatchedUsers extends StatefulWidget {
   State<MatchedUsers> createState() => _MatchedUsersState();
 }
 
-class _MatchedUsersState extends State<MatchedUsers> {
-  int _currentIndex = 0;
+class _MatchedUsersState extends State<MatchedUsers>
+    with SingleTickerProviderStateMixin {
   final CardSwiperController controller = CardSwiperController();
+  late AnimationController _fabAnimController;
 
-  getJobId() async {
+  // ─── Light theme ─────────────────────────────────────────────────────────
+  static const Color _bg = Colors.white;
+  static const Color _navy = Color(0xFF040326);
+  static const Color _teal = Color(0xFF08979F);
+  static const Color _tealLt = Color(0xFF0BBFCA);
+  static const Color _reject = Color(0xFFE8505B);
+  static const Color _accept = Color(0xFF2DB67D);
+  static const Color _grey = Color(0xFFF5F5F7);
+
+  Future<String> _getJobId() async {
     final prefs = await SharedPreferences.getInstance();
-    Set<String> keys = prefs.getKeys();
-    print(keys);
-    return prefs.getString('currentJobId') ?? "";
+    return prefs.getString('currentJobId') ?? '';
   }
 
   @override
   void initState() {
     super.initState();
+    _fabAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
     _initializeJobId();
   }
 
   void _initializeJobId() async {
-    String jobId = await getJobId();
-    debugPrint("JOB ID FOUND: $jobId");
+    final jobId = await _getJobId();
     if (!mounted) return;
-    final profileNotifier = Provider.of<JobsNotifier>(context, listen: false);
-    profileNotifier.getSwipedUsersId(jobId);
+    Provider.of<JobsNotifier>(context, listen: false).getSwipedUsersId(jobId);
   }
 
-  Future<String> getCurrentJobId() async {
-    String jobId = await getJobId();
-    debugPrint("JOB ID FOUND: $jobId");
-    return jobId;
+  @override
+  void dispose() {
+    _fabAnimController.dispose();
+    controller.dispose();
+    super.dispose();
   }
 
-  // Helper widgets
-  Widget _buildInfoBox(dynamic text, double fontSize) {
-    if (text == null ||
-        (text is String && text.isEmpty) ||
-        (text is List && text.isEmpty)) {
-      return SizedBox.shrink(); // Return empty widget if null or empty
-    }
+  Future<bool> _onSwipe(
+    int previousIndex,
+    int? currentIndex,
+    CardSwiperDirection direction,
+    List<SwipedRes> userList,
+    String currentJobId,
+  ) async {
+    if (direction == CardSwiperDirection.right) {
+      final user = userList[previousIndex];
+      Provider.of<JobsNotifier>(context, listen: false)
+          .addMatchedUsers(currentJobId, user.id);
 
-    if (text is String) {
-      return _buildSingleBox(text, fontSize);
-    } else if (text is List<String>) {
-      return Wrap(
-        spacing: 8.0, // Space between items
-        runSpacing: 4.0, // Space between lines
-        children: text.map((item) => _buildSingleBox(item, fontSize)).toList(),
+      Get.snackbar(
+        "It's a Match!",
+        "You matched with ${user.username}",
+        backgroundColor: _accept,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+        icon: const Icon(Icons.favorite, color: Colors.white),
+        duration: const Duration(seconds: 3),
       );
+
+      final result = await ChatHelper.createChat(CreateChat(userId: user.id));
+
+      if (result['success']) {
+        Get.toNamed('/chat', arguments: {
+          'chatId': result['chatId'],
+          'user': user,
+        });
+      } else {
+        Get.snackbar(
+          'Error',
+          result['message'] ?? 'Failed to create chat',
+          backgroundColor: _reject,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          borderRadius: 12,
+          margin: const EdgeInsets.all(16),
+        );
+      }
     }
-
-    return SizedBox.shrink(); // Fallback in case of unexpected input
-  }
-
-  Widget _buildSingleBox(String text, double fontSize) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF08979F),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFAB({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onPressed,
-  }) {
-    return FloatingActionButton(
-      onPressed: onPressed,
-      child: Icon(icon),
-      backgroundColor: color,
-      foregroundColor: Colors.white,
-    );
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0.065.sh),
-        child: CustomAppBar(
-          text: 'Interested Users',
-          child: Padding(
-            padding: EdgeInsets.only(right: 0.010.sh),
-            child: IconButton(
-              icon: const Icon(
-                FontAwesome.arrow_left,
-                color: Color(0xFF08959D),
+      backgroundColor: _bg,
+      body: SafeArea(
+        child: Consumer<JobsNotifier>(
+          builder: (context, jobsNotifier, _) {
+            return Column(
+              children: [
+                _buildHeader(),
+                Expanded(
+                  child: FutureBuilder<String>(
+                    future: _getJobId(),
+                    builder: (context, jobSnap) {
+                      if (!jobSnap.hasData) return _buildLoader();
+                      return FutureBuilder<List<SwipedRes>>(
+                        future: jobsNotifier.swipedUsers,
+                        builder: (context, snap) {
+                          if (snap.connectionState == ConnectionState.waiting) {
+                            return _buildLoader();
+                          }
+                          if (snap.hasError) {
+                            return _buildEmpty(
+                                'Something went wrong.\nPlease try again.');
+                          }
+                          if (!snap.hasData || snap.data!.isEmpty) {
+                            return _buildEmpty(
+                                'No interested users yet.\nCheck back soon.');
+                          }
+                          return _buildSwipeArea(snap.data!, jobSnap.data!);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  // ─── Header ───────────────────────────────────────────────────────────────
+  Widget _buildHeader() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(6.w, 10.h, 20.w, 0),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                color: _navy, size: 20),
+          ),
+          SizedBox(width: 2.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Interested Users',
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w700,
+                  color: _navy,
+                  fontFamily: 'Poppins',
+                ),
               ),
-              onPressed: () {
-                Navigator.pop(context);
+              Text(
+                'Swipe right to match · left to skip',
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: Colors.grey,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoader() {
+    return const Center(
+        child: CircularProgressIndicator(color: _teal, strokeWidth: 2.5));
+  }
+
+  Widget _buildEmpty(String message) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.people_outline_rounded,
+              size: 60, color: _teal.withOpacity(0.25)),
+          SizedBox(height: 16.h),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 15.sp,
+              color: Colors.grey,
+              fontFamily: 'Poppins',
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Swipe area ───────────────────────────────────────────────────────────
+  Widget _buildSwipeArea(List<SwipedRes> userList, String jobId) {
+    return Column(
+      children: [
+        SizedBox(height: 8.h),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: CardSwiper(
+              controller: controller,
+              scale: 0.93,
+              padding: EdgeInsets.only(bottom: 12.h, top: 4.h),
+              cardsCount: userList.length,
+              numberOfCardsDisplayed: userList.length.clamp(1, 3),
+              allowedSwipeDirection:
+                  const AllowedSwipeDirection.only(left: true, right: true),
+              onSwipe: (prev, curr, dir) =>
+                  _onSwipe(prev, curr, dir, userList, jobId),
+              cardBuilder: (context, index, pctX, pctY) {
+                CardSwiperDirection? liveDir;
+                const threshold = 0.12;
+                if (pctX > threshold) liveDir = CardSwiperDirection.right;
+                if (pctX < -threshold) liveDir = CardSwiperDirection.left;
+                return _UserCard(user: userList[index], liveDirection: liveDir);
               },
+              isLoop: true,
             ),
           ),
         ),
+
+        // ─── FAB row ──────────────────────────────────────────────────────
+        Padding(
+          padding: EdgeInsets.only(bottom: 28.h, top: 12.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _fab(
+                icon: Icons.close_rounded,
+                color: _reject,
+                size: 58,
+                label: 'Skip',
+                onTap: () => controller.swipe(CardSwiperDirection.left),
+              ),
+              SizedBox(width: 20.w),
+              _fab(
+                icon: Icons.replay_rounded,
+                color: Colors.grey.shade400,
+                size: 46,
+                label: 'Undo',
+                onTap: controller.undo,
+                outlined: true,
+              ),
+              SizedBox(width: 20.w),
+              _fab(
+                icon: Icons.favorite_rounded,
+                color: _accept,
+                size: 58,
+                label: 'Match',
+                onTap: () => controller.swipe(CardSwiperDirection.right),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _fab({
+    required IconData icon,
+    required Color color,
+    required double size,
+    required String label,
+    required VoidCallback onTap,
+    bool outlined = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: size.w,
+            height: size.w,
+            decoration: BoxDecoration(
+              color: outlined ? Colors.white : color,
+              shape: BoxShape.circle,
+              border: outlined
+                  ? Border.all(color: Colors.grey.shade300, width: 1.5)
+                  : null,
+              boxShadow: [
+                BoxShadow(
+                  color: outlined
+                      ? Colors.black.withOpacity(0.06)
+                      : color.withOpacity(0.35),
+                  blurRadius: 14,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Icon(icon,
+                color: outlined ? Colors.grey.shade400 : Colors.white,
+                size: size * 0.44),
+          ),
+          SizedBox(height: 6.h),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.sp,
+              color: outlined ? Colors.grey : color,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ],
       ),
-      body: Consumer<JobsNotifier>(
-        builder: (context, profileNotifier, child) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      SizedBox(
-                        height: 0.87.sh,
-                        child: ClipRRect(
-                            clipBehavior: Clip.antiAlias,
-                            child: FutureBuilder<String>(
-                              future: getCurrentJobId(),
-                              builder: (context, userSnapshot) {
-                                if (!userSnapshot.hasData) {
-                                  return const Center(
-                                      child:
-                                          CircularProgressIndicator()); // Show loading until agentId is fetched
-                                }
+    );
+  }
+}
 
-                                final String currentJobId = userSnapshot.data!;
-                                return FutureBuilder<List<SwipedRes>>(
-                                  future: profileNotifier.swipedUsers,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Center(
-                                        child: Text('Error: ${snapshot.error}'),
-                                      );
-                                    } else if (!snapshot.hasData ||
-                                        snapshot.data!.isEmpty) {
-                                      return Center(
-                                        child: Text(
-                                          'No users available.',
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: const Color(0xFF040326),
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      final userList = snapshot.data!;
+// ═══════════════════════════════════════════════════════════════════════════
+// User Card — white card with photo + info
+// ═══════════════════════════════════════════════════════════════════════════
+class _UserCard extends StatelessWidget {
+  final SwipedRes user;
+  final CardSwiperDirection? liveDirection;
 
-                                      return CardSwiper(
-                                        controller: controller,
-                                        scale: 0.5,
-                                        cardsCount: userList.length,
-                                        allowedSwipeDirection:
-                                            const AllowedSwipeDirection.only(
-                                                left: true, right: true),
-                                        onSwipe: (previousIndex, currentIndex,
-                                            direction) async {
-                                          if (direction ==
-                                              CardSwiperDirection.right) {
-                                            final user =
-                                                userList[previousIndex];
-                                            final userId = user.id;
+  static const Color _teal = Color(0xFF08979F);
+  static const Color _tealLt = Color(0xFF0BBFCA);
+  static const Color _navy = Color(0xFF040326);
+  static const Color _accept = Color(0xFF2DB67D);
+  static const Color _reject = Color(0xFFE8505B);
+  static const Color _orange = Color(0xFFf55631);
 
-                                            // ✅ Save match
-                                            profileNotifier.addMatchedUsers(
-                                                currentJobId, userId);
+  const _UserCard({required this.user, this.liveDirection});
 
-                                            // ✅ Show match popup
-                                            Get.snackbar(
-                                              "🎉 It's a Match!",
-                                              "You matched with ${user.username}",
-                                              backgroundColor: Colors.green,
-                                              colorText: Colors.white,
-                                            );
+  @override
+  Widget build(BuildContext context) {
+    final isRight = liveDirection == CardSwiperDirection.right;
+    final isLeft = liveDirection == CardSwiperDirection.left;
+    final hasOverlay = liveDirection != null;
 
-                                            // ✅ Create chat
-                                            final result =
-                                                await ChatHelper.createChat(
-                                                    CreateChat(userId: userId));
-
-                                            if (result['success']) {
-                                              final chatId = result['chatId'];
-
-                                              Get.toNamed('/chat', arguments: {
-                                                "chatId": chatId,
-                                                "user": user,
-                                              });
-                                            } else {
-                                              Get.snackbar(
-                                                "Error",
-                                                result['message'] ??
-                                                    "Failed to create chat",
-                                                backgroundColor: Colors.red,
-                                                colorText: Colors.white,
-                                              );
-                                            }
-                                          }
-
-                                          return true;
-                                        },
-                                        cardBuilder: (context,
-                                            index,
-                                            percentThresholdX,
-                                            percentThresholdY) {
-                                          final user = userList[index];
-                                          return Container(
-                                            padding: EdgeInsets.all(8.w),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF040326),
-                                              borderRadius:
-                                                  BorderRadius.circular(20.w),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SizedBox(height: 8),
-                                                Text(
-                                                  user.username ??
-                                                      'Unknown User',
-                                                  style: TextStyle(
-                                                    fontSize: 20.sp,
-                                                    fontWeight: FontWeight.bold,
-                                                    color:
-                                                        const Color(0xFF08979F),
-                                                    fontFamily: 'Poppins',
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                //SizedBox(height: 4),
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  child: Image.network(
-                                                    user.profile,
-                                                    height: 0.45.sh,
-                                                    width: double.infinity,
-                                                    fit: BoxFit.contain,
-                                                    errorBuilder: (context,
-                                                        error, stackTrace) {
-                                                      return Image.asset(
-                                                        'assets/images/user-placeholder.png',
-                                                        height: 0.45.sh,
-                                                        width: double.infinity,
-                                                        fit: BoxFit.contain,
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8),
-                                                _buildInfoBox(
-                                                    user.skills, 12.sp),
-                                                SizedBox(height: 10),
-                                                _buildInfoBox(
-                                                    user.location ??
-                                                        'Location Not Available',
-                                                    12.sp),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                        isLoop: true,
-                                      );
-                                    }
-                                  },
-                                );
-                              },
-                            )),
+    return Container(
+      decoration: BoxDecoration(
+        color: _navy,
+        borderRadius: BorderRadius.circular(28.r),
+        boxShadow: [
+          BoxShadow(
+            color: _navy.withOpacity(0.35),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Column(
+            children: [
+              // ── Photo — top 62% ────────────────────────────────────────
+              Expanded(
+                flex: 62,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(
+                      user.profile,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: _teal.withOpacity(0.08),
+                        child: const Icon(Icons.person_rounded,
+                            color: _teal, size: 64),
                       ),
-                      Positioned(
-                        bottom: 0, // Adjust to move the icons up
-                        left: 0,
-                        right: 0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildFAB(
-                                icon: Icons.heart_broken,
-                                color: const Color(0xFFD23838),
-                                onPressed: () =>
-                                    controller.swipe(CardSwiperDirection.left)),
-                            _buildFAB(
-                                icon: Icons.rotate_left,
-                                color: const Color(0xFF08979F),
-                                onPressed: controller.undo),
-                            _buildFAB(
-                                icon: Icons.star,
-                                color: const Color(0xFF089F20),
-                                onPressed: () => controller
-                                    .swipe(CardSwiperDirection.right)),
-                          ],
+                    ),
+                    // Gradient fade to navy at bottom
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              _navy.withOpacity(0.6),
+                              _navy,
+                            ],
+                            stops: const [0.5, 0.8, 1.0],
+                          ),
                         ),
                       ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Info — bottom 38% ──────────────────────────────────────
+              Expanded(
+                flex: 38,
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Name
+                      Text(
+                        user.username,
+                        style: TextStyle(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          height: 1.1,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      // Location
+                      if (user.location.isNotEmpty) ...[
+                        SizedBox(height: 5.h),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on_rounded,
+                                color: _orange, size: 13),
+                            SizedBox(width: 3.w),
+                            Expanded(
+                              child: Text(
+                                user.location,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Colors.white60,
+                                  fontFamily: 'Poppins',
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+
+                      SizedBox(height: 12.h),
+
+                      // Skills
+                      if (user.skills.isNotEmpty)
+                        Expanded(
+                          child: Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: user.skills.take(6).map((skill) {
+                              return Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 11.w, vertical: 5.h),
+                                decoration: BoxDecoration(
+                                  color: _teal.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                      color: _teal.withOpacity(0.25), width: 1),
+                                ),
+                                child: Text(
+                                  skill,
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    color: _teal,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        )
+                      else
+                        Text(
+                          'No skills listed',
+                          style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.white30,
+                              fontFamily: 'Poppins'),
+                        ),
                     ],
                   ),
-                  const SizedBox(height: 1),
-                ],
+                ),
+              ),
+            ],
+          ),
+
+          // ── Swipe overlay ──────────────────────────────────────────────
+          if (hasOverlay)
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: (isRight ? _accept : _reject).withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(28.r),
+                  border: Border.all(
+                    color: isRight ? _accept : _reject,
+                    width: 2.5,
+                  ),
+                ),
+                child: Align(
+                  alignment: isRight ? Alignment.topRight : Alignment.topLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: 28.h,
+                      left: isLeft ? 20.w : 0,
+                      right: isRight ? 20.w : 0,
+                    ),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                      decoration: BoxDecoration(
+                        color: isRight ? _accept : _reject,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isRight
+                                ? Icons.favorite_rounded
+                                : Icons.close_rounded,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          SizedBox(width: 5.w),
+                          Text(
+                            isRight ? 'MATCH' : 'SKIP',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14.sp,
+                              fontFamily: 'Poppins',
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          );
-        },
+        ],
       ),
     );
   }
