@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:jobhub_v1/controllers/exports.dart';
-import 'package:jobhub_v1/main.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
 import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/ui/auth/login.dart';
 import 'package:jobhub_v1/views/ui/device_mgt/widgets/device_info.dart';
 import 'package:provider/provider.dart';
 
-class DeviceManagement extends StatelessWidget {
+class DeviceManagement extends StatefulWidget {
   const DeviceManagement({super.key});
+
+  @override
+  State<DeviceManagement> createState() => _DeviceManagementState();
+}
+
+class _DeviceManagementState extends State<DeviceManagement> {
+  @override
+  void initState() {
+    super.initState();
+    // ✅ Load sessions when screen opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<LoginNotifier>().loadDeviceSessions();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final zoomNotifier = Provider.of<ZoomNotifier>(context);
-    final loginNotifier = Provider.of<LoginNotifier>(context);
     final onBoarding = Provider.of<OnBoardNotifier>(context);
-    final date = DateTime.now().toString();
-    final loginDate = date.substring(0, 11);
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(0.065.sh),
@@ -33,47 +42,67 @@ class DeviceManagement extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const HeightSpacer(size: 50),
-                  Text(
-                    'You are logged in into your account on these devices',
-                    style: appstyle(16, Color(kDark.value), FontWeight.normal),
+        child: Consumer<LoginNotifier>(
+          builder: (context, loginNotifier, child) {
+            final sessions = loginNotifier.deviceSessions;
+
+            return Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const HeightSpacer(size: 50),
+                      Text(
+                        'You are logged in into your account on these devices',
+                        style:
+                            appstyle(16, Color(kDark.value), FontWeight.normal),
+                      ),
+                      const HeightSpacer(size: 30),
+                      if (sessions.isEmpty)
+                        Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 40.h),
+                            child: Text(
+                              'No device sessions found',
+                              style: appstyle(
+                                  16, Color(kDarkGrey.value), FontWeight.w400),
+                            ),
+                          ),
+                        )
+                      else
+                        Expanded(
+                          child: ListView.separated(
+                            itemCount: sessions.length,
+                            separatorBuilder: (_, __) =>
+                                const HeightSpacer(size: 30),
+                            itemBuilder: (context, index) {
+                              final session = sessions[index];
+                              return DevicesInfo(
+                                date: session.date,
+                                device: session.device,
+                                platform: session.platform,
+                                onSignOut: () async {
+                                  await loginNotifier
+                                      .removeDeviceSession(index);
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                    ],
                   ),
-                  const HeightSpacer(size: 50),
-                  DevicesInfo(
-                    date: loginDate,
-                    device: 'MacBook M2',
-                    ipAdress: '10.0.12.000',
-                    location: 'Washington DC',
-                    platform: 'Apple Webkit',
-                  ),
-                  const HeightSpacer(size: 50),
-                  DevicesInfo(
-                    date: loginDate,
-                    device: 'iPhone 14',
-                    ipAdress: '10.0.12.000',
-                    location: 'Brooklyn',
-                    platform: 'Mobile App',
-                  ),
-                ],
-              ),
-            ),
-            Consumer<LoginNotifier>(
-              builder: (context, loginNotifier, child) {
-                return Padding(
+                ),
+
+                // ✅ Sign out from ALL devices
+                Padding(
                   padding: EdgeInsets.all(8.0.h),
                   child: GestureDetector(
                     onTap: () {
                       zoomNotifier.currentIndex = 0;
-                      loginNotifier.logout();
                       onBoarding.isLastPage = false;
-                      Get.offAll(() => LoginPage(drawer: true));
+                      loginNotifier.logout(); // ✅ always goes to LoginPage now
                     },
                     child: Align(
                       alignment: Alignment.bottomCenter,
@@ -87,10 +116,10 @@ class DeviceManagement extends StatelessWidget {
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

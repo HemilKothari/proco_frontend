@@ -5,19 +5,21 @@ import 'package:jobhub_v1/views/common/height_spacer.dart';
 
 class DevicesInfo extends StatelessWidget {
   const DevicesInfo({
-    required this.location,
+    this.location,
     required this.device,
     required this.platform,
     required this.date,
-    required this.ipAdress,
+    this.ipAdress,
+    this.onSignOut,
     super.key,
   });
 
-  final String location;
+  final String? location;
   final String device;
   final String platform;
   final String date;
-  final String ipAdress;
+  final String? ipAdress;
+  final VoidCallback? onSignOut;
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +46,21 @@ class DevicesInfo extends StatelessWidget {
                   style: appstyle(16, Color(kDarkGrey.value), FontWeight.w400),
                 ),
                 ReusableText(
-                  text: ipAdress,
+                  text: ipAdress != null
+                      ? "IP: $ipAdress"
+                      : "IP Address not available",
                   style: appstyle(16, Color(kDarkGrey.value), FontWeight.w400),
                 ),
               ],
             ),
-            CustomOutlineBtn(
-              text: 'Sign Out',
-              color: Color(kOrange.value),
-              height: height * 0.05,
-              width: width * 0.3,
+            GestureDetector(
+              onTap: onSignOut,
+              child: CustomOutlineBtn(
+                text: 'Sign Out',
+                color: Color(kOrange.value),
+                height: height * 0.05,
+                width: width * 0.3,
+              ),
             ),
           ],
         ),
