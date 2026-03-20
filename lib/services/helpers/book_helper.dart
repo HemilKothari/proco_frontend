@@ -11,25 +11,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 class BookMarkHelper {
   static https.Client client = https.Client();
 
-  /// ✅ ADD BOOKMARK
+  /// ================= ADD BOOKMARK =================
   static Future<Map<String, dynamic>> addBookmarks(
       BookmarkReqResModel model) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-
-    final requestHeaders = <String, String>{
-      'Content-Type': 'application/json',
-      'token': 'Bearer $token',
-    };
-
-    final url = Uri.http(Config.apiUrl, Config.bookmarkUrl);
-
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) {
+        return {"success": false, "message": "User not authenticated"};
+      }
+
+      final requestHeaders = <String, String>{
+        'Content-Type': 'application/json',
+        'token': 'Bearer $token',
+      };
+
+      final url = Uri.http(Config.apiUrl, Config.bookmarkUrl);
+
       final response = await client.post(
         url,
         headers: requestHeaders,
         body: jsonEncode(model.toJson()),
       );
+
+      debugPrint("ADD BOOKMARK RESPONSE: ${response.body}");
 
       final decoded = json.decode(response.body);
 
@@ -55,23 +61,27 @@ class BookMarkHelper {
     }
   }
 
-  /// ✅ DELETE BOOKMARK
+  /// ================= DELETE BOOKMARK =================
   static Future<bool> deleteBookmarks(String jobId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-
-    final requestHeaders = <String, String>{
-      'Content-Type': 'application/json',
-      'token': 'Bearer $token',
-    };
-
-    final url = Uri.http(Config.apiUrl, '${Config.bookmarkUrl}/$jobId');
-
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) return false;
+
+      final requestHeaders = <String, String>{
+        'Content-Type': 'application/json',
+        'token': 'Bearer $token',
+      };
+
+      final url = Uri.http(Config.apiUrl, '${Config.bookmarkUrl}/$jobId');
+
       final response = await client.delete(
         url,
         headers: requestHeaders,
       );
+
+      debugPrint("DELETE BOOKMARK RESPONSE: ${response.body}");
 
       final decoded = json.decode(response.body);
 
@@ -82,30 +92,38 @@ class BookMarkHelper {
     }
   }
 
-  /// ✅ GET ALL BOOKMARKS
+  /// ================= GET ALL BOOKMARKS =================
   static Future<List<AllBookmark>> getBookmarks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-
-    final requestHeaders = <String, String>{
-      'Content-Type': 'application/json',
-      'token': 'Bearer $token',
-    };
-
-    final url = Uri.http(Config.apiUrl, Config.bookmarkUrl);
-
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception("User not authenticated");
+      }
+
+      final requestHeaders = <String, String>{
+        'Content-Type': 'application/json',
+        'token': 'Bearer $token',
+      };
+
+      final url = Uri.http(Config.apiUrl, Config.bookmarkUrl);
+
       final response = await client.get(
         url,
         headers: requestHeaders,
       );
+
+      debugPrint("GET BOOKMARKS RESPONSE: ${response.body}");
 
       final decoded = json.decode(response.body);
 
       if (response.statusCode == 200 && decoded['success'] == true) {
         final List data = decoded['data'] ?? [];
 
-        return data.map((e) => AllBookmark.fromJson(e)).toList();
+        return data
+            .map((e) => AllBookmark.fromJson(e as Map<String, dynamic>))
+            .toList();
       } else {
         throw Exception(decoded['message'] ?? "Failed to load bookmarks");
       }

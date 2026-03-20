@@ -11,6 +11,9 @@ import 'package:jobhub_v1/views/ui/notification/notification_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../controllers/bookmark_provider.dart';
+import '../../models/request/bookmarks/bookmarks_model.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -43,7 +46,7 @@ class _HomePageState extends State<HomePage> {
           color: const Color(0xFF08979F),
           borderRadius: BorderRadius.circular(8.0),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: Text(
           text ?? '',
           style: TextStyle(
@@ -63,9 +66,9 @@ class _HomePageState extends State<HomePage> {
   }) {
     return FloatingActionButton(
       onPressed: onPressed,
-      child: Icon(icon),
       backgroundColor: color,
       foregroundColor: Colors.white,
+      child: Icon(icon),
     );
   }
 
@@ -184,29 +187,48 @@ class _HomePageState extends State<HomePage> {
                                             job.hiring ==
                                                 true) // Filter out user's jobs
                                         .toList();
+                                    final bookmarkNotifier =
+                                        Provider.of<BookMarkNotifier>(context,
+                                            listen: false);
                                     return CardSwiper(
                                       controller: controller,
                                       scale: 0.5,
                                       cardsCount: jobList.length,
                                       allowedSwipeDirection:
-                                          AllowedSwipeDirection.only(
-                                              left: true, right: true),
+                                          const AllowedSwipeDirection.only(
+                                        left: true,
+                                        right: true,
+                                        up: true,
+                                      ),
                                       onSwipe: (previousIndex, currentIndex,
                                           direction) {
+                                        final job = jobList[previousIndex];
+                                        final jobId = job.id;
+
+                                        // 👉 RIGHT = swipe action
                                         if (direction ==
                                             CardSwiperDirection.right) {
-                                          final jobId =
-                                              jobList[previousIndex].id;
-                                          jobNotifier.addSwipedUsers(jobId,
-                                              currentUserId); // Store swiped user
+                                          jobNotifier.addSwipedUsers(
+                                              jobId, currentUserId);
                                         }
-                                        return true; // Continue swipe action
+
+                                        // 👉 UP = bookmark
+                                        if (direction ==
+                                            CardSwiperDirection.top) {
+                                          final bookmarkModel =
+                                              BookmarkReqResModel(job: jobId);
+                                          bookmarkNotifier.addBookMark(
+                                              bookmarkModel, jobId);
+                                        }
+
+                                        return true;
                                       },
                                       cardBuilder: (context,
                                           index,
                                           percentThresholdX,
                                           percentThresholdY) {
                                         final job = jobList[index];
+
                                         return Container(
                                           padding: EdgeInsets.all(8.w),
                                           decoration: BoxDecoration(
@@ -218,7 +240,7 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              SizedBox(height: 8),
+                                              const SizedBox(height: 8),
                                               Text(
                                                 job.company ??
                                                     'Unknown Company',
@@ -231,7 +253,6 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 textAlign: TextAlign.center,
                                               ),
-                                              //SizedBox(height: 4),
                                               ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(15),
@@ -251,13 +272,14 @@ class _HomePageState extends State<HomePage> {
                                                   },
                                                 ),
                                               ),
-                                              SizedBox(height: 8),
+                                              const SizedBox(height: 8),
                                               _buildInfoBox(job.title, 12.sp),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               _buildInfoBox(
-                                                  job.location ??
-                                                      'Location Not Available',
-                                                  12.sp),
+                                                job.location ??
+                                                    'Location Not Available',
+                                                12.sp,
+                                              ),
                                             ],
                                           ),
                                         );
