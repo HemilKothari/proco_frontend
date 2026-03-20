@@ -195,20 +195,20 @@ class _JobPageState extends State<JobPage> {
 
                               final model = CreateChat(userId: job.agentId);
                               print(model.userId);
-                              await ChatHelper.apply(model).then((response) {
-                                if (response[0]) {
-                                  final model = SendMessage(
-                                    content:
-                                        "Hello, I'm interested in ${job.title}",
-                                    chatId: response[1],
-                                    receiver: job.agentId,
-                                  );
-                                  MesssagingHelper.sendMessage(model)
-                                      .whenComplete(() {
-                                    Get.to(() => const MainScreen());
-                                  });
-                                }
-                              });
+                              // await ChatHelper.apply(model).then((response) {
+                              //   if (response[0]) {
+                              //     final model = SendMessage(
+                              //       content:
+                              //           "Hello, I'm interested in ${job.title}",
+                              //       chatId: response[1],
+                              //       receiver: job.agentId,
+                              //     );
+                              //     MesssagingHelper.sendMessage(model)
+                              //         .whenComplete(() {
+                              //       Get.to(() => const MainScreen());
+                              //     });
+                              //   }
+                              // });
                             },
                             color2: Color(kOrange.value),
                             width: width,

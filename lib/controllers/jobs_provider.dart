@@ -7,13 +7,15 @@ import 'package:jobhub_v1/models/response/jobs/get_job.dart';
 import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/helpers/jobs_helper.dart';
 
+import '../models/response/jobs/match_res_model.dart';
+
 class JobsNotifier extends ChangeNotifier {
   Future<List<JobsResponse>>? jobList;
   Future<JobsResponse>? recent;
   Future<GetJobRes>? job;
   Future<List<JobsResponse>>? userJobs;
   Future<List<SwipedRes>>? swipedUsers;
-  Future<List<SwipedRes>>? matchedUsers;
+  Future<List<MatchedRes>>? matchedUsers;
 
   void getJobs() {
     jobList = JobsHelper.getJobs();

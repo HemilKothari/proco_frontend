@@ -20,7 +20,6 @@ class ChatsList extends StatefulWidget {
 }
 
 class _ChatsListState extends State<ChatsList> {
-
   @override
   void initState() {
     super.initState();
@@ -122,7 +121,11 @@ class _ChatsListState extends State<ChatsList> {
                                 ),
                                 const HeightSpacer(size: 5),
                                 ReusableText(
-                                  text: chat.latestMessage.content,
+                                  text: (chat.latestMessage?.content
+                                              ?.isNotEmpty ??
+                                          false)
+                                      ? chat.latestMessage!.content
+                                      : 'No messages yet',
                                   style: appstyle(
                                     16,
                                     Color(kDarkGrey.value),
