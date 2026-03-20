@@ -1,12 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:jobhub_v1/controllers/signup_provider.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:jobhub_v1/views/common/custom_btn.dart';
 import 'package:jobhub_v1/views/common/custom_textfield_input.dart';
 
 class SignUpScreen extends StatefulWidget {

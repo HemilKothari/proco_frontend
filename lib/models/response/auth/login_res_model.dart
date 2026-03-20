@@ -13,12 +13,16 @@ class LoginResponseModel {
     required this.userToken,
   });
 
-  factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
-      LoginResponseModel(
-        id: json['_id'],
-        profile: json['profile'],
-        userToken: json['userToken'],
-      );
+  factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] ?? {};
+
+    return LoginResponseModel(
+      id: data['_id'] ?? '',
+      profile: data['profile'] ?? '',
+      userToken: data['userToken'] ?? '',
+    );
+  }
+
   final String id;
   final String profile;
   final String userToken;

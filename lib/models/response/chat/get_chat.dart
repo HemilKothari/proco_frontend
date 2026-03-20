@@ -1,15 +1,31 @@
 import 'dart:convert';
 
-//  FIX: ERROR: type '(Map<String, dynamic>) => Sender' is not a subtype of type '(dynamic) => dynamic' of 'f'
-List<GetChats> getChatsFromJson(String str) => (json.decode(str) as List)
-    .cast<Map<String, dynamic>>()
-    .map(GetChats.fromJson)
-    .toList();
+/// 🔹 Decode function (handles wrapper)
+List<GetChats> getChatsFromJson(String str) {
+  final decoded = json.decode(str);
 
+  if (decoded['success'] != true) {
+    throw Exception(decoded['message'] ?? "Failed to fetch chats");
+  }
+
+  final List data = decoded['data'] ?? [];
+
+  return data.map((e) => GetChats.fromJson(e)).toList();
+}
+
+/// 🔹 Encode
 String getChatsToJson(List<GetChats> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class GetChats {
+  final String id;
+  final String chatName;
+  final bool isGroupChat;
+  final List<Sender> users;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final LatestMessage latestMessage;
+
   GetChats({
     required this.id,
     required this.chatName,
@@ -20,33 +36,39 @@ class GetChats {
     required this.latestMessage,
   });
 
-  // FIX: ERROR: type '(Map<String, dynamic>) => Sender' is not a subtype of type '(dynamic) => dynamic' of 'f'
-  factory GetChats.fromJson(Map<String, dynamic> json) => GetChats(
-        id: json['_id'],
-        chatName: json['chatName'],
-        isGroupChat: json['isGroupChat'],
-        users: List<Sender>.from(
-          (json['users'] as List)
-              .cast<Map<String, dynamic>>()
-              .map(Sender.fromJson),
-        ),
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
-        latestMessage: LatestMessage.fromJson(json['latestMessage']),
-      );
-  final String id;
-  final String chatName;
-  final bool isGroupChat;
-  final List<Sender> users;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final LatestMessage latestMessage;
+  factory GetChats.fromJson(Map<String, dynamic> json) {
+    return GetChats(
+      id: json['_id'] ?? '',
+      chatName: json['chatName'] ?? '',
+      isGroupChat: json['isGroupChat'] ?? false,
+
+      /// ✅ FIXED mapping
+      users: json['users'] != null
+          ? (json['users'] as List)
+              .map((e) => Sender.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : [],
+
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : DateTime.now(),
+
+      latestMessage: json['latestMessage'] != null
+          ? LatestMessage.fromJson(
+              json['latestMessage'] as Map<String, dynamic>)
+          : LatestMessage.empty(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         '_id': id,
         'chatName': chatName,
         'isGroupChat': isGroupChat,
-        'users': List<dynamic>.from(users.map((x) => x.toJson())),
+        'users': users.map((x) => x.toJson()).toList(),
         'createdAt': createdAt.toIso8601String(),
         'updatedAt': updatedAt.toIso8601String(),
         'latestMessage': latestMessage.toJson(),
@@ -54,6 +76,12 @@ class GetChats {
 }
 
 class LatestMessage {
+  final String id;
+  final Sender sender;
+  final String content;
+  final String receiver;
+  final String chat;
+
   LatestMessage({
     required this.id,
     required this.sender,
@@ -62,18 +90,28 @@ class LatestMessage {
     required this.chat,
   });
 
-  factory LatestMessage.fromJson(Map<String, dynamic> json) => LatestMessage(
-        id: json['_id'],
-        sender: Sender.fromJson(json['sender']),
-        content: json['content'],
-        receiver: json['receiver'],
-        chat: json['chat'],
-      );
-  final String id;
-  final Sender sender;
-  final String content;
-  final String receiver;
-  final String chat;
+  factory LatestMessage.fromJson(Map<String, dynamic> json) {
+    return LatestMessage(
+      id: json['_id'] ?? '',
+      sender: json['sender'] != null
+          ? Sender.fromJson(json['sender'] as Map<String, dynamic>)
+          : Sender.empty(),
+      content: json['content'] ?? '',
+      receiver: json['receiver'] ?? '',
+      chat: json['chat'] ?? '',
+    );
+  }
+
+  /// ✅ fallback to prevent crashes
+  factory LatestMessage.empty() {
+    return LatestMessage(
+      id: '',
+      sender: Sender.empty(),
+      content: '',
+      receiver: '',
+      chat: '',
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         '_id': id,
@@ -85,6 +123,11 @@ class LatestMessage {
 }
 
 class Sender {
+  final String id;
+  final String username;
+  final String email;
+  final String profile;
+
   Sender({
     required this.id,
     required this.username,
@@ -92,16 +135,24 @@ class Sender {
     required this.profile,
   });
 
-  factory Sender.fromJson(Map<String, dynamic> json) => Sender(
-        id: json['_id'],
-        username: json['username'],
-        email: json['email'],
-        profile: json['profile'],
-      );
-  final String id;
-  final String username;
-  final String email;
-  final String profile;
+  factory Sender.fromJson(Map<String, dynamic> json) {
+    return Sender(
+      id: json['_id'] ?? '',
+      username: json['username'] ?? '',
+      email: json['email'] ?? '',
+      profile: json['profile'] ?? '',
+    );
+  }
+
+  /// ✅ fallback
+  factory Sender.empty() {
+    return Sender(
+      id: '',
+      username: '',
+      email: '',
+      profile: '',
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         '_id': id,

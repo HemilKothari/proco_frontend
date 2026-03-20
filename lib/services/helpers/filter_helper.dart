@@ -13,7 +13,7 @@ class FilterHelper {
   static Future<List<FilterResponse>> getFilters() async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, Config.filters);
+      final url = Uri.http(Config.apiUrl, Config.filters);
       final response = await client.get(url, headers: requestHeaders);
 
       if (response.statusCode == 200) {
@@ -31,7 +31,7 @@ class FilterHelper {
   static Future<GetFilterRes> getFilter(String agentId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, '${Config.filters}/$agentId');
+      final url = Uri.http(Config.apiUrl, '${Config.filters}/$agentId');
       final response = await client.get(url, headers: requestHeaders);
 
       debugPrint('Request Headers: ${{
@@ -54,7 +54,7 @@ class FilterHelper {
 
   static Future<List<FilterResponse>> getUserFilters(String agentId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.https(Config.apiUrl, '${Config.filters}/$agentId');
+    final url = Uri.http(Config.apiUrl, '${Config.filters}/$agentId');
     final response = await client.get(url, headers: requestHeaders);
 
     if (response.statusCode == 200) {
@@ -68,7 +68,7 @@ class FilterHelper {
 
       debugPrint('Response Code: ${response.statusCode}');
       debugPrint('Response Body: ${response.body}');
-      
+
       // Check if data['data'] is a Map or List
       if (data['data'] is List) {
         // If it's a List, parse as a list of FilterResponse
@@ -77,9 +77,7 @@ class FilterHelper {
             .toList();
       } else if (data['data'] is Map) {
         // If it's a Map, wrap it in a list and parse the single item
-        return [
-          FilterResponse.fromJson(data['data'] as Map<String, dynamic>)
-        ];
+        return [FilterResponse.fromJson(data['data'] as Map<String, dynamic>)];
       } else {
         throw Exception('Unexpected response structure');
       }
@@ -89,13 +87,12 @@ class FilterHelper {
     }
   }
 
-
   static Future<FilterResponse> getRecentFilters() async {
     final requestHeaders = <String, String>{
       'Content-Type': 'application/json',
     };
 
-    final url = Uri.https(Config.apiUrl, Config.filters, {'new': 'true'});
+    final url = Uri.http(Config.apiUrl, Config.filters, {'new': 'true'});
     final response = await client.get(
       url,
       headers: requestHeaders,
@@ -113,7 +110,7 @@ class FilterHelper {
 
   static Future<FilterResponse> createFilter(CreateFilterRequest model) async {
     try {
-      final url = Uri.https(Config.apiUrl, Config.filters);
+      final url = Uri.http(Config.apiUrl, Config.filters);
 
       // API Request
       final response = await client.post(
@@ -153,7 +150,7 @@ class FilterHelper {
     try {
       final prefs = await SharedPreferences.getInstance();
       var token = prefs.getString('token');
-      final url = Uri.https(Config.apiUrl, '${Config.filters}/$filterId');
+      final url = Uri.http(Config.apiUrl, '${Config.filters}/$filterId');
       final response = await client.put(
         url,
         headers: {
@@ -176,7 +173,7 @@ class FilterHelper {
   static Future<void> deleteFilter(String filterId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, '${Config.filters}/$filterId');
+      final url = Uri.http(Config.apiUrl, '${Config.filters}/$filterId');
       final response = await client.delete(url, headers: requestHeaders);
 
       if (response.statusCode != 204) {

@@ -11,8 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ChatHelper {
   static https.Client client = https.Client();
 
-  // Apply for job
-  static Future<List<dynamic>> apply(CreateChat model) async {
+  /// ✅ Apply / Create Chat
+  static Future<Map<String, dynamic>> apply(CreateChat model) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -21,49 +21,69 @@ class ChatHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.https(Config.apiUrl, Config.chatsUrl);
-    final response = await client.post(
-      url,
-      headers: requestHeaders,
-      body: jsonEncode(model.toJson()),
-    );
+    final url = Uri.http(Config.apiUrl, Config.chatsUrl);
 
-    if (response.statusCode == 200) {
-      final first = initialChatFromJson(response.body).id;
+    try {
+      final response = await client.post(
+        url,
+        headers: requestHeaders,
+        body: jsonEncode(model.toJson()),
+      );
 
-      return [true, first];
-    } else {
-      return [false];
+      final decoded = json.decode(response.body);
+
+      if (response.statusCode == 200 && decoded['success'] == true) {
+        final chat = InitialChat.fromJson(decoded['data']);
+
+        return {
+          "success": true,
+          "chatId": chat.id,
+        };
+      } else {
+        return {
+          "success": false,
+          "message": decoded['message'] ?? "Failed to create chat",
+        };
+      }
+    } catch (e) {
+      debugPrint("Apply Chat Error: $e");
+      return {
+        "success": false,
+        "message": "Something went wrong",
+      };
     }
   }
-// FIX: added try-catch
+
   static Future<List<GetChats>> getConversations() async {
-   try {
-     final prefs = await SharedPreferences.getInstance();
-     final token = prefs.getString('token');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
 
-     final requestHeaders = <String, String>{
-       'Content-Type': 'application/json',
-       'token': 'Bearer $token',
-     };
+      final requestHeaders = <String, String>{
+        'Content-Type': 'application/json',
+        'token': 'Bearer $token',
+      };
 
-     final url = Uri.https(Config.apiUrl, Config.chatsUrl);
-     final response = await client.get(
-       url,
-       headers: requestHeaders,
-     );
+      final url = Uri.http(Config.apiUrl, Config.chatsUrl);
 
-     if (response.statusCode == 200) {
-       final chats = getChatsFromJson(response.body);
+      final response = await client.get(
+        url,
+        headers: requestHeaders,
+      );
 
-       return chats;
-     } else {
-       throw Exception("Couldn't load chats");
-     }
-   } catch(e, s) {
-     debugPrint('ERROR: $e');
-     debugPrintStack(stackTrace: s);
-     rethrow;
-   }
+      final decoded = json.decode(response.body);
+
+      if (response.statusCode == 200 && decoded['success'] == true) {
+        final List data = decoded['data'] ?? [];
+
+        return data.map((e) => GetChats.fromJson(e)).toList();
+      } else {
+        throw Exception(decoded['message'] ?? "Couldn't load chats");
+      }
+    } catch (e, s) {
+      debugPrint('ERROR: $e');
+      debugPrintStack(stackTrace: s);
+      rethrow;
+    }
   }
 }

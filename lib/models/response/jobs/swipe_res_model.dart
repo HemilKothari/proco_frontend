@@ -1,8 +1,16 @@
 import 'dart:convert';
 
-SwipedRes swipedResFromJson(String str) => SwipedRes.fromJson(json.decode(str));
+List<SwipedRes> swipedResListFromJson(String str) {
+  final decoded = json.decode(str);
 
-String swipedResToJson(SwipedRes data) => json.encode(data.toJson());
+  if (decoded['success'] != true) {
+    throw Exception(decoded['message'] ?? "Failed to fetch swiped users");
+  }
+
+  final List data = decoded['data'] ?? [];
+
+  return data.map((e) => SwipedRes.fromJson(e)).toList();
+}
 
 class SwipedRes {
   final String id;
@@ -24,15 +32,17 @@ class SwipedRes {
       id: json['_id'] ?? '',
       username: json['username'] ?? '',
       location: json['location'] ?? '',
-      skills: List<String>.from(json['skills'] ?? []),
+      skills: json['skills'] != null
+          ? List<String>.from(json['skills'].map((x) => x.toString()))
+          : [],
       profile: json['profile'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        '_id': id,
         'username': username,
-        'skills': List<dynamic>.from(skills.map((x) => x)),
+        'skills': skills,
         'location': location,
         'profile': profile,
       };
