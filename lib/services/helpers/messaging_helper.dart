@@ -10,65 +10,92 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MesssagingHelper {
   static https.Client client = https.Client();
 
-  static Future<List<dynamic>> sendMessage(SendMessage model) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+  /// ================= SEND MESSAGE =================
+  static Future<Map<String, dynamic>> sendMessage(SendMessage model) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
 
-    final requestHeaders = <String, String>{
-      'Content-Type': 'application/json',
-      'token': 'Bearer $token',
-    };
+      if (token == null) {
+        return {
+          "success": false,
+          "message": "User not authenticated",
+        };
+      }
 
-    final url = Uri.http(Config.apiUrl, Config.messagingUrl);
-    final response = await client.post(
-      url,
-      headers: requestHeaders,
-      body: jsonEncode(model.toJson()),
-    );
+      final url = Uri.http(Config.apiUrl, Config.messagingUrl);
 
-    print(response.statusCode);
+      final response = await client.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': 'Bearer $token',
+        },
+        body: jsonEncode(model.toJson()),
+      );
 
-    if (response.statusCode == 200) {
-      final message = ReceivedMessge.fromJson(jsonDecode(response.body));
+      debugPrint("SEND MESSAGE RESPONSE: ${response.body}");
 
-      final Map<String, dynamic> responseMap = jsonDecode(response.body);
-      return [true, message, responseMap];
-    } else {
-      return [false];
+      final decoded = json.decode(response.body);
+
+      if (response.statusCode == 201 && decoded['success'] == true) {
+        final message =
+            ReceivedMessge.fromJson(decoded['data'] as Map<String, dynamic>);
+
+        return {
+          "success": true,
+          "message": message,
+        };
+      } else {
+        return {
+          "success": false,
+          "message": decoded['message'] ?? "Failed to send message",
+        };
+      }
+    } catch (e) {
+      debugPrint("Send Message Error: $e");
+      return {
+        "success": false,
+        "message": "Something went wrong",
+      };
     }
   }
 
-  // FIX: added try-catch
+  /// ================= GET MESSAGES =================
   static Future<List<ReceivedMessge>> getMessages(
     String chatId,
     int offset,
   ) async {
     try {
       debugPrint('----------FETCHING MESSAGES-------------');
+
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
-      final requestHeaders = <String, String>{
-        'Content-Type': 'application/json',
-        'token': 'Bearer $token',
-      };
+      if (token == null) {
+        throw Exception("User not authenticated");
+      }
 
       final url = Uri.http(
         Config.apiUrl,
         '${Config.messagingUrl}/$chatId',
         {'page': offset.toString()},
       );
+
       final response = await client.get(
         url,
-        headers: requestHeaders,
+        headers: {
+          'Content-Type': 'application/json',
+          'token': 'Bearer $token',
+        },
       );
 
-      if (response.statusCode == 200) {
-        final messages = receivedMessgeFromJson(response.body);
+      debugPrint("GET MESSAGES RESPONSE: ${response.body}");
 
-        return messages;
+      if (response.statusCode == 200) {
+        return receivedMessgeFromJson(response.body);
       } else {
-        throw Exception(' failed to load messages');
+        throw Exception('Failed to load messages');
       }
     } catch (e, s) {
       debugPrint('Error Occurred: -------------- $e ---------------');

@@ -8,6 +8,8 @@ import 'package:jobhub_v1/models/response/jobs/jobs_response.dart';
 import 'package:jobhub_v1/services/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/response/jobs/match_res_model.dart';
+
 class JobsHelper {
   static https.Client client = https.Client();
 
@@ -303,10 +305,10 @@ class JobsHelper {
     }
   }
 
-  static Future<List<SwipedRes>> getMatchedUsersId(String jobId) async {
+  static Future<List<MatchedRes>> getMatchedUsersId(String jobId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.http(Config.apiUrl, '${Config.jobs}/user/match/$jobId');
+      final url = Uri.http(Config.apiUrl, '${Config.matches}/$jobId');
 
       final response = await client.get(url, headers: requestHeaders);
 
@@ -321,9 +323,9 @@ class JobsHelper {
           return [];
         }
 
-        //Convert the List<dynamic> into List<SwipedRes>
-        List<SwipedRes> matchedUsers =
-            data.map((user) => SwipedRes.fromJson(user)).toList();
+        //Convert the List<dynamic> into List<MatchedRes>
+        List<MatchedRes> matchedUsers =
+            data.map((user) => MatchedRes.fromJson(user)).toList();
 
         return matchedUsers;
       } else {
@@ -339,7 +341,7 @@ class JobsHelper {
 
   static Future<void> addMatchedUsers(String jobId, String userId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.http(Config.apiUrl, '${Config.jobs}/user/match/');
+    final url = Uri.http(Config.apiUrl, Config.matches);
     debugPrint("jobId: $jobId");
     debugPrint("userId: $userId");
 

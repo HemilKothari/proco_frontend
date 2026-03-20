@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:get/get.dart';
 import 'package:jobhub_v1/controllers/exports.dart';
-import 'package:jobhub_v1/controllers/profile_provider.dart';
+import 'package:jobhub_v1/models/request/chat/create_chat.dart';
 import 'package:jobhub_v1/models/response/jobs/swipe_res_model.dart';
-import 'package:jobhub_v1/models/response/bookmarks/all_bookmarks.dart';
+import 'package:jobhub_v1/services/helpers/chat_helper.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:jobhub_v1/views/ui/jobs/user_job_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jobhub_v1/models/request/chat/create_chat.dart';
 
 class MatchedUsers extends StatefulWidget {
   const MatchedUsers({super.key});
@@ -37,7 +38,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
 
   void _initializeJobId() async {
     String jobId = await getJobId();
-    print("JOB ID FOUND: $jobId");
+    debugPrint("JOB ID FOUND: $jobId");
     if (!mounted) return;
     final profileNotifier = Provider.of<JobsNotifier>(context, listen: false);
     profileNotifier.getSwipedUsersId(jobId);
@@ -45,7 +46,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
 
   Future<String> getCurrentJobId() async {
     String jobId = await getJobId();
-    print("JOB ID FOUND: $jobId");
+    debugPrint("JOB ID FOUND: $jobId");
     return jobId;
   }
 
@@ -174,6 +175,7 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                       );
                                     } else {
                                       final userList = snapshot.data!;
+
                                       return CardSwiper(
                                         controller: controller,
                                         scale: 0.5,
@@ -182,16 +184,49 @@ class _MatchedUsersState extends State<MatchedUsers> {
                                             const AllowedSwipeDirection.only(
                                                 left: true, right: true),
                                         onSwipe: (previousIndex, currentIndex,
-                                            direction) {
+                                            direction) async {
                                           if (direction ==
                                               CardSwiperDirection.right) {
-                                            final userId =
-                                                userList[previousIndex].id;
+                                            final user =
+                                                userList[previousIndex];
+                                            final userId = user.id;
+
+                                            // ✅ Save match
                                             profileNotifier.addMatchedUsers(
-                                                currentJobId,
-                                                userId); // Store swiped user
+                                                currentJobId, userId);
+
+                                            // ✅ Show match popup
+                                            Get.snackbar(
+                                              "🎉 It's a Match!",
+                                              "You matched with ${user.username}",
+                                              backgroundColor: Colors.green,
+                                              colorText: Colors.white,
+                                            );
+
+                                            // ✅ Create chat
+                                            final result =
+                                                await ChatHelper.createChat(
+                                                    CreateChat(userId: userId));
+
+                                            if (result['success']) {
+                                              final chatId = result['chatId'];
+
+                                              Get.toNamed('/chat', arguments: {
+                                                "chatId": chatId,
+                                                "user": user,
+                                              });
+                                            } else {
+                                              Get.snackbar(
+                                                "Error",
+                                                result['message'] ??
+                                                    "Failed to create chat",
+                                                backgroundColor: Colors.red,
+                                                colorText: Colors.white,
+                                              );
+                                            }
                                           }
-                                          return true; // Continue swipe action
+
+                                          return true;
                                         },
                                         cardBuilder: (context,
                                             index,
