@@ -1,17 +1,17 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:get/get.dart';
-import 'package:jobhub_v1/controllers/profile_provider.dart';
-import 'package:jobhub_v1/models/response/auth/profile_model.dart';
-import 'package:jobhub_v1/views/common/app_bar.dart';
-import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
-import 'package:jobhub_v1/views/common/exports.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/common/width_spacer.dart';
-import 'package:jobhub_v1/views/ui/auth/profile_update.dart';
-import 'package:provider/provider.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+// import 'package:get/get.dart';
+// import 'package:jobhub_v1/controllers/profile_provider.dart';
+// import 'package:jobhub_v1/models/response/auth/profile_model.dart';
+// import 'package:jobhub_v1/views/common/app_bar.dart';
+// import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
+// import 'package:jobhub_v1/views/common/exports.dart';
+// import 'package:jobhub_v1/views/common/height_spacer.dart';
+// import 'package:jobhub_v1/views/common/width_spacer.dart';
+// import 'package:jobhub_v1/views/ui/auth/profile_update.dart';
+// import 'package:provider/provider.dart';
 
 /*class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -375,6 +375,21 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }*/
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:get/get.dart';
+import 'package:jobhub_v1/controllers/profile_provider.dart';
+import 'package:jobhub_v1/models/response/auth/profile_model.dart';
+import 'package:jobhub_v1/views/common/app_bar.dart';
+import 'package:jobhub_v1/views/common/drawer/drawer_widget.dart';
+import 'package:jobhub_v1/views/common/exports.dart';
+import 'package:jobhub_v1/views/common/height_spacer.dart';
+import 'package:jobhub_v1/views/common/width_spacer.dart';
+import 'package:jobhub_v1/views/ui/auth/profile_update.dart';
+import 'package:provider/provider.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -423,19 +438,49 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      const HeightSpacer(size: 20),
                       _buildProfileHeader(userData),
                       const HeightSpacer(size: 20),
-                      _buildInfoTile(Icons.email, userData.email),
+
+                      // ✅ Personal Info Section
+                      _buildSectionLabel('Personal Info'),
+                      const HeightSpacer(size: 10),
+                      _buildInfoTile(
+                          Icons.email_outlined, 'Email', userData.email),
+                      const HeightSpacer(size: 12),
+                      _buildInfoTile(
+                          Icons.phone_outlined, 'Phone', userData.phone),
+                      const HeightSpacer(size: 12),
+                      _buildInfoTile(Icons.wc_outlined, 'Gender',
+                          userData.gender ?? 'Not set'),
                       const HeightSpacer(size: 20),
-                      _buildInfoTile(Icons.phone, userData.phone),
+
+                      // ✅ Location Section
+                      _buildSectionLabel('Location'),
+                      const HeightSpacer(size: 10),
+                      _buildInfoTile(Icons.location_city_outlined, 'City',
+                          userData.city ?? 'Not set'),
+                      const HeightSpacer(size: 12),
+                      _buildInfoTile(Icons.map_outlined, 'State',
+                          userData.state ?? 'Not set'),
+                      const HeightSpacer(size: 12),
+                      _buildInfoTile(Icons.flag_outlined, 'Country',
+                          userData.country ?? 'Not set'),
                       const HeightSpacer(size: 20),
-                      _buildInfoTile(Icons.wc, userData.gender),
+
+                      // ✅ Education Section
+                      _buildSectionLabel('Education'),
+                      const HeightSpacer(size: 10),
+                      _buildInfoTile(Icons.apartment_outlined, 'College',
+                          userData.college ?? 'Not set'),
+                      const HeightSpacer(size: 12),
+                      _buildInfoTile(Icons.school_outlined, 'Branch',
+                          userData.branch ?? 'Not set'),
                       const HeightSpacer(size: 20),
-                      _buildInfoTile(Icons.apartment, userData.college),
-                      const HeightSpacer(size: 20),
-                      _buildInfoTile(Icons.school, userData.branch),
-                      const HeightSpacer(size: 20),
+
+                      // ✅ Skills Section
                       _buildSkillsSection(userData.skills),
+                      const HeightSpacer(size: 30),
                     ],
                   ),
                 ),
@@ -447,56 +492,82 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // ✅ Section label helper
+  Widget _buildSectionLabel(String label) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: ReusableText(
+        text: label,
+        style: appstyle(13, Colors.white54, FontWeight.w500),
+      ),
+    );
+  }
+
   Widget _buildProfileHeader(ProfileRes userData) {
+    // Build location string only from non-null/empty parts
+    final locationParts = [
+      userData.city,
+      userData.state,
+      userData.country,
+    ].where((part) => part != null && part.isNotEmpty).toList();
+    final locationString = locationParts.join(', ');
+
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: userData.profile == 'null' || userData.profile.isEmpty
-                  ? Image.asset('assets/images/user.png',
-                      width: 80.w, height: 100.h)
-                  : CachedNetworkImage(
-                      imageUrl: userData.profile,
-                      width: 80.w,
-                      height: 100.h,
-                      errorWidget: (context, url, error) => Image.asset(
-                          'assets/images/user.png',
-                          width: 80.w,
-                          height: 100.h),
-                    ),
-            ),
-            const WidthSpacer(width: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ReusableText(
-                  text: userData.username,
-                  style: appstyle(20, Colors.white, FontWeight.w600),
+        // ✅ Avatar — fixed size, never shrinks
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: userData.profile == 'null' || userData.profile.isEmpty
+              ? Image.asset(
+                  'assets/images/user.png',
+                  width: 80.w,
+                  height: 100.h,
+                  fit: BoxFit.cover,
+                )
+              : CachedNetworkImage(
+                  imageUrl: userData.profile,
+                  width: 80.w,
+                  height: 100.h,
+                  fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => Image.asset(
+                    'assets/images/user.png',
+                    width: 80.w,
+                    height: 100.h,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                Row(
-                  children: [
-                    ReusableText(
-                      text: '${userData.city}, ',
-                      style: appstyle(16, Colors.white70, FontWeight.w600),
-                    ),
-                    ReusableText(
-                      text: '${userData.state}, ',
-                      style: appstyle(16, Colors.white70, FontWeight.w600),
-                    ),
-                    ReusableText(
-                      text: userData.country,
-                      style: appstyle(16, Colors.white70, FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
         ),
+        const WidthSpacer(width: 16),
+
+        // ✅ Expanded so text never overflows — takes remaining width
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Username — wraps if very long
+              Text(
+                userData.username,
+                style: appstyle(20, Colors.white, FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              const SizedBox(height: 4),
+              // ✅ Location — single string, ellipsis if overflows
+              if (locationString.isNotEmpty)
+                Text(
+                  locationString,
+                  style: appstyle(14, Colors.white70, FontWeight.w400),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+            ],
+          ),
+        ),
+        const WidthSpacer(width: 8),
+
+        // Edit icon — fixed, never pushed off screen
         GestureDetector(
           onTap: () => Get.to(() => const UpdateProfilePage()),
           child: const Icon(Feather.edit, color: Colors.white, size: 18),
@@ -505,30 +576,53 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildInfoTile(IconData icon, String text) {
+  // ✅ Flexible tile — height grows with content, never clips long text
+  Widget _buildInfoTile(IconData icon, String label, String text) {
     return Container(
-      padding: EdgeInsets.only(left: 8.w),
       width: double.infinity,
-      height: 60.h,
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
       decoration: BoxDecoration(
         color: const Color(0xFF08979F),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.white),
-          const WidthSpacer(width: 5),
-          ReusableText(
-            text: text,
-            style: appstyle(16, Colors.white, FontWeight.w600),
+          // Icon aligned to first line of text
+          Padding(
+            padding: EdgeInsets.only(top: 2.h),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+          const WidthSpacer(width: 10),
+          // ✅ Expanded so text wraps instead of overflowing
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Small label above the value
+                Text(
+                  label,
+                  style: appstyle(11, Colors.white60, FontWeight.w400),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  text.isEmpty ? 'Not set' : text,
+                  style: appstyle(15, Colors.white, FontWeight.w600),
+                  softWrap: true, // ✅ wraps long text
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
+  // ✅ Skills shown as wrap chips — handles any number of skills
   Widget _buildSkillsSection(List<String> skills) {
     return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(14.h),
       decoration: BoxDecoration(
         color: const Color(0xFF08979F),
         borderRadius: BorderRadius.circular(16),
@@ -536,20 +630,44 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.all(8.h),
-            child: Center(
-              child: ReusableText(
-                text: 'Skills',
-                style: appstyle(16, Colors.white, FontWeight.w600),
-              ),
+          Center(
+            child: ReusableText(
+              text: 'Skills',
+              style: appstyle(16, Colors.white, FontWeight.w600),
             ),
           ),
-          ...skills.map((skill) => Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text(skill,
-                    style: appstyle(16, Colors.white, FontWeight.normal)),
-              )),
+          const SizedBox(height: 12),
+          skills.isEmpty
+              ? Text(
+                  'No skills added yet',
+                  style: appstyle(14, Colors.white60, FontWeight.normal),
+                )
+              // ✅ Wrap — chips flow to next line instead of overflowing
+              : Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: skills
+                      .map(
+                        (skill) => Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Text(
+                            skill,
+                            style: appstyle(13, Colors.white, FontWeight.w500),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
         ],
       ),
     );
