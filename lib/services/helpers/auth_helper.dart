@@ -23,6 +23,10 @@ class AuthHelper {
       body: jsonEncode(model),
     );
 
+    if (response.body.isEmpty) {
+      return [false, 'Server is starting up, please try again in a moment'];
+    }
+
     if (response.statusCode == 200) {
       final prefs = await SharedPreferences.getInstance();
 
