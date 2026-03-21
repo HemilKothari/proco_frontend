@@ -28,6 +28,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _loadJobs();
+  }
+
+  Future<void> _loadJobs() async {
     final jobNotifier = Provider.of<JobsNotifier>(context, listen: false);
     jobNotifier.getJobs();
   }

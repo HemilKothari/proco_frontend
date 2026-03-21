@@ -10,8 +10,32 @@ import 'package:jobhub_v1/views/common/custom_btn.dart';
 import 'package:jobhub_v1/views/common/custom_textfield.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:jobhub_v1/views/common/reusable_text.dart';
+import 'package:jobhub_v1/models/response/auth/profile_model.dart';
+import 'package:jobhub_v1/services/helpers/user_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+const List<String> kDomains = [
+  'Web Development',
+  'App Development',
+  'Graphic Designer',
+  'Finance',
+  'Consulting',
+  'Marketing',
+  'Competitive Programming',
+  'Cyber Security',
+  'Blockchain',
+  'Research',
+  'UI/UX',
+  'Animator',
+];
+
+const List<String> kOpportunityTypes = [
+  'Internship',
+  'Research',
+  'Freelance',
+  'Competition',
+];
 
 class AddJobPage extends StatefulWidget {
   const AddJobPage({Key? key}) : super(key: key);
@@ -21,33 +45,31 @@ class AddJobPage extends StatefulWidget {
 }
 
 class _AddJobPageState extends State<AddJobPage> {
-  // Form controllers
   final titleController = TextEditingController();
-  final locationController = TextEditingController();
   final companyController = TextEditingController();
   final descriptionController = TextEditingController();
   final salaryController = TextEditingController();
   final imageUrlController = TextEditingController();
   final contractController = TextEditingController();
-  // final requirementsController = TextEditingController();
   final periodController = TextEditingController();
-  // List to hold multiple requirements controllers
+
   List<TextEditingController> requirementsControllers = [
     TextEditingController()
   ];
+
   bool isHiring = true;
+  String? selectedCategory;
+  String? selectedOpportunityType;
 
   @override
   void dispose() {
     titleController.dispose();
-    locationController.dispose();
     companyController.dispose();
     descriptionController.dispose();
     salaryController.dispose();
     imageUrlController.dispose();
     contractController.dispose();
     periodController.dispose();
-    // Dispose all requirements controllers
     for (var controller in requirementsControllers) {
       controller.dispose();
     }
@@ -67,46 +89,30 @@ class _AddJobPageState extends State<AddJobPage> {
     });
   }
 
-  void submitJob() {
-    // if (titleController.text.isEmpty ||S
-    //     locationController.text.isEmpty ||
-    //     companyController.text.isEmpty ||
-    //     descriptionController.text.isEmpty ||
-    //     salaryController.text.isEmpty ) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('All fields are required')),
-    //   );
-    //   return;
-    // }
-
-    // Example job data to send to the backend
-    // final jobData = {
-    //   'title': titleController.text,
-    //   'location': locationController.text,
-    //   'company': companyController.text,
-    //   'description': descriptionController.text,
-    //   'salary': salaryController.text,
-    //   'hiring': isHiring,
-    //   'imageUrl': imageUrlController.text,
-    // };
-
-    // JobsNotifier.createJob(jobData);
-
-    // To do: Call the API to send `jobData` to the backend
-
-    // Reset the form
-    setState(() {
-      titleController.clear();
-      locationController.clear();
-      companyController.clear();
-      descriptionController.clear();
-      salaryController.clear();
-      imageUrlController.clear();
-      contractController.clear();
-      requirementsControllers.clear();
-      periodController.clear();
-      isHiring = true;
-    });
+  Widget _buildDropdown({
+    required String hint,
+    required List<String> items,
+    required String? value,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade400),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          isExpanded: true,
+          hint: Text(hint, style: TextStyle(color: Colors.grey.shade500)),
+          value: value,
+          items: items
+              .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+              .toList(),
+          onChanged: onChanged,
+        ),
+      ),
+    );
   }
 
   @override
@@ -151,93 +157,65 @@ class _AddJobPageState extends State<AddJobPage> {
                   children: [
                     CustomTextField(
                       controller: titleController,
-                      hintText: 'Query Title',
+                      hintText: 'Query Title (optional)',
                       keyboardType: TextInputType.text,
-                      validator: (title) {
-                        if (title!.isEmpty) {
-                          return 'Please enter a valid job title';
-                        } else {
-                          return null;
-                        }
-                      },
                     ),
                     const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: locationController,
-                      hintText: 'Location',
-                      keyboardType: TextInputType.text,
-                      validator: (location) {
-                        if (location!.isEmpty) {
-                          return 'Please enter a valid location';
-                        } else {
-                          return null;
-                        }
-                      },
+                    // Domain / Category dropdown
+                    Text(
+                      'Domain',
+                      style: appstyle(14, Colors.black87, FontWeight.w600),
+                    ),
+                    const HeightSpacer(size: 6),
+                    _buildDropdown(
+                      hint: 'Select Domain',
+                      items: kDomains,
+                      value: selectedCategory,
+                      onChanged: (val) => setState(() => selectedCategory = val),
+                    ),
+                    const HeightSpacer(size: 10),
+                    // Opportunity Type dropdown
+                    Text(
+                      'Opportunity Type',
+                      style: appstyle(14, Colors.black87, FontWeight.w600),
+                    ),
+                    const HeightSpacer(size: 6),
+                    _buildDropdown(
+                      hint: 'Select Opportunity Type',
+                      items: kOpportunityTypes,
+                      value: selectedOpportunityType,
+                      onChanged: (val) =>
+                          setState(() => selectedOpportunityType = val),
                     ),
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: companyController,
-                      hintText: 'Company',
+                      hintText: 'Company (optional)',
                       keyboardType: TextInputType.text,
-                      validator: (company) {
-                        if (company!.isEmpty) {
-                          return 'Please enter a valid company';
-                        } else {
-                          return null;
-                        }
-                      },
                     ),
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: descriptionController,
-                      hintText: 'Description',
+                      hintText: 'Description (optional)',
                       keyboardType: TextInputType.text,
-                      validator: (description) {
-                        if (description!.isEmpty) {
-                          return 'Please enter a valid description';
-                        } else {
-                          return null;
-                        }
-                      },
                     ),
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: salaryController,
-                      hintText: 'Reward/Compensation',
+                      hintText: 'Reward/Compensation (optional)',
                       keyboardType: TextInputType.number,
-                      validator: (salary) {
-                        if (salary!.isEmpty) {
-                          return 'Please enter a valid salary';
-                        } else {
-                          return null;
-                        }
-                      },
                     ),
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: periodController,
-                      hintText: 'period',
+                      hintText: 'Period (optional)',
                       keyboardType: TextInputType.text,
-                      validator: (period) {
-                        if (period!.isEmpty) {
-                          return 'Please enter a valid period';
-                        } else {
-                          return null;
-                        }
-                      },
                     ),
                     const HeightSpacer(size: 10),
                     CustomTextField(
                       controller: contractController,
-                      hintText: 'contract',
+                      hintText: 'Contract (optional)',
                       keyboardType: TextInputType.text,
-                      validator: (contract) {
-                        if (contract!.isEmpty) {
-                          return 'Please enter a valid contract';
-                        } else {
-                          return null;
-                        }
-                      },
                     ),
                     const HeightSpacer(size: 10),
                     Text(
@@ -294,43 +272,75 @@ class _AddJobPageState extends State<AddJobPage> {
                       controller: imageUrlController,
                       hintText: 'Image URL',
                       keyboardType: TextInputType.text,
-                      // validator: (url) {
-                      //   if (url!.isEmpty) {
-                      //     return 'Please enter a valid image URL';
-                      //   } else {
-                      //     return null;
-                      //   }
-                      // },
                     ),
                     const HeightSpacer(size: 20),
                     CustomButton(
                       onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        var userId = prefs.getString('userId');
-                        final requirementsList = requirementsControllers
-                            .map((controller) => controller.text)
-                            .toList();
+                        if (selectedCategory == null ||
+                            selectedOpportunityType == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Please select a domain and opportunity type.'),
+                            ),
+                          );
+                          return;
+                        }
 
-                        // const userId = "6777c8d3b4c508d712aac2f3";
-                        final jobData = CreateJobsRequest(
-                          title: titleController.text,
-                          location: locationController.text,
-                          company: companyController.text,
-                          description: descriptionController.text,
-                          salary: salaryController.text,
-                          period: periodController.text,
-                          hiring: isHiring,
-                          contract: contractController.text,
-                          requirements: requirementsList,
-                          imageUrl: imageUrlController.text,
-                          agentId: userId ?? '',
-                          matchedUsers: [],
-                          swipedUsers: [],
-                        );
-                        // JobsNotifier.createJob(jobData);
-                        // print('Job Data: ${jsonEncode(jobData.toJson())}');
-                        if (!mounted) return;
-                        JobsNotifier.createJob(jobData, context);
+                        try {
+                          final prefs = await SharedPreferences.getInstance();
+                          final userId = prefs.getString('userId') ?? '';
+
+                          if (userId.isEmpty) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'You must be logged in to list a query.')),
+                            );
+                            return;
+                          }
+
+                          ProfileRes? profile;
+                          try {
+                            profile = await UserHelper.getProfile();
+                          } catch (_) {
+                            profile = null;
+                          }
+                          final location = profile?.location ?? '';
+                          final requirementsList = requirementsControllers
+                              .map((c) => c.text)
+                              .where((t) => t.trim().isNotEmpty)
+                              .toList();
+
+                          final jobData = CreateJobsRequest(
+                            agentId: userId,
+                            category: selectedCategory!,
+                            opportunityType: selectedOpportunityType!,
+                            title: titleController.text.isNotEmpty
+                                ? titleController.text
+                                : selectedCategory!,
+                            location: location.isNotEmpty ? location : 'Remote',
+                            company: companyController.text,
+                            description: descriptionController.text,
+                            salary: salaryController.text,
+                            period: periodController.text,
+                            hiring: isHiring,
+                            contract: contractController.text,
+                            requirements: requirementsList,
+                            imageUrl: imageUrlController.text,
+                            matchedUsers: [],
+                            swipedUsers: [],
+                          );
+
+                          if (!mounted) return;
+                          await JobsNotifier.createJob(jobData, context);
+                        } catch (e) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: ${e.toString()}')),
+                          );
+                        }
                       },
                       text: 'List Query',
                     ),

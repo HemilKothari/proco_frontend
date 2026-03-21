@@ -13,6 +13,24 @@ import '../../models/response/jobs/match_res_model.dart';
 class JobsHelper {
   static https.Client client = https.Client();
 
+  static Future<List<JobsResponse>> getFilteredJobs(String agentId) async {
+    try {
+      final requestHeaders = {'Content-Type': 'application/json'};
+      final url = Uri.http(Config.apiUrl, '${Config.jobs}/filtered/$agentId');
+      final response = await client.get(url, headers: requestHeaders);
+
+      if (response.statusCode == 200) {
+        return jobsResponseFromJson(response.body);
+      } else {
+        throw Exception('Failed to get filtered jobs');
+      }
+    } catch (e, s) {
+      debugPrint('Error Occurred: $e');
+      debugPrintStack(stackTrace: s);
+      rethrow;
+    }
+  }
+
   static Future<List<JobsResponse>> getJobs() async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
@@ -58,11 +76,15 @@ class JobsHelper {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
-      if (decoded['success'] != true) {
-        throw Exception(decoded['message'] ?? 'Failed to load user jobs');
+      List data;
+      if (decoded is List) {
+        data = decoded;
+      } else {
+        if (decoded['success'] != true) {
+          throw Exception(decoded['message'] ?? 'Failed to load user jobs');
+        }
+        data = decoded['data'] ?? [];
       }
-
-      final List data = decoded['data'] ?? [];
 
       if (data.isEmpty) {
         debugPrint('No jobs found for user: $agentId');
@@ -72,7 +94,6 @@ class JobsHelper {
       List<JobsResponse> jobs =
           data.map((job) => JobsResponse.fromJson(job)).toList();
 
-      // ✅ Store job IDs
       List<String> jobIds = jobs.map((job) => job.id).toList();
       await saveJobIdsToPrefs(jobIds);
 
@@ -139,43 +160,33 @@ class JobsHelper {
 
   static Future<JobsResponse> createJob(CreateJobsRequest model) async {
     try {
-      // Fetch the token from SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      var token = prefs.getString('token');
-
-      if (token == null || token.isEmpty) {
-        throw Exception('Token is null or empty');
-      }
-
       final url = Uri.http(Config.apiUrl, Config.jobs);
 
       // API Request
       final response = await client.post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
-          'token': 'Bearer $token', // Correct header for Bearer token
-        },
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode(model),
       );
 
-      // Log the response for debugging
       debugPrint('Request URL: $url');
-      debugPrint('Request Headers: ${{
-        'Content-Type': 'application/json',
-        'token': 'Bearer $token',
-      }}');
       debugPrint('Request Body: ${jsonEncode(model)}');
 
       debugPrint('Response Code: ${response.statusCode}');
       debugPrint('Response Body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        // Parse the single job object
-        return JobsResponse.fromJson(json.decode(response.body));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = json.decode(response.body);
+        final data = (body is Map && body.containsKey('data'))
+            ? body['data']
+            : body;
+        return JobsResponse.fromJson(data as Map<String, dynamic>);
       } else {
-        // Throw exception with detailed error
-        throw Exception('Failed to create a job: ${response.body}');
+        final body = json.decode(response.body);
+        final message = (body is Map && body.containsKey('message'))
+            ? body['message']
+            : response.body;
+        throw Exception(message);
       }
     } catch (e, s) {
       debugPrint('Error Occurred: $e');

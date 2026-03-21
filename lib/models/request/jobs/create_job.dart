@@ -5,21 +5,26 @@ String createJobsRequestToJson(CreateJobsRequest data) =>
 
 class CreateJobsRequest {
   CreateJobsRequest({
-    required this.title,
-    required this.location,
-    required this.company,
-    required this.description,
-    required this.salary,
-    required this.period,
-    required this.hiring,
-    required this.contract,
-    required this.requirements,
-    required this.imageUrl,
     required this.agentId,
+    required this.category,
+    required this.opportunityType,
+    this.title = '',
+    this.location = '',
+    this.company = '',
+    this.description = '',
+    this.salary = '',
+    this.period = '',
+    this.hiring = true,
+    this.contract = '',
+    this.requirements = const [],
+    this.imageUrl = '',
     this.matchedUsers = const [],
     this.swipedUsers = const [],
   });
 
+  final String agentId;
+  final String category;
+  final String opportunityType;
   final String title;
   final String location;
   final String company;
@@ -30,11 +35,13 @@ class CreateJobsRequest {
   final String contract;
   final List<String> requirements;
   final String imageUrl;
-  final String agentId;
   final List<String> matchedUsers;
   final List<String> swipedUsers;
 
   Map<String, dynamic> toJson() => {
+        'agentId': agentId,
+        'category': category,
+        'opportunityType': opportunityType,
         'title': title,
         'location': location,
         'company': company,
@@ -45,8 +52,7 @@ class CreateJobsRequest {
         'contract': contract,
         'requirements': requirements.map((x) => x).toList(),
         'imageUrl': imageUrl,
-        'agentId': agentId,
         'matchedUsers': matchedUsers.map((x) => x).toList(),
-        'swipedUsers': matchedUsers.map((x) => x).toList(),
+        'swipedUsers': swipedUsers.map((x) => x).toList(),
       };
 }

@@ -14,5 +14,5 @@ class Config {
   static const String bookmarkUrl = '/api/bookmarks';
   static const String chatsUrl = '/api/chats';
   static const String messagingUrl = '/api/messages';
-  static const String filters = 'api/filters';
+  static const String filters = '/api/filters';
 }

@@ -22,6 +22,11 @@ class JobsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  void getFilteredJobs(String agentId) {
+    jobList = JobsHelper.getFilteredJobs(agentId);
+    notifyListeners();
+  }
+
   void getRecent() {
     recent = JobsHelper.getRecent();
     notifyListeners();
@@ -46,17 +51,24 @@ class JobsNotifier extends ChangeNotifier {
         await Future.delayed(const Duration(seconds: 1)).then((value) {
           Get.back();
         });
-        // Refresh the job list after successful creation
+        // Refresh both the global job list and the user's own job list
         getJobs();
+        getUserJobs(model.agentId);
       });
     } catch (e) {
-      // Handle errors
-      Get.snackbar(
-        'Error Creating Query',
-        e.toString(),
-        colorText: Color(kLight.value),
-        backgroundColor: Color(kOrange.value),
-        icon: const Icon(Icons.error),
+      debugPrint('createJob error: $e');
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Failed to List Query'),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
     }
   }
