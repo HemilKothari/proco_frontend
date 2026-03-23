@@ -6,7 +6,7 @@ String createJobsRequestToJson(CreateJobsRequest data) =>
 class CreateJobsRequest {
   CreateJobsRequest({
     required this.agentId,
-    required this.category,
+    required this.domain,
     required this.opportunityType,
     this.title = '',
     this.location = '',
@@ -23,7 +23,7 @@ class CreateJobsRequest {
   });
 
   final String agentId;
-  final String category;
+  final String domain;
   final String opportunityType;
   final String title;
   final String location;
@@ -40,7 +40,7 @@ class CreateJobsRequest {
 
   Map<String, dynamic> toJson() => {
         'agentId': agentId,
-        'category': category,
+        'domain': domain,
         'opportunityType': opportunityType,
         'title': title,
         'location': location,

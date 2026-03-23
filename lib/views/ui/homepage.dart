@@ -32,8 +32,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadJobs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId') ?? '';
     final jobNotifier = Provider.of<JobsNotifier>(context, listen: false);
-    jobNotifier.getJobs();
+    jobNotifier.getFilteredJobs(userId);
   }
 
   Future<String> getCurrentUserId() async {
@@ -97,11 +99,12 @@ class _HomePageState extends State<HomePage> {
                   FontAwesome.filter,
                   color: Color(0xFF08959D),
                 ),
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const FilterPage()),
                   );
+                  _loadJobs();
                 },
               ),
             ),
@@ -191,6 +194,18 @@ class _HomePageState extends State<HomePage> {
                                             job.hiring ==
                                                 true) // Filter out user's jobs
                                         .toList();
+                                    if (jobList.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                          'No jobs available.',
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: const Color(0xFF040326),
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      );
+                                    }
                                     final bookmarkNotifier =
                                         Provider.of<BookMarkNotifier>(context,
                                             listen: false);
@@ -198,6 +213,7 @@ class _HomePageState extends State<HomePage> {
                                       controller: controller,
                                       scale: 0.5,
                                       cardsCount: jobList.length,
+                                      numberOfCardsDisplayed: jobList.length.clamp(1, 2),
                                       allowedSwipeDirection:
                                           const AllowedSwipeDirection.only(
                                         left: true,
@@ -278,12 +294,21 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                               const SizedBox(height: 8),
                                               _buildInfoBox(job.title, 12.sp),
-                                              const SizedBox(height: 10),
-                                              _buildInfoBox(
-                                                job.location ??
-                                                    'Location Not Available',
-                                                12.sp,
+                                              const SizedBox(height: 6),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  if (job.domain.isNotEmpty)
+                                                    _buildInfoBox(job.domain, 11.sp),
+                                                  if (job.domain.isNotEmpty && job.opportunityType.isNotEmpty)
+                                                    const SizedBox(width: 6),
+                                                  if (job.opportunityType.isNotEmpty)
+                                                    _buildInfoBox(job.opportunityType, 11.sp),
+                                                ],
                                               ),
+                                              const SizedBox(height: 6),
+                                              if (job.city.isNotEmpty)
+                                                _buildInfoBox(job.city, 12.sp),
                                             ],
                                           ),
                                         );

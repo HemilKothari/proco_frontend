@@ -36,7 +36,7 @@ class JobsResponse {
   final List<String> matchedUsers;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String category;
+  final String domain;
   final String opportunityType;
   final String city;
 
@@ -57,7 +57,7 @@ class JobsResponse {
     required this.matchedUsers,
     required this.createdAt,
     required this.updatedAt,
-    this.category = '',
+    this.domain = '',
     this.opportunityType = '',
     this.city = '',
   });
@@ -90,7 +90,7 @@ class JobsResponse {
       updatedAt: json['updatedAt'] != null && json['updatedAt'] != ''
           ? DateTime.parse(json['updatedAt'])
           : DateTime.now(),
-      category: json['category'] ?? '',
+      domain: json['domain'] ?? '',
       opportunityType: json['opportunityType'] ?? '',
       city: json['city'] ?? '',
     );

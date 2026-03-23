@@ -15,27 +15,6 @@ import 'package:jobhub_v1/services/helpers/user_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const List<String> kDomains = [
-  'Web Development',
-  'App Development',
-  'Graphic Designer',
-  'Finance',
-  'Consulting',
-  'Marketing',
-  'Competitive Programming',
-  'Cyber Security',
-  'Blockchain',
-  'Research',
-  'UI/UX',
-  'Animator',
-];
-
-const List<String> kOpportunityTypes = [
-  'Internship',
-  'Research',
-  'Freelance',
-  'Competition',
-];
 
 class AddJobPage extends StatefulWidget {
   const AddJobPage({Key? key}) : super(key: key);
@@ -315,7 +294,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
                           final jobData = CreateJobsRequest(
                             agentId: userId,
-                            category: selectedCategory!,
+                            domain: selectedCategory!,
                             opportunityType: selectedOpportunityType!,
                             title: titleController.text.isNotEmpty
                                 ? titleController.text
