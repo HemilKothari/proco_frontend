@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jobhub_v1/controllers/image_provider.dart';
 import 'package:jobhub_v1/models/request/auth/profile_update_model.dart';
 import 'package:jobhub_v1/services/helpers/user_helper.dart';
 import 'package:jobhub_v1/views/ui/mainscreen.dart';
+import 'package:provider/provider.dart';
 
 class UpdateProfilePage extends StatefulWidget {
   const UpdateProfilePage({Key? key}) : super(key: key);
@@ -13,7 +17,7 @@ class UpdateProfilePage extends StatefulWidget {
 }
 
 class _UpdateProfilePageState extends State<UpdateProfilePage> {
-  // ─── Theme colours (matching profile page) ───────────────────────────────
+  // ─── Theme colours ────────────────────────────────────────────────────────
   static const Color _bg = Color(0xFF040326);
   static const Color _card = Color(0xFF08979F);
   static const Color _cardDark = Color(0xFF067078);
@@ -22,7 +26,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   // ─── Form ─────────────────────────────────────────────────────────────────
   final _formKey = GlobalKey<FormState>();
-
   final _phoneController = TextEditingController();
   final _cityController = TextEditingController();
   final _stateController = TextEditingController();
@@ -31,7 +34,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   final _branchController = TextEditingController();
   final _skillController = TextEditingController();
 
-  // ✅ NEW fields present on backend / profile page
   String? _selectedGender;
   static const List<String> _genderOptions = [
     'Male',
@@ -41,7 +43,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   ];
 
   List<String> skills = [];
-
   bool isLoading = true;
   bool isUpdating = false;
   String? errorMessage;
@@ -81,24 +82,16 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           _collegeController.text = profileData.college ?? '';
           _branchController.text = profileData.branch ?? '';
           skills = List<String>.from(profileData.skills ?? []);
-
-          // ✅ Pre-select gender if stored
           final g = profileData.gender ?? '';
           _selectedGender = _genderOptions.contains(g) ? g : null;
         });
       } else {
-        setState(() {
-          errorMessage = 'Could not load profile data';
-        });
+        setState(() => errorMessage = 'Could not load profile data');
       }
     } catch (e) {
-      setState(() {
-        errorMessage = 'Error loading profile: $e';
-      });
+      setState(() => errorMessage = 'Error loading profile: $e');
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
 
@@ -116,44 +109,44 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
     try {
       final phone = _phoneController.text.trim();
-      if (!_isValidPhone(phone))
+      if (!_isValidPhone(phone)) {
         throw Exception('Please enter a valid phone number');
+      }
+
+      // ✅ Get the uploaded selectedImage from ImageNotifier if available
+      final imageNotifier = context.read<ImageNotifier>();
 
       final updateReq = ProfileUpdateReq(
         city: _cityController.text.trim(),
         state: _stateController.text.trim(),
         country: _countryController.text.trim(),
         phone: phone,
-        profile: null,
         skills: skills,
         college: _collegeController.text.trim(),
         branch: _branchController.text.trim(),
-        gender: _selectedGender, // ✅ pass gender
+        gender: _selectedGender,
       );
 
-      final response = await UserHelper.updateProfile(updateReq);
+      final response = await UserHelper.updateProfile(
+        updateReq,
+        imageNotifier.selectedImage,
+      );
 
       if (response == true) {
         _snack('Success', 'Profile updated successfully', Colors.green);
         await Future.delayed(const Duration(seconds: 2));
         if (mounted) Get.offAll(() => const MainScreen());
       } else {
-        setState(() {
-          errorMessage = 'Profile update failed. Please try again.';
-        });
+        setState(
+            () => errorMessage = 'Profile update failed. Please try again.');
         _snack('Update Failed', 'Please check your information and try again',
             Colors.orange);
       }
     } catch (e) {
-      setState(() {
-        errorMessage = 'Error: ${e.toString()}';
-      });
+      setState(() => errorMessage = 'Error: ${e.toString()}');
       _snack('Error', e.toString(), Colors.red);
     } finally {
-      if (mounted)
-        setState(() {
-          isUpdating = false;
-        });
+      if (mounted) setState(() => isUpdating = false);
     }
   }
 
@@ -183,33 +176,36 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   // ─── Build ────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _bg,
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (_) => ImageNotifier(),
+      child: Scaffold(
         backgroundColor: _bg,
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: _white, size: 20),
-        ),
-        title: const Text(
-          'Edit Profile',
-          style: TextStyle(
-              color: _white, fontWeight: FontWeight.w600, fontSize: 18),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: _white),
-            onPressed: isLoading ? null : _loadProfile,
+        appBar: AppBar(
+          backgroundColor: _bg,
+          elevation: 0,
+          leading: GestureDetector(
+            onTap: () => Get.back(),
+            child: const Icon(Icons.arrow_back_ios_new_rounded,
+                color: _white, size: 20),
           ),
-        ],
+          title: const Text(
+            'Edit Profile',
+            style: TextStyle(
+                color: _white, fontWeight: FontWeight.w600, fontSize: 18),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded, color: _white),
+              onPressed: isLoading ? null : _loadProfile,
+            ),
+          ],
+        ),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator(color: _accent))
+            : (errorMessage != null && errorMessage!.contains('Could not load'))
+                ? _buildErrorView()
+                : _buildForm(),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator(color: _accent))
-          : (errorMessage != null && errorMessage!.contains('Could not load'))
-              ? _buildErrorView()
-              : _buildForm(),
     );
   }
 
@@ -239,7 +235,11 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Personal Info ──────────────────────────────────────────────
+            // ── Profile Picture ───────────────────────────────────────────
+            _buildImagePicker(),
+            SizedBox(height: 24.h),
+
+            // ── Personal Info ─────────────────────────────────────────────
             _sectionLabel('Personal Info'),
             SizedBox(height: 12.h),
             _field(
@@ -256,8 +256,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               },
             ),
             SizedBox(height: 12.h),
-
-            // ✅ Gender dropdown
             _label('Gender'),
             SizedBox(height: 6.h),
             _genderDropdown(),
@@ -327,6 +325,105 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           ],
         ),
       ),
+    );
+  }
+
+  // ─── Image Picker Widget ──────────────────────────────────────────────────
+  Widget _buildImagePicker() {
+    return Consumer<ImageNotifier>(
+      builder: (context, imageNotifier, _) {
+        return Column(
+          children: [
+            // ── Avatar ──────────────────────────────────────────────────
+            Center(
+              child: Stack(
+                children: [
+                  // Profile picture circle
+                  Container(
+                    width: 100.w,
+                    height: 100.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _card.withOpacity(0.3),
+                      border: Border.all(color: _accent, width: 2),
+                      image: imageNotifier.selectedImage != null
+                          ? DecorationImage(
+                              image: FileImage(imageNotifier.selectedImage!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    ),
+                    child: imageNotifier.selectedImage == null
+                        ? Icon(Icons.person_rounded,
+                            size: 50.w, color: _accent.withOpacity(0.6))
+                        : null,
+                  ),
+
+                  // Edit button
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: imageNotifier.isLoading
+                          ? null
+                          : () async {
+                              await imageNotifier.pickImage();
+                              if (imageNotifier.errorMessage != null) {
+                                _snack('Image Error',
+                                    imageNotifier.errorMessage!, Colors.red);
+                              } else if (imageNotifier.selectedImage != null) {
+                                _snack('Success', 'Image uploaded successfully',
+                                    Colors.green);
+                              }
+                            },
+                      child: Container(
+                        width: 32.w,
+                        height: 32.w,
+                        decoration: BoxDecoration(
+                          color: _card,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _bg, width: 2),
+                        ),
+                        child: imageNotifier.isLoading
+                            ? const Padding(
+                                padding: EdgeInsets.all(6),
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: _white),
+                              )
+                            : Icon(Icons.camera_alt_rounded,
+                                size: 16.w, color: _white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Status text below avatar ─────────────────────────────────
+            SizedBox(height: 10.h),
+            Center(
+              child: imageNotifier.isLoading
+                  ? Text('Uploading...',
+                      style: TextStyle(color: _accent, fontSize: 12.sp))
+                  : imageNotifier.selectedImage != null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.check_circle_rounded,
+                                color: Colors.green, size: 14.w),
+                            SizedBox(width: 4.w),
+                            Text('Image uploaded',
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 12.sp)),
+                          ],
+                        )
+                      : Text('Tap the camera icon to upload a photo',
+                          style: TextStyle(
+                              color: Colors.white38, fontSize: 12.sp)),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -400,7 +497,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     );
   }
 
-  // ✅ Gender dropdown styled to match the dark theme
   Widget _genderDropdown() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w),

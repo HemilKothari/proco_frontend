@@ -1,6 +1,6 @@
 class Config {
-  static const String apiUrl = 'proco-server-api.onrender.com';
-  // static const String apiUrl = '10.0.2.2:3000';
+  // static const String apiUrl = 'proco-server-api.onrender.com';
+  static const String apiUrl = '10.0.2.2:3000';
 
   static const String loginUrl = '/api/login';
   static const String signupUrl = '/api/register';
