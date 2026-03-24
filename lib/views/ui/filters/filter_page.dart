@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/filter_provider.dart';
 import 'package:jobhub_v1/models/request/filters/create_filter.dart';
+import 'package:jobhub_v1/services/helpers/filter_helper.dart';
 import 'package:jobhub_v1/views/common/custom_btn.dart';
-import 'package:jobhub_v1/views/common/custom_textfield.dart';
 import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/ui/homepage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,30 +12,14 @@ class FilterPage extends StatefulWidget {
   const FilterPage({Key? key}) : super(key: key);
 
   @override
-  _FilterPageState createState() => _FilterPageState();
+  State<FilterPage> createState() => _FilterPageState();
 }
 
 class _FilterPageState extends State<FilterPage> {
-  // List of options for the bubbles
-  final List<String> options = [
-    'Web Development',
-    'App Development',
-    'Graphic Designer',
-    'Fianace',
-    'Consulting',
-    'Marketing',
-    'Competitive Programming',
-    'Cyber Security',
-    'Blockchain',
-    'Research',
-    'UI/UX',
-    'Animator',
-  ];
+  // Shared domain list from app_constants — same as add_job.dart
+  final List<String> options = List.from(kDomains);
   final Map<String, bool> opportunityTypes = {
-    'Internship': false,
-    'Research': false,
-    'Freelance': false,
-    'Competition': false,
+    for (final t in kOpportunityTypes) t: false,
   };
 
   final List<String> states = [
@@ -54,16 +38,54 @@ class _FilterPageState extends State<FilterPage> {
   List<TextEditingController> customControllers =
       List.generate(10, (index) => TextEditingController());
 
-  // Store the selected options
   final List<String> selectedOptions = [];
-  bool showCustomInput = false; // Flag to show/hide custom input
-  // String customInputValue = ""; // Store the custom input value
-  double selectedDistance = 10.0;
-  String selectedLocationOption =
-      ""; // Keeps track of the selected option (City/State/Country)
-  double locationDistance = 10.0; // For City Slider
-  String selectedState = ""; // For State Dropdown
-  String enteredCountry = ""; // For Country Text Input
+  bool showCustomInput = false;
+  String selectedLocationOption = "";
+  String selectedCity = "";
+  String selectedState = "";
+  String selectedCountry = "";
+  bool _isLoading = true; // show spinner until existing filter is loaded
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingFilter();
+  }
+
+  Future<void> _loadExistingFilter() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId') ?? '';
+
+    if (userId.isNotEmpty) {
+      try {
+        final existing = await FilterHelper.getFilter(userId);
+        if (!mounted) return;
+        setState(() {
+          selectedOptions.clear();
+          selectedOptions.addAll(existing.selectedOptions);
+
+          for (final custom in existing.customOptions) {
+            if (!options.contains(custom)) options.add(custom);
+          }
+
+          for (final key in existing.opportunityTypes.keys) {
+            if (opportunityTypes.containsKey(key)) {
+              opportunityTypes[key] = existing.opportunityTypes[key] ?? false;
+            }
+          }
+
+          selectedLocationOption = existing.selectedLocationOption;
+          selectedCity = existing.selectedCity;
+          selectedState = existing.selectedState;
+          selectedCountry = existing.selectedCountry;
+        });
+      } catch (_) {
+        // No saved filter yet — start fresh
+      }
+    }
+
+    if (mounted) setState(() => _isLoading = false);
+  }
 
   void removeCustomField(int index) {
     setState(() {
@@ -93,13 +115,15 @@ class _FilterPageState extends State<FilterPage> {
           },
         ),
       ),
-      body: Padding(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Which Area To Explore?',
+              'Domain',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
@@ -251,30 +275,16 @@ class _FilterPageState extends State<FilterPage> {
             ),
             const SizedBox(height: 20),
             if (selectedLocationOption == "City")
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Distance (in kms):",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Slider(
-                    value: locationDistance,
-                    min: 0,
-                    max: 100,
-                    divisions: 20,
-                    activeColor: Colors.teal,
-                    inactiveColor: Colors.grey,
-                    label: '${locationDistance.toInt()} km',
-                    onChanged: (value) {
-                      setState(() {
-                        locationDistance = value;
-                      });
-                    },
-                  ),
-                  Text('${locationDistance.toInt()} km'),
-                ],
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    selectedCity = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Type city name",
+                ),
               ),
             if (selectedLocationOption == "State")
               DropdownButton<String>(
@@ -296,7 +306,7 @@ class _FilterPageState extends State<FilterPage> {
               TextField(
                 onChanged: (value) {
                   setState(() {
-                    enteredCountry = value;
+                    selectedCountry = value;
                   });
                 },
                 decoration: const InputDecoration(
@@ -312,6 +322,7 @@ class _FilterPageState extends State<FilterPage> {
 
                 final customInput = customControllers
                     .map((controller) => controller.text)
+                    .where((text) => text.isNotEmpty)
                     .toList();
 
                 final filterData = CreateFilterRequest(
@@ -319,9 +330,9 @@ class _FilterPageState extends State<FilterPage> {
                   selectedOptions: selectedOptions,
                   opportunityTypes: opportunityTypes,
                   selectedLocationOption: selectedLocationOption,
-                  locationDistance: locationDistance,
+                  selectedCity: selectedCity,
                   selectedState: selectedState,
-                  enteredCountry: enteredCountry,
+                  selectedCountry: selectedCountry,
                   customOptions: customInput,
                 );
 
@@ -334,7 +345,7 @@ class _FilterPageState extends State<FilterPage> {
 
                 if (!context.mounted) return;
 
-                /// Safe navigation check before popping
+                Navigator.pop(context);
               },
               text: 'Add Filters',
             ),

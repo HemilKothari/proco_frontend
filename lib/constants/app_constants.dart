@@ -23,6 +23,28 @@ const kDefaultImage = 'https://firebasestorage.googleapis'
 
 String theId = '';
 
+const List<String> kDomains = [
+  'Web Development',
+  'App Development',
+  'Graphic Designer',
+  'Finance',
+  'Consulting',
+  'Marketing',
+  'Competitive Programming',
+  'Cyber Security',
+  'Blockchain',
+  'Research',
+  'UI/UX',
+  'Animator',
+];
+
+const List<String> kOpportunityTypes = [
+  'Internship',
+  'Research',
+  'Freelance',
+  'Competition',
+];
+
 List<String> requirements = [
   'Design and Build sophisticated and highly scalable apps using Flutter.',
   'Build custom packages in Flutter using the functionalities and APIs already available in native Android and IOS.',

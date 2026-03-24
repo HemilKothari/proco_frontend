@@ -3,11 +3,16 @@ import 'dart:convert';
 List<JobsResponse> jobsResponseFromJson(String str) {
   final decoded = json.decode(str);
 
-  if (decoded['success'] != true) {
-    throw Exception(decoded['message'] ?? "Failed to fetch jobs");
+  List dataList;
+  if (decoded is List) {
+    // Plain array response
+    dataList = decoded;
+  } else {
+    if (decoded['success'] != true) {
+      throw Exception(decoded['message'] ?? "Failed to fetch jobs");
+    }
+    dataList = decoded['data'] ?? [];
   }
-
-  final List dataList = decoded['data'] ?? [];
 
   return dataList
       .map((e) => JobsResponse.fromJson(e as Map<String, dynamic>))
@@ -31,6 +36,9 @@ class JobsResponse {
   final List<String> matchedUsers;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String domain;
+  final String opportunityType;
+  final String city;
 
   JobsResponse({
     required this.id,
@@ -49,6 +57,9 @@ class JobsResponse {
     required this.matchedUsers,
     required this.createdAt,
     required this.updatedAt,
+    this.domain = '',
+    this.opportunityType = '',
+    this.city = '',
   });
 
   factory JobsResponse.fromJson(Map<String, dynamic> json) {
@@ -79,6 +90,9 @@ class JobsResponse {
       updatedAt: json['updatedAt'] != null && json['updatedAt'] != ''
           ? DateTime.parse(json['updatedAt'])
           : DateTime.now(),
+      domain: json['domain'] ?? '',
+      opportunityType: json['opportunityType'] ?? '',
+      city: json['city'] ?? '',
     );
   }
 }

@@ -131,9 +131,10 @@ class FilterHelper {
       // debugPrint('Response Code: ${response.statusCode}');
       // debugPrint('Response Body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        // Parse the single filter object
-        return FilterResponse.fromJson(json.decode(response.body));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = json.decode(response.body);
+        final data = body is Map && body.containsKey('data') ? body['data'] : body;
+        return FilterResponse.fromJson(data as Map<String, dynamic>);
       } else {
         // Throw exception with detailed error
         throw Exception('Failed to create a filter: ${response.body}');

@@ -36,7 +36,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<JobsNotifier>(context, listen: false).getJobs();
+    _loadJobs();
+  }
+
+  Future<void> _loadJobs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId') ?? '';
+    final jobNotifier = Provider.of<JobsNotifier>(context, listen: false);
+    jobNotifier.getFilteredJobs(userId);
   }
 
   Future<String> getCurrentUserId() async {
@@ -52,10 +59,28 @@ class _HomePageState extends State<HomePage> {
         preferredSize: Size.fromHeight(0.065.sh),
         child: CustomAppBar(
           actions: [
-            IconButton(
-              icon: const Icon(FontAwesome.filter, color: _teal, size: 18),
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const FilterPage())),
+            Padding(
+              padding: EdgeInsets.only(right: 0.01.sh),
+
+              /*child: Icon(
+                FontAwesome.filter,
+                color: const Color(0xFF08959D),
+              ),
+              */
+
+              child: IconButton(
+                icon: const Icon(
+                  FontAwesome.filter,
+                  color: Color(0xFF08959D),
+                ),
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FilterPage()),
+                  );
+                  _loadJobs();
+                },
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(right: 6.w),
@@ -111,19 +136,185 @@ class _HomePageState extends State<HomePage> {
                   return Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      // ── Card swiper fills all space above FABs ─────────────
-                      Positioned.fill(
-                        bottom: 100.h,
-                        child: CardSwiper(
-                          controller: controller,
-                          scale: 0.92,
-                          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
-                          cardsCount: jobList.length,
-                          allowedSwipeDirection:
-                              const AllowedSwipeDirection.only(
-                            left: true,
-                            right: true,
-                            up: true,
+                      SizedBox(
+                        height: 0.87.sh,
+                        child: ClipRRect(
+                          clipBehavior: Clip.antiAlias,
+                          child: FutureBuilder<String>(
+                            future:
+                                getCurrentUserId(), // Fetch logged-in user's agentId
+                            builder: (context, userSnapshot) {
+                              if (!userSnapshot.hasData) {
+                                return const Center(
+                                    child:
+                                        CircularProgressIndicator()); // Show loading until agentId is fetched
+                              }
+
+                              final String currentUserId = userSnapshot.data!;
+                              return FutureBuilder<List<JobsResponse>>(
+                                future: jobNotifier.jobList,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text('Error: ${snapshot.error}'),
+                                    );
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    return Center(
+                                      child: Text(
+                                        'No jobs available.',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          color: const Color(0xFF040326),
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    final jobList = snapshot.data!
+                                        .where((job) =>
+                                            job.agentId != currentUserId &&
+                                            job.hiring ==
+                                                true) // Filter out user's jobs
+                                        .toList();
+                                    if (jobList.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                          'No jobs available.',
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: const Color(0xFF040326),
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    final bookmarkNotifier =
+                                        Provider.of<BookMarkNotifier>(context,
+                                            listen: false);
+                                    return CardSwiper(
+                                      controller: controller,
+                                      scale: 0.5,
+                                      cardsCount: jobList.length,
+                                      numberOfCardsDisplayed:
+                                          jobList.length.clamp(1, 2),
+                                      allowedSwipeDirection:
+                                          const AllowedSwipeDirection.only(
+                                        left: true,
+                                        right: true,
+                                        up: true,
+                                      ),
+                                      onSwipe: (previousIndex, currentIndex,
+                                          direction) {
+                                        final job = jobList[previousIndex];
+                                        final jobId = job.id;
+
+                                        // 👉 RIGHT = swipe action
+                                        if (direction ==
+                                            CardSwiperDirection.right) {
+                                          jobNotifier.addSwipedUsers(
+                                              jobId, currentUserId);
+                                        }
+
+                                        // 👉 UP = bookmark
+                                        if (direction ==
+                                            CardSwiperDirection.top) {
+                                          final bookmarkModel =
+                                              BookmarkReqResModel(job: jobId);
+                                          bookmarkNotifier.addBookMark(
+                                              bookmarkModel, jobId);
+                                        }
+
+                                        return true;
+                                      },
+                                      cardBuilder: (context,
+                                          index,
+                                          percentThresholdX,
+                                          percentThresholdY) {
+                                        final job = jobList[index];
+
+                                        return Container(
+                                          padding: EdgeInsets.all(8.w),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF040326),
+                                            borderRadius:
+                                                BorderRadius.circular(20.w),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                job.company ??
+                                                    'Unknown Company',
+                                                style: TextStyle(
+                                                  fontSize: 20.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      const Color(0xFF08979F),
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                child: Image.network(
+                                                  job.imageUrl,
+                                                  height: 0.45.sh,
+                                                  width: double.infinity,
+                                                  fit: BoxFit.contain,
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Image.asset(
+                                                      'assets/images/default-placeholder.png',
+                                                      height: 0.45.sh,
+                                                      width: double.infinity,
+                                                      fit: BoxFit.contain,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              _buildInfoBox(job.title, 12.sp),
+                                              const SizedBox(height: 6),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  if (job.domain.isNotEmpty)
+                                                    _buildInfoBox(
+                                                        job.domain, 11.sp),
+                                                  if (job.domain.isNotEmpty &&
+                                                      job.opportunityType
+                                                          .isNotEmpty)
+                                                    const SizedBox(width: 6),
+                                                  if (job.opportunityType
+                                                      .isNotEmpty)
+                                                    _buildInfoBox(
+                                                        job.opportunityType,
+                                                        11.sp),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 6),
+                                              if (job.city.isNotEmpty)
+                                                _buildInfoBox(job.city, 12.sp),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      isLoop: true,
+                                    );
+                                  }
+                                },
+                              );
+                            },
                           ),
                           onSwipe: (previousIndex, currentIndex, direction) {
                             final job = jobList[previousIndex];
