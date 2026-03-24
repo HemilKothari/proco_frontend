@@ -13,7 +13,7 @@ class AuthHelper {
 
   static Future<List<dynamic>> login(LoginModel model) async {
     final requestHeaders = <String, String>{'Content-Type': 'application/json'};
-    final url = Uri.http(Config.apiUrl, Config.loginUrl);
+    final url = Uri.https(Config.apiUrl, Config.loginUrl);
 
     final response = await client.post(
       url,
@@ -52,7 +52,7 @@ class AuthHelper {
       final requestHeaders = <String, String>{
         'Content-Type': 'application/json'
       };
-      final url = Uri.http(Config.apiUrl, Config.signupUrl);
+      final url = Uri.https(Config.apiUrl, Config.signupUrl);
 
       debugPrint(jsonEncode(model));
 
