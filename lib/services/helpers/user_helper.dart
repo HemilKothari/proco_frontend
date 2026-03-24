@@ -20,7 +20,7 @@ class UserHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.http(Config.apiUrl, Config.profileUrl);
+    final url = Uri.https(Config.apiUrl, Config.profileUrl);
     final response = await client.put(
       url,
       headers: requestHeaders,
@@ -51,7 +51,7 @@ class UserHelper {
       'token': 'Bearer $token',
     };
 
-    final url = Uri.http(Config.apiUrl, '/api/users');
+    final url = Uri.https(Config.apiUrl, '/api/users');
     final response = await client.get(
       url,
       headers: requestHeaders,
@@ -69,7 +69,7 @@ class UserHelper {
 
   static Future<List<SwipedRes>> getUserProfiles(String agentId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.http(Config.apiUrl, '${Config.profileUrl}/$agentId');
+    final url = Uri.https(Config.apiUrl, '${Config.profileUrl}/$agentId');
 
     final response = await client.get(url, headers: requestHeaders);
 

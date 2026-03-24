@@ -115,7 +115,7 @@ class _ChatPageState extends State<ChatPage> {
 
     socket = IO.io(
       // 'http://10.0.2.2:3000',
-      'proco-server-api.onrender.com',
+      'https://proco-server-api.onrender.com',
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()

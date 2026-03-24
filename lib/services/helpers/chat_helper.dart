@@ -23,7 +23,7 @@ class ChatHelper {
         };
       }
 
-      final url = Uri.http(Config.apiUrl, Config.chatsUrl);
+      final url = Uri.https(Config.apiUrl, Config.chatsUrl);
 
       final response = await client.post(
         url,
@@ -68,7 +68,7 @@ class ChatHelper {
         throw Exception("User not authenticated");
       }
 
-      final url = Uri.http(Config.apiUrl, Config.chatsUrl);
+      final url = Uri.https(Config.apiUrl, Config.chatsUrl);
 
       final response = await client.get(
         url,
