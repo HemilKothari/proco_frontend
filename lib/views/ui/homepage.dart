@@ -51,6 +51,7 @@ class _HomePageState extends State<HomePage> {
     return prefs.getString('userId') ?? '';
   }
 
+  // ─── Build ────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,22 +62,12 @@ class _HomePageState extends State<HomePage> {
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 0.01.sh),
-
-              /*child: Icon(
-                FontAwesome.filter,
-                color: const Color(0xFF08959D),
-              ),
-              */
-
               child: IconButton(
-                icon: const Icon(
-                  FontAwesome.filter,
-                  color: Color(0xFF08959D),
-                ),
+                icon: const Icon(FontAwesome.filter, color: _teal),
                 onPressed: () async {
                   await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const FilterPage()),
+                    MaterialPageRoute(builder: (_) => const FilterPage()),
                   );
                   _loadJobs();
                 },
@@ -87,9 +78,9 @@ class _HomePageState extends State<HomePage> {
               child: IconButton(
                 icon: const Icon(FontAwesome.bell, color: _teal, size: 18),
                 onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const NotificationPage())),
+                  context,
+                  MaterialPageRoute(builder: (_) => const NotificationPage()),
+                ),
               ),
             ),
           ],
@@ -136,220 +127,49 @@ class _HomePageState extends State<HomePage> {
                   return Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      SizedBox(
-                        height: 0.87.sh,
-                        child: ClipRRect(
-                          clipBehavior: Clip.antiAlias,
-                          child: FutureBuilder<String>(
-                            future:
-                                getCurrentUserId(), // Fetch logged-in user's agentId
-                            builder: (context, userSnapshot) {
-                              if (!userSnapshot.hasData) {
-                                return const Center(
-                                    child:
-                                        CircularProgressIndicator()); // Show loading until agentId is fetched
-                              }
-
-                              final String currentUserId = userSnapshot.data!;
-                              return FutureBuilder<List<JobsResponse>>(
-                                future: jobNotifier.jobList,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return Center(
-                                      child: Text('Error: ${snapshot.error}'),
-                                    );
-                                  } else if (!snapshot.hasData ||
-                                      snapshot.data!.isEmpty) {
-                                    return Center(
-                                      child: Text(
-                                        'No jobs available.',
-                                        style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: const Color(0xFF040326),
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    final jobList = snapshot.data!
-                                        .where((job) =>
-                                            job.agentId != currentUserId &&
-                                            job.hiring ==
-                                                true) // Filter out user's jobs
-                                        .toList();
-                                    if (jobList.isEmpty) {
-                                      return Center(
-                                        child: Text(
-                                          'No jobs available.',
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: const Color(0xFF040326),
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    final bookmarkNotifier =
-                                        Provider.of<BookMarkNotifier>(context,
-                                            listen: false);
-                                    return CardSwiper(
-                                      controller: controller,
-                                      scale: 0.5,
-                                      cardsCount: jobList.length,
-                                      numberOfCardsDisplayed:
-                                          jobList.length.clamp(1, 2),
-                                      allowedSwipeDirection:
-                                          const AllowedSwipeDirection.only(
-                                        left: true,
-                                        right: true,
-                                        up: true,
-                                      ),
-                                      onSwipe: (previousIndex, currentIndex,
-                                          direction) {
-                                        final job = jobList[previousIndex];
-                                        final jobId = job.id;
-
-                                        // 👉 RIGHT = swipe action
-                                        if (direction ==
-                                            CardSwiperDirection.right) {
-                                          jobNotifier.addSwipedUsers(
-                                              jobId, currentUserId);
-                                        }
-
-                                        // 👉 UP = bookmark
-                                        if (direction ==
-                                            CardSwiperDirection.top) {
-                                          final bookmarkModel =
-                                              BookmarkReqResModel(job: jobId);
-                                          bookmarkNotifier.addBookMark(
-                                              bookmarkModel, jobId);
-                                        }
-
-                                        return true;
-                                      },
-                                      cardBuilder: (context,
-                                          index,
-                                          percentThresholdX,
-                                          percentThresholdY) {
-                                        final job = jobList[index];
-
-                                        return Container(
-                                          padding: EdgeInsets.all(8.w),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF040326),
-                                            borderRadius:
-                                                BorderRadius.circular(20.w),
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                job.company ??
-                                                    'Unknown Company',
-                                                style: TextStyle(
-                                                  fontSize: 20.sp,
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      const Color(0xFF08979F),
-                                                  fontFamily: 'Poppins',
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                child: Image.network(
-                                                  job.imageUrl,
-                                                  height: 0.45.sh,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.contain,
-                                                  errorBuilder: (context, error,
-                                                      stackTrace) {
-                                                    return Image.asset(
-                                                      'assets/images/default-placeholder.png',
-                                                      height: 0.45.sh,
-                                                      width: double.infinity,
-                                                      fit: BoxFit.contain,
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              _buildInfoBox(job.title, 12.sp),
-                                              const SizedBox(height: 6),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  if (job.domain.isNotEmpty)
-                                                    _buildInfoBox(
-                                                        job.domain, 11.sp),
-                                                  if (job.domain.isNotEmpty &&
-                                                      job.opportunityType
-                                                          .isNotEmpty)
-                                                    const SizedBox(width: 6),
-                                                  if (job.opportunityType
-                                                      .isNotEmpty)
-                                                    _buildInfoBox(
-                                                        job.opportunityType,
-                                                        11.sp),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 6),
-                                              if (job.city.isNotEmpty)
-                                                _buildInfoBox(job.city, 12.sp),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                      isLoop: true,
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          ),
-                          onSwipe: (previousIndex, currentIndex, direction) {
-                            final job = jobList[previousIndex];
-                            if (direction == CardSwiperDirection.right) {
-                              jobNotifier.addSwipedUsers(job.id, currentUserId);
-                            }
-                            if (direction == CardSwiperDirection.top) {
-                              bookmarkNotifier.addBookMark(
-                                  BookmarkReqResModel(job: job.id), job.id);
-                            }
-                            return true;
-                          },
-                          cardBuilder: (context, index, pctX, pctY) {
-                            final job = jobList[index];
-
-                            // Derive live direction from drag %
-                            CardSwiperDirection? liveDirection;
-                            const threshold = 0.15;
-                            if (index == 0) {
-                              if (pctY < -threshold) {
-                                liveDirection = CardSwiperDirection.top;
-                              } else if (pctX > threshold) {
-                                liveDirection = CardSwiperDirection.right;
-                              } else if (pctX < -threshold) {
-                                liveDirection = CardSwiperDirection.left;
-                              }
-                            }
-
-                            return _buildCard(job, liveDirection);
-                          },
-                          isLoop: true,
+                      // ── Card swiper ───────────────────────────────────────
+                      CardSwiper(
+                        controller: controller,
+                        scale: 0.5,
+                        cardsCount: jobList.length,
+                        numberOfCardsDisplayed: jobList.length.clamp(1, 2),
+                        allowedSwipeDirection: const AllowedSwipeDirection.only(
+                          left: true,
+                          right: true,
+                          up: true,
                         ),
+                        onSwipe: (previousIndex, currentIndex, direction) {
+                          final job = jobList[previousIndex];
+                          if (direction == CardSwiperDirection.right) {
+                            jobNotifier.addSwipedUsers(job.id, currentUserId);
+                          }
+                          if (direction == CardSwiperDirection.top) {
+                            bookmarkNotifier.addBookMark(
+                                BookmarkReqResModel(job: job.id), job.id);
+                          }
+                          return true;
+                        },
+                        cardBuilder: (context, index, pctX, pctY) {
+                          final job = jobList[index];
+
+                          // Derive live swipe direction from drag %
+                          CardSwiperDirection? liveDirection;
+                          const threshold = 0.15;
+                          if (index == 0) {
+                            if (pctY < -threshold) {
+                              liveDirection = CardSwiperDirection.top;
+                            } else if (pctX > threshold) {
+                              liveDirection = CardSwiperDirection.right;
+                            } else if (pctX < -threshold) {
+                              liveDirection = CardSwiperDirection.left;
+                            }
+                          }
+                          return _buildCard(job, liveDirection);
+                        },
+                        isLoop: true,
                       ),
 
-                      // ── FABs — floating, no box ────────────────────────────
+                      // ── Floating action buttons ───────────────────────────
                       Positioned(
                         bottom: 14.h,
                         child: _buildFabRow(),
@@ -369,7 +189,6 @@ class _HomePageState extends State<HomePage> {
   Widget _buildCard(JobsResponse job, CardSwiperDirection? liveDirection) {
     return Stack(
       children: [
-        // Card body
         Container(
           decoration: BoxDecoration(
             color: _navy,
@@ -386,7 +205,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Image top 52% ──────────────────────────────────────────────
+              // ── Top image (52%) ────────────────────────────────────────────
               Expanded(
                 flex: 52,
                 child: Stack(
@@ -440,13 +259,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                    // Company name overlaid at image bottom
+                    // Company name
                     Positioned(
                       bottom: 12.h,
                       left: 16.w,
                       right: 16.w,
                       child: Text(
-                        job.company ?? 'Unknown Company',
+                        job.company.isNotEmpty
+                            ? job.company
+                            : 'Unknown Company',
                         style: TextStyle(
                           fontSize: 13.sp,
                           color: _tealLt,
@@ -460,7 +281,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              // ── Info bottom 48% ────────────────────────────────────────────
+              // ── Bottom info (48%) ──────────────────────────────────────────
               Expanded(
                 flex: 48,
                 child: Padding(
@@ -469,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Job title
+                      // Title
                       Text(
                         job.title,
                         maxLines: 1,
@@ -484,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: 8.h),
 
-                      // Location + contract type on same row
+                      // Location + contract
                       Row(
                         children: [
                           const Icon(Icons.location_on_rounded,
@@ -501,24 +322,44 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           ),
-                          if (job.contract != null &&
-                              job.contract!.isNotEmpty) ...[
+                          if (job.contract.isNotEmpty) ...[
                             SizedBox(width: 8.w),
-                            _chip(job.contract!, Colors.white12),
+                            _chip(job.contract, Colors.white12),
                           ],
                         ],
                       ),
                       SizedBox(height: 8.h),
 
-                      // Salary row
-                      if (job.salary != null && job.salary!.isNotEmpty)
+                      // Domain + Opportunity Type
+                      if (job.domain.isNotEmpty ||
+                          job.opportunityType.isNotEmpty)
+                        Row(
+                          children: [
+                            if (job.domain.isNotEmpty)
+                              _chip(job.domain, _teal.withOpacity(0.35)),
+                            if (job.domain.isNotEmpty &&
+                                job.opportunityType.isNotEmpty)
+                              SizedBox(width: 6.w),
+                            if (job.opportunityType.isNotEmpty)
+                              _chip(
+                                  job.opportunityType, _teal.withOpacity(0.35)),
+                          ],
+                        ),
+                      if (job.domain.isNotEmpty ||
+                          job.opportunityType.isNotEmpty)
+                        SizedBox(height: 8.h),
+
+                      // Salary
+                      if (job.salary.isNotEmpty)
                         Row(
                           children: [
                             const Icon(Icons.payments_outlined,
                                 color: _tealLt, size: 13),
                             SizedBox(width: 4.w),
                             Text(
-                              '${job.salary}  ·  ${job.period ?? ''}',
+                              job.period.isNotEmpty
+                                  ? '${job.salary} · ${job.period}'
+                                  : job.salary,
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: _tealLt,
@@ -528,14 +369,12 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                      if (job.salary != null && job.salary!.isNotEmpty)
-                        SizedBox(height: 8.h),
+                      if (job.salary.isNotEmpty) SizedBox(height: 8.h),
 
-                      // Description preview — 2 lines
-                      if (job.description != null &&
-                          job.description!.isNotEmpty) ...[
+                      // Description — 2 lines
+                      if (job.description.isNotEmpty) ...[
                         Text(
-                          job.description!,
+                          job.description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -548,42 +387,41 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(height: 8.h),
                       ],
 
-                      // Requirements preview — up to 2 bullet points
-                      if (job.requirements.isNotEmpty)
-                        ...job.requirements.take(2).map(
-                              (req) => Padding(
-                                padding: EdgeInsets.only(bottom: 4.h),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 5.h),
-                                      child: Container(
-                                        width: 5,
-                                        height: 5,
-                                        decoration: const BoxDecoration(
-                                          color: _teal,
-                                          shape: BoxShape.circle,
-                                        ),
+                      // Requirements — up to 2 bullet points
+                      ...job.requirements.take(2).map(
+                            (req) => Padding(
+                              padding: EdgeInsets.only(bottom: 4.h),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 5.h),
+                                    child: Container(
+                                      width: 5,
+                                      height: 5,
+                                      decoration: const BoxDecoration(
+                                        color: _teal,
+                                        shape: BoxShape.circle,
                                       ),
                                     ),
-                                    SizedBox(width: 8.w),
-                                    Expanded(
-                                      child: Text(
-                                        req,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 11.sp,
-                                          color: Colors.white60,
-                                          fontFamily: 'Poppins',
-                                        ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Expanded(
+                                    child: Text(
+                                      req,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 11.sp,
+                                        color: Colors.white60,
+                                        fontFamily: 'Poppins',
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
+                          ),
                     ],
                   ),
                 ),
@@ -592,7 +430,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
 
-        // Swipe overlay
+        // Swipe direction overlay
         if (liveDirection != null) _buildSwipeOverlay(liveDirection),
       ],
     );
@@ -618,13 +456,11 @@ class _HomePageState extends State<HomePage> {
         : isRight
             ? 'APPLY'
             : 'SAVE';
-
     final Alignment alignment = isLeft
         ? Alignment.topLeft
         : isRight
             ? Alignment.topRight
             : Alignment.topCenter;
-
     final EdgeInsets padding = isLeft
         ? EdgeInsets.only(top: 30.h, left: 22.w)
         : isRight
@@ -672,43 +508,39 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ─── FAB row — no surrounding box ─────────────────────────────────────────
+  // ─── FAB row ──────────────────────────────────────────────────────────────
   Widget _buildFabRow() {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         _fab(
-          icon: Icons.rotate_left_rounded,
-          color: _teal,
-          label: 'Undo',
-          onTap: controller.undo,
-          size: 50,
-        ),
+            icon: Icons.rotate_left_rounded,
+            color: _teal,
+            label: 'Undo',
+            onTap: controller.undo,
+            size: 50),
         SizedBox(width: 14.w),
         _fab(
-          icon: Icons.close_rounded,
-          color: _red,
-          label: 'Pass',
-          onTap: () => controller.swipe(CardSwiperDirection.left),
-          size: 64,
-        ),
+            icon: Icons.close_rounded,
+            color: _red,
+            label: 'Pass',
+            onTap: () => controller.swipe(CardSwiperDirection.left),
+            size: 64),
         SizedBox(width: 14.w),
         _fab(
-          icon: Icons.star_rounded,
-          color: _green,
-          label: 'Apply',
-          onTap: () => controller.swipe(CardSwiperDirection.right),
-          size: 64,
-        ),
+            icon: Icons.star_rounded,
+            color: _green,
+            label: 'Apply',
+            onTap: () => controller.swipe(CardSwiperDirection.right),
+            size: 64),
         SizedBox(width: 14.w),
         _fab(
-          icon: Icons.bookmark_rounded,
-          color: _teal,
-          label: 'Save',
-          onTap: () => controller.swipe(CardSwiperDirection.top),
-          size: 50,
-        ),
+            icon: Icons.bookmark_rounded,
+            color: _teal,
+            label: 'Save',
+            onTap: () => controller.swipe(CardSwiperDirection.top),
+            size: 50),
       ],
     );
   }
@@ -739,8 +571,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            child: Icon(Icons.close_rounded == icon ? icon : icon,
-                color: Colors.white, size: size * 0.44),
+            child: Icon(icon, color: Colors.white, size: size * 0.44),
           ),
           SizedBox(height: 5.h),
           Text(

@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/exports.dart';
 import 'package:jobhub_v1/models/request/jobs/create_job.dart';
 import 'package:jobhub_v1/views/common/app_bar.dart';
 import 'package:jobhub_v1/views/common/app_style.dart';
-import 'package:jobhub_v1/views/common/custom_btn.dart';
-import 'package:jobhub_v1/views/common/custom_textfield.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
-import 'package:jobhub_v1/views/common/reusable_text.dart';
-import 'package:jobhub_v1/models/response/auth/profile_model.dart';
-import 'package:jobhub_v1/services/helpers/user_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class AddJobPage extends StatefulWidget {
   const AddJobPage({Key? key}) : super(key: key);
@@ -27,7 +21,6 @@ class _AddJobPageState extends State<AddJobPage> {
   static const Color _teal = Color(0xFF08979F);
   static const Color _tealLt = Color(0xFF0BBFCA);
   static const Color _navy = Color(0xFF040326);
-  static const Color _bg = Colors.white;
 
   // ─── Controllers ──────────────────────────────────────────────────────────
   final _titleController = TextEditingController();
@@ -35,11 +28,15 @@ class _AddJobPageState extends State<AddJobPage> {
   final _companyController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _salaryController = TextEditingController();
-  final _imageUrlController = TextEditingController();
-  final _contractController = TextEditingController();
   final _periodController = TextEditingController();
-  List<TextEditingController> _reqControllers = [TextEditingController()];
+  final _contractController = TextEditingController();
+  final _imageUrlController = TextEditingController();
+  final List<TextEditingController> _reqControllers = [TextEditingController()];
+
+  // ─── State ────────────────────────────────────────────────────────────────
   bool _isHiring = true;
+  String? selectedDomain;
+  String? selectedOpportunityType;
 
   @override
   void dispose() {
@@ -48,41 +45,16 @@ class _AddJobPageState extends State<AddJobPage> {
     _companyController.dispose();
     _descriptionController.dispose();
     _salaryController.dispose();
-    _imageUrlController.dispose();
-    _contractController.dispose();
     _periodController.dispose();
-    for (final c in _reqControllers) c.dispose();
-  final titleController = TextEditingController();
-  final companyController = TextEditingController();
-  final descriptionController = TextEditingController();
-  final salaryController = TextEditingController();
-  final imageUrlController = TextEditingController();
-  final contractController = TextEditingController();
-  final periodController = TextEditingController();
-
-  List<TextEditingController> requirementsControllers = [
-    TextEditingController()
-  ];
-
-  bool isHiring = true;
-  String? selectedCategory;
-  String? selectedOpportunityType;
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    companyController.dispose();
-    descriptionController.dispose();
-    salaryController.dispose();
-    imageUrlController.dispose();
-    contractController.dispose();
-    periodController.dispose();
-    for (var controller in requirementsControllers) {
-      controller.dispose();
+    _contractController.dispose();
+    _imageUrlController.dispose();
+    for (final c in _reqControllers) {
+      c.dispose();
     }
     super.dispose();
   }
 
+  // ─── Requirements helpers ─────────────────────────────────────────────────
   void _addRequirement() =>
       setState(() => _reqControllers.add(TextEditingController()));
 
@@ -91,28 +63,62 @@ class _AddJobPageState extends State<AddJobPage> {
         _reqControllers.removeAt(index);
       });
 
+  // ─── Submit ───────────────────────────────────────────────────────────────
   Future<void> _submit(JobsNotifier notifier) async {
+    // Validate required dropdowns
+    if (selectedDomain == null || selectedOpportunityType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Please select a domain and opportunity type.')),
+      );
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId') ?? '';
 
+    if (userId.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be logged in to list a query.')),
+      );
+      return;
+    }
+
+    final requirements = _reqControllers
+        .map((c) => c.text)
+        .where((t) => t.trim().isNotEmpty)
+        .toList();
+
+    final location = _locationController.text.trim().isNotEmpty
+        ? _locationController.text.trim()
+        : 'Remote';
+
     final jobData = CreateJobsRequest(
-      title: _titleController.text,
-      location: _locationController.text,
+      agentId: userId,
+      domain: selectedDomain!,
+      opportunityType: selectedOpportunityType!,
+      title: _titleController.text.isNotEmpty
+          ? _titleController.text
+          : selectedDomain!,
+      location: location,
       company: _companyController.text,
       description: _descriptionController.text,
       salary: _salaryController.text,
       period: _periodController.text,
       hiring: _isHiring,
       contract: _contractController.text,
-      requirements: _reqControllers.map((c) => c.text).toList(),
+      requirements: requirements,
       imageUrl: _imageUrlController.text,
-      agentId: userId,
       matchedUsers: [],
       swipedUsers: [],
     );
 
     if (!mounted) return;
-    notifier.createJob(jobData, context);
+    await notifier.createJob(jobData, context);
+  }
+
+  // ─── Dropdown builder ─────────────────────────────────────────────────────
   Widget _buildDropdown({
     required String hint,
     required List<String> items,
@@ -122,13 +128,22 @@ class _AddJobPageState extends State<AddJobPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade400),
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
-          hint: Text(hint, style: TextStyle(color: Colors.grey.shade500)),
+          hint: Text(hint,
+              style: appstyle(14, Colors.grey.shade400, FontWeight.w400)),
           value: value,
           items: items
               .map((item) => DropdownMenuItem(value: item, child: Text(item)))
@@ -139,18 +154,19 @@ class _AddJobPageState extends State<AddJobPage> {
     );
   }
 
+  // ─── Build ────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50.h),
         child: CustomAppBar(
-          text: 'Add Job Listing',
+          text: 'List Query',
           child: Padding(
             padding: EdgeInsets.all(10.0.h),
             child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: _teal),
+              icon: const Icon(FontAwesome.arrow_left, color: _teal),
               onPressed: () => Navigator.pop(context),
             ),
           ),
@@ -161,27 +177,44 @@ class _AddJobPageState extends State<AddJobPage> {
           return ListView(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
             children: [
-              // ── Page title ───────────────────────────────────────────────
-              Text(
-                'Job Details',
-                style: appstyle(28, const Color(0xFF040326), FontWeight.w700),
-              ),
+              // ── Page header ───────────────────────────────────────────────
+              Text('Query Details',
+                  style: appstyle(28, _navy, FontWeight.w700)),
               SizedBox(height: 4.h),
-              Text(
-                'Fill in the details to post a new listing',
-                style: appstyle(13, Colors.grey, FontWeight.w400),
-              ),
+              Text('Fill in the details to post a new listing',
+                  style: appstyle(13, Colors.grey, FontWeight.w400)),
               SizedBox(height: 24.h),
 
               // ── Section: Basic Info ───────────────────────────────────────
               _sectionLabel('Basic Info'),
               SizedBox(height: 12.h),
-              _field(_titleController, 'Job Title', Icons.work_outline_rounded),
+              _field(_titleController, 'Query Title (optional)',
+                  Icons.work_outline_rounded),
               SizedBox(height: 12.h),
-              _field(_companyController, 'Company', Icons.business_outlined),
+              _field(_companyController, 'Company (optional)',
+                  Icons.business_outlined),
               SizedBox(height: 12.h),
               _field(
                   _locationController, 'Location', Icons.location_on_outlined),
+              SizedBox(height: 24.h),
+
+              // ── Section: Category ─────────────────────────────────────────
+              _sectionLabel('Category'),
+              SizedBox(height: 12.h),
+              _buildDropdown(
+                hint: 'Select Domain',
+                items: kDomains,
+                value: selectedDomain,
+                onChanged: (val) => setState(() => selectedDomain = val),
+              ),
+              SizedBox(height: 12.h),
+              _buildDropdown(
+                hint: 'Select Opportunity Type',
+                items: kOpportunityTypes,
+                value: selectedOpportunityType,
+                onChanged: (val) =>
+                    setState(() => selectedOpportunityType = val),
+              ),
               SizedBox(height: 24.h),
 
               // ── Section: Compensation ─────────────────────────────────────
@@ -209,12 +242,9 @@ class _AddJobPageState extends State<AddJobPage> {
               // ── Section: Description ──────────────────────────────────────
               _sectionLabel('Description'),
               SizedBox(height: 12.h),
-              _field(
-                _descriptionController,
-                'Describe the role…',
-                Icons.description_outlined,
-                maxLines: 4,
-              ),
+              _field(_descriptionController, 'Describe the role…',
+                  Icons.description_outlined,
+                  maxLines: 4),
               SizedBox(height: 24.h),
 
               // ── Section: Requirements ─────────────────────────────────────
@@ -251,7 +281,6 @@ class _AddJobPageState extends State<AddJobPage> {
                   ),
                 );
               }),
-              // Add requirement button
               GestureDetector(
                 onTap: _addRequirement,
                 child: Container(
@@ -260,10 +289,8 @@ class _AddJobPageState extends State<AddJobPage> {
                   decoration: BoxDecoration(
                     color: _teal.withOpacity(0.07),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: _teal.withOpacity(0.25),
-                        width: 1,
-                        style: BorderStyle.solid),
+                    border:
+                        Border.all(color: _teal.withOpacity(0.25), width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -318,7 +345,7 @@ class _AddJobPageState extends State<AddJobPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Hiring Status',
+                          Text('Query Status',
                               style: appstyle(14, _navy, FontWeight.w600)),
                           Text(
                             _isHiring
@@ -333,199 +360,6 @@ class _AddJobPageState extends State<AddJobPage> {
                       value: _isHiring,
                       onChanged: (v) => setState(() => _isHiring = v),
                       activeColor: _teal,
-              const HeightSpacer(size: 20),
-              Form(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextField(
-                      controller: titleController,
-                      hintText: 'Query Title (optional)',
-                      keyboardType: TextInputType.text,
-                    ),
-                    const HeightSpacer(size: 10),
-                    // Domain / Category dropdown
-                    Text(
-                      'Domain',
-                      style: appstyle(14, Colors.black87, FontWeight.w600),
-                    ),
-                    const HeightSpacer(size: 6),
-                    _buildDropdown(
-                      hint: 'Select Domain',
-                      items: kDomains,
-                      value: selectedCategory,
-                      onChanged: (val) => setState(() => selectedCategory = val),
-                    ),
-                    const HeightSpacer(size: 10),
-                    // Opportunity Type dropdown
-                    Text(
-                      'Opportunity Type',
-                      style: appstyle(14, Colors.black87, FontWeight.w600),
-                    ),
-                    const HeightSpacer(size: 6),
-                    _buildDropdown(
-                      hint: 'Select Opportunity Type',
-                      items: kOpportunityTypes,
-                      value: selectedOpportunityType,
-                      onChanged: (val) =>
-                          setState(() => selectedOpportunityType = val),
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: companyController,
-                      hintText: 'Company (optional)',
-                      keyboardType: TextInputType.text,
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: descriptionController,
-                      hintText: 'Description (optional)',
-                      keyboardType: TextInputType.text,
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: salaryController,
-                      hintText: 'Reward/Compensation (optional)',
-                      keyboardType: TextInputType.number,
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: periodController,
-                      hintText: 'Period (optional)',
-                      keyboardType: TextInputType.text,
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: contractController,
-                      hintText: 'Contract (optional)',
-                      keyboardType: TextInputType.text,
-                    ),
-                    const HeightSpacer(size: 10),
-                    Text(
-                      'Requirements',
-                      style: appstyle(18, Colors.black, FontWeight.bold),
-                    ),
-                    const HeightSpacer(size: 10),
-                    Column(
-                      children: List.generate(
-                        requirementsControllers.length,
-                        (index) => Row(
-                          children: [
-                            Expanded(
-                              child: CustomTextField(
-                                controller: requirementsControllers[index],
-                                hintText: 'Requirement ${index + 1}',
-                                keyboardType: TextInputType.text,
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => removeRequirementField(index),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const HeightSpacer(size: 10),
-                    TextButton.icon(
-                      onPressed: addRequirementField,
-                      icon: const Icon(Icons.add, color: Colors.green),
-                      label: Text(
-                        'Add Requirement',
-                        style: appstyle(16, Colors.green, FontWeight.bold),
-                      ),
-                    ),
-                    const HeightSpacer(size: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Query Status'),
-                        Switch(
-                          value: isHiring,
-                          onChanged: (value) {
-                            setState(() {
-                              isHiring = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    const HeightSpacer(size: 10),
-                    CustomTextField(
-                      controller: imageUrlController,
-                      hintText: 'Image URL',
-                      keyboardType: TextInputType.text,
-                    ),
-                    const HeightSpacer(size: 20),
-                    CustomButton(
-                      onTap: () async {
-                        if (selectedCategory == null ||
-                            selectedOpportunityType == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'Please select a domain and opportunity type.'),
-                            ),
-                          );
-                          return;
-                        }
-
-                        try {
-                          final prefs = await SharedPreferences.getInstance();
-                          final userId = prefs.getString('userId') ?? '';
-
-                          if (userId.isEmpty) {
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'You must be logged in to list a query.')),
-                            );
-                            return;
-                          }
-
-                          ProfileRes? profile;
-                          try {
-                            profile = await UserHelper.getProfile();
-                          } catch (_) {
-                            profile = null;
-                          }
-                          final location = profile?.location ?? '';
-                          final requirementsList = requirementsControllers
-                              .map((c) => c.text)
-                              .where((t) => t.trim().isNotEmpty)
-                              .toList();
-
-                          final jobData = CreateJobsRequest(
-                            agentId: userId,
-                            domain: selectedCategory!,
-                            opportunityType: selectedOpportunityType!,
-                            title: titleController.text.isNotEmpty
-                                ? titleController.text
-                                : selectedCategory!,
-                            location: location.isNotEmpty ? location : 'Remote',
-                            company: companyController.text,
-                            description: descriptionController.text,
-                            salary: salaryController.text,
-                            period: periodController.text,
-                            hiring: isHiring,
-                            contract: contractController.text,
-                            requirements: requirementsList,
-                            imageUrl: imageUrlController.text,
-                            matchedUsers: [],
-                            swipedUsers: [],
-                          );
-
-                          if (!mounted) return;
-                          await JobsNotifier.createJob(jobData, context);
-                        } catch (e) {
-                          if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error: ${e.toString()}')),
-                          );
-                        }
-                      },
-                      text: 'List Query',
                     ),
                   ],
                 ),
@@ -560,10 +394,8 @@ class _AddJobPageState extends State<AddJobPage> {
                     ],
                   ),
                   child: Center(
-                    child: Text(
-                      'Post Listing',
-                      style: appstyle(16, Colors.white, FontWeight.w700),
-                    ),
+                    child: Text('List Query',
+                        style: appstyle(16, Colors.white, FontWeight.w700)),
                   ),
                 ),
               ),
@@ -576,7 +408,6 @@ class _AddJobPageState extends State<AddJobPage> {
   }
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
-
   Widget _sectionLabel(String text) {
     return Row(
       children: [
