@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as https;
@@ -11,32 +12,46 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserHelper {
   static https.Client client = https.Client();
 
-  static Future<bool> updateProfile(ProfileUpdateReq model) async {
+  static Future<bool> updateProfile(
+    ProfileUpdateReq model,
+    File? image,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    final requestHeaders = <String, String>{
-      'Content-Type': 'application/json',
-      'token': 'Bearer $token',
-    };
-
     final url = Uri.http(Config.apiUrl, Config.profileUrl);
-    final response = await client.put(
-      url,
-      headers: requestHeaders,
-      body: jsonEncode(model),
-    );
 
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
+    var request = https.MultipartRequest('PUT', url);
+
+    request.headers['token'] = 'Bearer $token';
+
+    // ✅ Add text fields
+    request.fields['city'] = model.city ?? '';
+    request.fields['state'] = model.state ?? '';
+    request.fields['country'] = model.country ?? '';
+    request.fields['phone'] = model.phone ?? '';
+    request.fields['college'] = model.college ?? '';
+    request.fields['branch'] = model.branch ?? '';
+    request.fields['gender'] = model.gender ?? '';
+
+    // if skills is list
+    request.fields['skills'] = jsonEncode(model.skills);
+
+    // ✅ Add image file
+    if (image != null) {
+      request.files.add(
+        await https.MultipartFile.fromPath(
+          'profile', // MUST match backend multer field
+          image.path,
+        ),
+      );
     }
+
+    final response = await request.send();
+
+    return response.statusCode == 200;
   }
 
-  // Fix: Pushes to the Personal Details even after filling it first time.
-  // To replicate, sign up, fill in personal details after login, logout and
-  // try logging in again, it'll still ask you to fill personal details
   static Future<ProfileRes?> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');

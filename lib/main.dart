@@ -34,7 +34,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => SignUpNotifier()),
         ChangeNotifierProvider(create: (context) => JobsNotifier()),
         ChangeNotifierProvider(create: (context) => BookMarkNotifier()),
-        ChangeNotifierProvider(create: (context) => ImageUpoader()),
+        ChangeNotifierProvider(create: (context) => ImageNotifier()),
         ChangeNotifierProvider(create: (context) => ProfileNotifier()),
         ChangeNotifierProvider(create: (context) => ChatNotifier()),
         ChangeNotifierProvider(create: (context) => FilterNotifier()),

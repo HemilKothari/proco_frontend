@@ -1,74 +1,97 @@
 import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
-import 'package:uuid/uuid.dart';
 
-class ImageUpoader extends ChangeNotifier {
-  Uuid uuid = const Uuid();
+class ImageNotifier extends ChangeNotifier {
   final ImagePicker _picker = ImagePicker();
 
-  String? imageUrl;
-  String? imagePath;
-
-  List<String> imageFil = [];
+  File? selectedImage;
+  bool isLoading = false;
+  String? errorMessage;
 
   Future<void> pickImage() async {
-    var imageFile = await _picker.pickImage(source: ImageSource.gallery);
+    try {
+      _setLoading(true);
+      _clearError();
 
-    imageFile = await cropImage(imageFile!);
-    if (imageFile != null) {
-      imageFil.add(imageFile.path);
-      await imageUpload(imageFile);
-      imagePath = imageFile.path;
-    } else {
-      return;
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 90,
+      );
+
+      if (pickedFile == null) {
+        _setLoading(false);
+        return;
+      }
+
+      final XFile? croppedFile = await _cropImage(pickedFile);
+
+      if (croppedFile == null) {
+        _setLoading(false);
+        return;
+      }
+
+      selectedImage = File(croppedFile.path);
+
+      notifyListeners();
+    } catch (e) {
+      _setError('Something went wrong: ${e.toString()}');
+    } finally {
+      _setLoading(false);
     }
   }
 
-  Future<XFile?> cropImage(XFile imageFile) async {
-    final croppedFile = await ImageCropper.platform.cropImage(
-      sourcePath: imageFile.path,
-      maxHeight: 800,
-      maxWidth: 600,
-      compressQuality: 70,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.ratio5x4,
-      ],
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Image Cropper',
-          toolbarColor: Color(kLightBlue.value),
-          toolbarWidgetColor: Color(kLight.value),
-          initAspectRatio: CropAspectRatioPreset.ratio5x4,
-          lockAspectRatio: true,
-        ),
-        IOSUiSettings(title: 'Image Cropper'),
-      ],
-    );
+  Future<XFile?> _cropImage(XFile imageFile) async {
+    try {
+      final CroppedFile? cropped = await ImageCropper().cropImage(
+        sourcePath: imageFile.path,
+        maxHeight: 800,
+        maxWidth: 600,
+        compressQuality: 70,
+        aspectRatioPresets: [CropAspectRatioPreset.ratio5x4],
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: Color(kLightBlue.value),
+            toolbarWidgetColor: Color(kLight.value),
+            initAspectRatio: CropAspectRatioPreset.ratio5x4,
+            lockAspectRatio: true,
+          ),
+          IOSUiSettings(title: 'Crop Image'),
+        ],
+      );
 
-    if (croppedFile != null) {
-      notifyListeners();
-      return XFile(croppedFile.path);
-    } else {
+      if (cropped == null) return null;
+
+      return XFile(cropped.path);
+    } catch (e) {
+      _setError('Cropping failed: ${e.toString()}');
       return null;
     }
   }
 
-  Future<String?> imageUpload(XFile upload) async {
-    final image = File(upload.path);
+  void clearImage() {
+    selectedImage = null;
+    notifyListeners();
+  }
 
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child('jobhub')
-        .child('${uuid.v1()}.jpg');
-    await ref.putFile(image);
+  bool get hasImage => selectedImage != null;
 
-    imageUrl = await ref.getDownloadURL();
+  File? get imageFile => selectedImage;
 
-    return imageUrl;
+  void _setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
+
+  void _setError(String message) {
+    errorMessage = message;
+    notifyListeners();
+  }
+
+  void _clearError() {
+    errorMessage = null;
   }
 }

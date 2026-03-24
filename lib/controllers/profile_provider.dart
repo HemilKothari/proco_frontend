@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:jobhub_v1/models/response/auth/profile_model.dart';
 import 'package:jobhub_v1/models/response/jobs/swipe_res_model.dart';
@@ -23,8 +25,8 @@ class ProfileNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  updateProfile(ProfileUpdateReq model) async {
-    await UserHelper.updateProfile(model).then((response) {
+  updateProfile(ProfileUpdateReq model, File? image) async {
+    await UserHelper.updateProfile(model, image).then((response) {
       if (response) {
         Get.snackbar(
           'Profile Update',
