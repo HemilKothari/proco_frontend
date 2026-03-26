@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
@@ -9,6 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class BookMarkNotifier extends ChangeNotifier {
   List<String> _jobs = [];
   Future<List<AllBookmark>>? bookmarks;
+
+  BookMarkNotifier() {
+    loadJobs();
+  }
 
   List<String> get jobs => _jobs;
 
@@ -44,7 +49,8 @@ class BookMarkNotifier extends ChangeNotifier {
 
   addBookMark(BookmarkReqResModel model, String jobId) {
     BookMarkHelper.addBookmarks(model).then((response) {
-      if (response[0]) {
+      debugPrint('BOOKMARK RESPONSE: $response');
+      if (response['success'] == true) {
         addJob(jobId);
         Get.snackbar(
           'Bookmark successfully added',
@@ -53,10 +59,10 @@ class BookMarkNotifier extends ChangeNotifier {
           backgroundColor: Color(kLightBlue.value),
           icon: const Icon(Icons.bookmark_add),
         );
-      } else if (!response[0]) {
+      } else {
         Get.snackbar(
-          'Failed to add Bookmarks',
-          'Please try again',
+          'Failed to add Bookmark',
+          response['message'] ?? 'Please try again',
           colorText: Color(kLight.value),
           backgroundColor: Colors.red,
           icon: const Icon(Icons.bookmark_add),
@@ -90,5 +96,6 @@ class BookMarkNotifier extends ChangeNotifier {
 
   getBookMarks() {
     bookmarks = BookMarkHelper.getBookmarks();
+    notifyListeners();
   }
 }
