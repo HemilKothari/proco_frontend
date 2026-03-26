@@ -43,7 +43,11 @@ class _HomePageState extends State<HomePage> {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId') ?? '';
     final jobNotifier = Provider.of<JobsNotifier>(context, listen: false);
-    jobNotifier.getFilteredJobs(userId);
+    if (userId.isNotEmpty) {
+      jobNotifier.getFilteredJobs(userId);
+    } else {
+      jobNotifier.getJobs();
+    }
   }
 
   Future<String> getCurrentUserId() async {

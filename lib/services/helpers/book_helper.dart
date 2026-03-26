@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as https;
 import 'package:jobhub_v1/models/request/bookmarks/bookmarks_model.dart';
 import 'package:jobhub_v1/models/response/bookmarks/all_bookmarks.dart';
-import 'package:jobhub_v1/models/response/bookmarks/book_res.dart';
 import 'package:jobhub_v1/services/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,13 +38,9 @@ class BookMarkHelper {
 
       final decoded = json.decode(response.body);
 
-      if (response.statusCode == 200 && decoded['success'] == true) {
-        final bookmark = bookMarkReqResFromJson(decoded['data']);
-
-        return {
-          "success": true,
-          "bookmarkId": bookmark.id,
-        };
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          decoded['success'] == true) {
+        return {"success": true};
       } else {
         return {
           "success": false,

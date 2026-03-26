@@ -36,14 +36,14 @@ class Job {
   });
 
   factory Job.fromJson(Map<String, dynamic> json) => Job(
-        id: json['_id'],
-        title: json['title'],
-        location: json['location'],
-        company: json['company'],
-        salary: json['salary'],
-        period: json['period'],
-        contract: json['contract'],
-        imageUrl: json['imageUrl'],
+        id: json['_id'] ?? '',
+        title: json['title'] ?? '',
+        location: json['location'] ?? '',
+        company: json['company'] ?? '',
+        salary: json['salary'] ?? '',
+        period: json['period'] ?? '',
+        contract: json['contract'] ?? '',
+        imageUrl: json['imageUrl'] ?? '',
         hiring: json['hiring'] ?? true,
         agentId: json['agentId'] ?? '',
       );
