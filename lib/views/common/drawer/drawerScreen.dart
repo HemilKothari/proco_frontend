@@ -7,6 +7,7 @@ import 'package:jobhub_v1/controllers/zoom_provider.dart';
 import 'package:jobhub_v1/views/common/app_style.dart';
 import 'package:jobhub_v1/views/common/reusable_text.dart';
 import 'package:jobhub_v1/views/common/width_spacer.dart';
+import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:provider/provider.dart';
 
 class DrawerScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
             ZoomDrawer.of(context)!.toggle();
           },
           child: Scaffold(
-            backgroundColor: Color(const Color.fromRGBO(54, 99, 227, 1).value),
+            backgroundColor: kTeal,
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,

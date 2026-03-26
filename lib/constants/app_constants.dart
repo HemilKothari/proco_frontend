@@ -11,6 +11,8 @@ const kLightBlue = Color(0xff3663e3);
 const kDarkBlue = Color(0xff1c153e);
 const kLightPurple = Color(0xff6352c5);
 const kDarkPurple = Color(0xff6352c5);
+const kTealLight = Color(0xFF0BBFCA);
+const kTeal = Color(0xFF08979F);
 
 double height = 825.h;
 double width = 375.w;

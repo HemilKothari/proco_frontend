@@ -16,7 +16,7 @@ class JobsHelper {
   static Future<List<JobsResponse>> getFilteredJobs(String agentId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, '${Config.jobs}/filtered/$agentId');
+      final url = Uri.http(Config.apiUrl, '${Config.jobs}/filtered/$agentId');
       final response = await client.get(url, headers: requestHeaders);
 
       if (response.statusCode == 200) {
@@ -34,7 +34,7 @@ class JobsHelper {
   static Future<List<JobsResponse>> getJobs() async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, Config.jobs);
+      final url = Uri.http(Config.apiUrl, Config.jobs);
       final response = await client.get(url, headers: requestHeaders);
 
       if (response.statusCode == 200) {
@@ -52,7 +52,7 @@ class JobsHelper {
   static Future<GetJobRes> getJob(String jobId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId');
+      final url = Uri.http(Config.apiUrl, '${Config.jobs}/$jobId');
       final response = await client.get(url, headers: requestHeaders);
 
       if (response.statusCode == 200) {
@@ -69,7 +69,7 @@ class JobsHelper {
 
   static Future<List<JobsResponse>> getUserJobs(String agentId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/$agentId');
+    final url = Uri.http(Config.apiUrl, '${Config.jobs}/user/$agentId');
 
     final response = await client.get(url, headers: requestHeaders);
 
@@ -122,7 +122,7 @@ class JobsHelper {
       'Content-Type': 'application/json',
     };
 
-    final url = Uri.https(Config.apiUrl, Config.jobs, {'new': 'true'});
+    final url = Uri.http(Config.apiUrl, Config.jobs, {'new': 'true'});
     final response = await client.get(
       url,
       headers: requestHeaders,
@@ -144,7 +144,7 @@ class JobsHelper {
       'Content-Type': 'application/json',
     };
 
-    final url = Uri.https(Config.apiUrl, '${Config.search}/$searchQeury');
+    final url = Uri.http(Config.apiUrl, '${Config.search}/$searchQeury');
     final response = await client.get(
       url,
       headers: requestHeaders,
@@ -160,7 +160,7 @@ class JobsHelper {
 
   static Future<JobsResponse> createJob(CreateJobsRequest model) async {
     try {
-      final url = Uri.https(Config.apiUrl, Config.jobs);
+      final url = Uri.http(Config.apiUrl, Config.jobs);
 
       // API Request
       final response = await client.post(
@@ -200,7 +200,7 @@ class JobsHelper {
     try {
       final prefs = await SharedPreferences.getInstance();
       var token = prefs.getString('token');
-      final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId');
+      final url = Uri.http(Config.apiUrl, '${Config.jobs}/$jobId');
       final response = await client.put(
         url,
         headers: {
@@ -223,7 +223,7 @@ class JobsHelper {
   static Future<void> deleteJob(String jobId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, '${Config.jobs}/$jobId');
+      final url = Uri.http(Config.apiUrl, '${Config.jobs}/$jobId');
       final response = await client.delete(url, headers: requestHeaders);
 
       if (response.statusCode != 204) {
@@ -238,7 +238,7 @@ class JobsHelper {
 
   // static Future<List<SwipedRes>> getSwipededUsersId(String jobId) async {
   //   final requestHeaders = {'Content-Type': 'application/json'};
-  //   final url = Uri.https(Config.apiUrl, '${Config.jobs}/user/swipe/$jobId');
+  //   final url = Uri.http(Config.apiUrl, '${Config.jobs}/user/swipe/$jobId');
   //   final response = await client.get(url, headers: requestHeaders);
   //   debugPrint("Response Received $response");
 
@@ -260,7 +260,7 @@ class JobsHelper {
   static Future<List<SwipedRes>> getSwipededUsersId(String jobId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, '${Config.swipe}/$jobId');
+      final url = Uri.http(Config.apiUrl, '${Config.swipe}/$jobId');
 
       final response = await client.get(url, headers: requestHeaders);
 
@@ -298,7 +298,7 @@ class JobsHelper {
 
   static Future<void> addSwipedUsers(String jobId, String userId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.https(Config.apiUrl, Config.swipe);
+    final url = Uri.http(Config.apiUrl, Config.swipe);
 
     try {
       final requestBody = json.encode({'jobId': jobId, 'userId': userId});
@@ -319,7 +319,7 @@ class JobsHelper {
   static Future<List<MatchedRes>> getMatchedUsersId(String jobId) async {
     try {
       final requestHeaders = {'Content-Type': 'application/json'};
-      final url = Uri.https(Config.apiUrl, '${Config.matches}/$jobId');
+      final url = Uri.http(Config.apiUrl, '${Config.matches}/$jobId');
 
       final response = await client.get(url, headers: requestHeaders);
 
@@ -352,7 +352,7 @@ class JobsHelper {
 
   static Future<void> addMatchedUsers(String jobId, String userId) async {
     final requestHeaders = {'Content-Type': 'application/json'};
-    final url = Uri.https(Config.apiUrl, Config.matches);
+    final url = Uri.http(Config.apiUrl, Config.matches);
     debugPrint("jobId: $jobId");
     debugPrint("userId: $userId");
 
