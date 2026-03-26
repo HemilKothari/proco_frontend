@@ -256,8 +256,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               },
             ),
             SizedBox(height: 12.h),
-            _label('Gender'),
-            SizedBox(height: 6.h),
+            // _label('Gender'),
+            // SizedBox(height: 6.h),
             _genderDropdown(),
             SizedBox(height: 20.h),
 
@@ -498,28 +498,55 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   }
 
   Widget _genderDropdown() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(
-        color: _card.withOpacity(0.25),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _card.withOpacity(0.4)),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _selectedGender,
-          hint: const Text('Select gender',
-              style: TextStyle(color: Colors.white30, fontSize: 14)),
-          dropdownColor: const Color(0xFF0A2A2C),
-          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: _accent),
-          isExpanded: true,
-          style: const TextStyle(color: _white, fontSize: 15),
-          items: _genderOptions
-              .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-              .toList(),
-          onChanged: (val) => setState(() => _selectedGender = val),
+    return DropdownButtonFormField<String>(
+      value: _selectedGender,
+
+      decoration: InputDecoration(
+        labelText: 'Gender',
+        labelStyle: const TextStyle(color: Colors.white60, fontSize: 14),
+        hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
+        prefixIcon: const Icon(Icons.person_outline, color: _accent),
+        filled: true,
+        fillColor: _card.withOpacity(0.25),
+        contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 14.w),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: _card.withOpacity(0.4)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: _card.withOpacity(0.4)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: _accent, width: 1.5),
         ),
       ),
+
+      hint: const Text('Select gender'),
+
+      dropdownColor: _bg,
+      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: _accent),
+
+      style: const TextStyle(color: Colors.white, fontSize: 15),
+
+      borderRadius: BorderRadius.circular(14),
+
+      items: _genderOptions
+          .map(
+            (g) => DropdownMenuItem(
+              value: g,
+              child: Text(
+                g,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          )
+          .toList(),
+
+      onChanged: (val) => setState(() => _selectedGender = val),
+
+      validator: (v) => v == null ? 'Required' : null,
     );
   }
 
