@@ -5,7 +5,7 @@ import 'package:jobhub_v1/controllers/exports.dart';
 import 'package:jobhub_v1/views/common/drawer/drawerScreen.dart';
 import 'package:jobhub_v1/views/common/exports.dart';
 import 'package:jobhub_v1/views/ui/auth/login.dart';
-import 'package:jobhub_v1/views/ui/auth/profile.dart';
+import 'package:jobhub_v1/views/ui/auth/profile_screen.dart';
 import 'package:jobhub_v1/views/ui/bookmarks/bookmarks.dart';
 import 'package:jobhub_v1/views/ui/chat/chat_list.dart';
 import 'package:jobhub_v1/views/ui/device_mgt/devices_info.dart';

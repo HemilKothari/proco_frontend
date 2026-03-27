@@ -21,6 +21,8 @@ class _AddJobPageState extends State<AddJobPage> {
   static const Color _teal = Color(0xFF08979F);
   static const Color _tealLt = Color(0xFF0BBFCA);
   static const Color _navy = Color(0xFF040326);
+  static const Color _cardBg = Color(0xFF0D1B2A);
+  static const Color _white = Colors.white;
 
   // ─── Controllers ──────────────────────────────────────────────────────────
   final _titleController = TextEditingController();
@@ -141,23 +143,18 @@ class _AddJobPageState extends State<AddJobPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200),
+        color: _teal.withOpacity(0.1),
+        border: Border.all(color: _teal.withOpacity(0.3)),
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
-          hint: Text(hint,
-              style: appstyle(14, Colors.grey.shade400, FontWeight.w400)),
+          dropdownColor: const Color(0xFF0D2233),
+          iconEnabledColor: _teal,
+          hint: Text(hint, style: appstyle(14, Colors.white38, FontWeight.w400)),
           value: value,
+          style: appstyle(14, _white, FontWeight.w500),
           items: items
               .map((item) => DropdownMenuItem(value: item, child: Text(item)))
               .toList(),
@@ -171,7 +168,7 @@ class _AddJobPageState extends State<AddJobPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _navy,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50.h),
         child: CustomAppBar(
@@ -192,10 +189,10 @@ class _AddJobPageState extends State<AddJobPage> {
             children: [
               // ── Page header ───────────────────────────────────────────────
               Text('Query Details',
-                  style: appstyle(28, _navy, FontWeight.w700)),
+                  style: appstyle(28, _white, FontWeight.w700)),
               SizedBox(height: 4.h),
               Text('Fill in the details to post a new listing',
-                  style: appstyle(13, Colors.grey, FontWeight.w400)),
+                  style: appstyle(13, Colors.white54, FontWeight.w400)),
               SizedBox(height: 24.h),
 
               // ── Section: Basic Info ───────────────────────────────────────
@@ -288,8 +285,10 @@ class _AddJobPageState extends State<AddJobPage> {
                           width: 38.w,
                           height: 38.w,
                           decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.08),
+                            color: Colors.red.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                                color: Colors.redAccent.withOpacity(0.3)),
                           ),
                           child: const Icon(Icons.delete_outline_rounded,
                               color: Colors.redAccent, size: 18),
@@ -330,16 +329,9 @@ class _AddJobPageState extends State<AddJobPage> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: _teal.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.grey.shade200),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+                  border: Border.all(color: _teal.withOpacity(0.3)),
                 ),
                 child: Row(
                   children: [
@@ -347,7 +339,7 @@ class _AddJobPageState extends State<AddJobPage> {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: (_isHiring ? Colors.green : Colors.red)
-                            .withOpacity(0.1),
+                            .withOpacity(0.15),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
@@ -364,12 +356,12 @@ class _AddJobPageState extends State<AddJobPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Query Status',
-                              style: appstyle(14, _navy, FontWeight.w600)),
+                              style: appstyle(14, _white, FontWeight.w600)),
                           Text(
                             _isHiring
                                 ? 'Actively accepting applicants'
                                 : 'Position is closed',
-                            style: appstyle(11, Colors.grey, FontWeight.w400),
+                            style: appstyle(11, Colors.white54, FontWeight.w400),
                           ),
                         ],
                       ),
@@ -378,6 +370,9 @@ class _AddJobPageState extends State<AddJobPage> {
                       value: _isHiring,
                       onChanged: (v) => setState(() => _isHiring = v),
                       activeColor: _teal,
+                      activeTrackColor: _teal.withOpacity(0.3),
+                      inactiveThumbColor: Colors.white38,
+                      inactiveTrackColor: Colors.white12,
                     ),
                   ],
                 ),
@@ -438,7 +433,7 @@ class _AddJobPageState extends State<AddJobPage> {
           ),
         ),
         SizedBox(width: 10.w),
-        Text(text, style: appstyle(15, _navy, FontWeight.w700)),
+        Text(text, style: appstyle(15, _white, FontWeight.w700)),
       ],
     );
   }
@@ -450,40 +445,34 @@ class _AddJobPageState extends State<AddJobPage> {
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        maxLines: maxLines,
-        style: appstyle(14, _navy, FontWeight.w500),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: appstyle(14, Colors.grey.shade400, FontWeight.w400),
-          prefixIcon: Padding(
-            padding: EdgeInsets.only(left: 12.w, right: 8.w),
-            child: Icon(icon, color: _teal, size: 20),
-          ),
-          prefixIconConstraints: const BoxConstraints(),
-          contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: _teal, width: 1.5),
-          ),
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      style: appstyle(14, _white, FontWeight.w500),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: appstyle(14, Colors.white38, FontWeight.w400),
+        prefixIcon: Padding(
+          padding: EdgeInsets.only(left: 12.w, right: 8.w),
+          child: Icon(icon, color: _teal, size: 20),
+        ),
+        prefixIconConstraints: const BoxConstraints(),
+        contentPadding:
+            EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        filled: true,
+        fillColor: _teal.withOpacity(0.1),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: _teal.withOpacity(0.3)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: _teal.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: _teal, width: 1.5),
         ),
       ),
     );
