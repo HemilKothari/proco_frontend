@@ -45,6 +45,7 @@ const List<String> kOpportunityTypes = [
   'Research',
   'Freelance',
   'Competition',
+  'Collaborate',
 ];
 
 List<String> requirements = [

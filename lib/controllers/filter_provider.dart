@@ -5,12 +5,57 @@ import 'package:jobhub_v1/models/request/filters/create_filter.dart';
 import 'package:jobhub_v1/models/response/filters/filter_response.dart';
 import 'package:jobhub_v1/models/response/filters/get_filter.dart';
 import 'package:jobhub_v1/services/helpers/filter_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FilterNotifier extends ChangeNotifier {
   Future<List<FilterResponse>>? filterList;
   Future<FilterResponse>? recentFilter;
   Future<GetFilterRes>? filter;
   Future<List<FilterResponse>>? userFilters;
+
+  // ── Active filter (shown as chips on homepage) ──────────────────────────
+  GetFilterRes? activeFilter;
+
+  FilterNotifier() {
+    _loadActiveFilterFromPrefs();
+  }
+
+  Future<void> _loadActiveFilterFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonStr = prefs.getString('activeFilter');
+    if (jsonStr != null) {
+      try {
+        activeFilter = getFilterResFromJson(jsonStr);
+        notifyListeners();
+      } catch (_) {}
+    }
+  }
+
+  void setActiveFilter(GetFilterRes f) async {
+    activeFilter = f;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('activeFilter', getFilterResToJson(f));
+    notifyListeners();
+  }
+
+  Future<void> clearFilter(String agentId) async {
+    try {
+      await FilterHelper.createFilter(CreateFilterRequest(
+        agentId: agentId,
+        selectedOptions: [],
+        opportunityTypes: {for (final t in kOpportunityTypes) t: false},
+        selectedLocationOption: '',
+        selectedCity: '',
+        selectedState: '',
+        selectedCountry: '',
+        customOptions: [],
+      ));
+    } catch (_) {}
+    activeFilter = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('activeFilter');
+    notifyListeners();
+  }
 
   // Method to get filters
   void getFilters() {
@@ -34,7 +79,6 @@ class FilterNotifier extends ChangeNotifier {
   Future<void> createFilter(String agentId, CreateFilterRequest model) async {
     try {
       await FilterHelper.createFilter(model).then((_) async {
-        // Show success message
         Get.snackbar(
           'Filter Added Successfully',
           '',
@@ -42,14 +86,9 @@ class FilterNotifier extends ChangeNotifier {
           backgroundColor: Color(kLightBlue.value),
           icon: const Icon(Icons.check_circle),
         );
-        // await Future.delayed(const Duration(seconds: 1)).then((value) {
-        //   Get.offAll(() => const FilterPage());
-        // });
-        // Refresh the filter list after successful creation
         getUserFilters(agentId);
       });
     } catch (e) {
-      // Handle errors
       Get.snackbar(
         'Error Creating Filter',
         e.toString(),

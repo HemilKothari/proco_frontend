@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:jobhub_v1/constants/app_constants.dart';
 import 'package:jobhub_v1/controllers/filter_provider.dart';
 import 'package:jobhub_v1/models/request/filters/create_filter.dart';
+import 'package:jobhub_v1/models/response/filters/get_filter.dart';
 import 'package:jobhub_v1/services/helpers/filter_helper.dart';
 import 'package:jobhub_v1/views/common/custom_btn.dart';
-import 'package:jobhub_v1/views/common/height_spacer.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,8 +37,12 @@ class _FilterPageState extends State<FilterPage> {
 
   List<TextEditingController> customControllers =
       List.generate(10, (index) => TextEditingController());
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
 
   final List<String> selectedOptions = [];
+  final List<String> selectedSkills = [];
+  final TextEditingController _skillInputController = TextEditingController();
   bool showCustomInput = false;
   String selectedLocationOption = "";
   String selectedCity = "";
@@ -52,33 +56,80 @@ class _FilterPageState extends State<FilterPage> {
     _loadExistingFilter();
   }
 
-  Future<void> _loadExistingFilter() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('userId') ?? '';
+  @override
+  void dispose() {
+    for (final c in customControllers) c.dispose();
+    _cityController.dispose();
+    _countryController.dispose();
+    _skillInputController.dispose();
+    super.dispose();
+  }
 
+  void _applyFilterToState(GetFilterRes existing) {
+    selectedOptions.clear();
+    selectedOptions.addAll(existing.selectedOptions);
+
+    // Restore any custom options not in the predefined list
+    for (final selected in existing.selectedOptions) {
+      if (!options.contains(selected)) options.add(selected);
+    }
+    for (final custom in existing.customOptions) {
+      if (!options.contains(custom)) options.add(custom);
+    }
+
+    for (final key in existing.opportunityTypes.keys) {
+      if (opportunityTypes.containsKey(key)) {
+        opportunityTypes[key] = existing.opportunityTypes[key] ?? false;
+      }
+    }
+
+    selectedLocationOption = existing.selectedLocationOption;
+    selectedCity = existing.selectedCity;
+    selectedState = existing.selectedState;
+    selectedCountry = existing.selectedCountry;
+    _cityController.text = existing.selectedCity;
+    _countryController.text = existing.selectedCountry;
+
+    selectedSkills.clear();
+    selectedSkills.addAll(existing.skills);
+  }
+
+  Future<void> _loadExistingFilter() async {
+    // Grab FilterNotifier synchronously before any await to avoid
+    // "BuildContext across async gap" issues
+    final filterNotifier =
+        Provider.of<FilterNotifier>(context, listen: false);
+
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+
+    // Read the persisted active-filter JSON directly from SharedPreferences.
+    // This avoids the race condition where FilterNotifier._loadActiveFilterFromPrefs()
+    // hasn't finished yet when initState fires.
+    final activeJson = prefs.getString('activeFilter');
+    if (activeJson != null) {
+      try {
+        final active = getFilterResFromJson(activeJson);
+        setState(() => _applyFilterToState(active));
+        // Keep FilterNotifier in sync in case it lost the race
+        if (filterNotifier.activeFilter == null) {
+          filterNotifier.setActiveFilter(active);
+        }
+        setState(() => _isLoading = false);
+        return;
+      } catch (_) {
+        // Corrupt prefs entry — fall through to backend
+      }
+    }
+
+    // Fallback: first launch or prefs cleared — load from backend
+    final userId = prefs.getString('userId') ?? '';
     if (userId.isNotEmpty) {
       try {
         final existing = await FilterHelper.getFilter(userId);
         if (!mounted) return;
-        setState(() {
-          selectedOptions.clear();
-          selectedOptions.addAll(existing.selectedOptions);
-
-          for (final custom in existing.customOptions) {
-            if (!options.contains(custom)) options.add(custom);
-          }
-
-          for (final key in existing.opportunityTypes.keys) {
-            if (opportunityTypes.containsKey(key)) {
-              opportunityTypes[key] = existing.opportunityTypes[key] ?? false;
-            }
-          }
-
-          selectedLocationOption = existing.selectedLocationOption;
-          selectedCity = existing.selectedCity;
-          selectedState = existing.selectedState;
-          selectedCountry = existing.selectedCountry;
-        });
+        setState(() => _applyFilterToState(existing));
+        filterNotifier.setActiveFilter(existing);
       } catch (_) {
         // No saved filter yet — start fresh
       }
@@ -117,21 +168,20 @@ class _FilterPageState extends State<FilterPage> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16.0),
+          : SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
               'Domain',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 8, // Space between bubbles horizontally
-                  runSpacing: 8, // Space between bubbles vertically
+            Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     ...options.map((option) {
                       final isSelected = selectedOptions.contains(option);
@@ -178,8 +228,6 @@ class _FilterPageState extends State<FilterPage> {
                       ),
                     ),
                   ],
-                ),
-              ),
             ),
             // Show Text Field for Custom Input
             if (showCustomInput)
@@ -259,6 +307,62 @@ class _FilterPageState extends State<FilterPage> {
             ),
 
             const SizedBox(height: 20),
+            // ── Skills / Technologies ─────────────────────────────────────
+            const Text(
+              'Skills / Technologies',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 38,
+                    child: TextField(
+                      controller: _skillInputController,
+                      decoration: const InputDecoration(
+                        hintText: 'e.g. React, Python…',
+                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF040326)),
+                  onPressed: () {
+                    final val = _skillInputController.text.trim();
+                    if (val.isNotEmpty && !selectedSkills.contains(val)) {
+                      setState(() {
+                        selectedSkills.add(val);
+                        _skillInputController.clear();
+                      });
+                    }
+                  },
+                  child: const Text('Add',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            ),
+            if (selectedSkills.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: selectedSkills
+                    .map((skill) => Chip(
+                          label: Text(skill),
+                          deleteIcon: const Icon(Icons.close, size: 16),
+                          onDeleted: () =>
+                              setState(() => selectedSkills.remove(skill)),
+                        ))
+                    .toList(),
+              ),
+            ],
+            const SizedBox(height: 20),
             // Location Selector Section
             const Text(
               'Select Location Type:',
@@ -276,11 +380,8 @@ class _FilterPageState extends State<FilterPage> {
             const SizedBox(height: 20),
             if (selectedLocationOption == "City")
               TextField(
-                onChanged: (value) {
-                  setState(() {
-                    selectedCity = value;
-                  });
-                },
+                controller: _cityController,
+                onChanged: (value) => setState(() => selectedCity = value),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Type city name",
@@ -304,17 +405,14 @@ class _FilterPageState extends State<FilterPage> {
               ),
             if (selectedLocationOption == "Country")
               TextField(
-                onChanged: (value) {
-                  setState(() {
-                    selectedCountry = value;
-                  });
-                },
+                controller: _countryController,
+                onChanged: (value) => setState(() => selectedCountry = value),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Type country name",
                 ),
               ),
-            const HeightSpacer(size: 20),
+            const SizedBox(height: 20),
             CustomButton(
               onTap: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -334,6 +432,7 @@ class _FilterPageState extends State<FilterPage> {
                   selectedState: selectedState,
                   selectedCountry: selectedCountry,
                   customOptions: customInput,
+                  skills: List.from(selectedSkills),
                 );
 
                 if (!context.mounted) return;
@@ -344,6 +443,19 @@ class _FilterPageState extends State<FilterPage> {
                 await filterNotifier.createFilter(userId!, filterData);
 
                 if (!context.mounted) return;
+
+                // Store active filter so homepage can show chips
+                filterNotifier.setActiveFilter(GetFilterRes(
+                  id: '',
+                  selectedOptions: List.from(selectedOptions),
+                  opportunityTypes: Map.from(opportunityTypes),
+                  selectedLocationOption: selectedLocationOption,
+                  selectedCity: selectedCity,
+                  selectedState: selectedState,
+                  selectedCountry: selectedCountry,
+                  customOptions: customInput,
+                  skills: List.from(selectedSkills),
+                ));
 
                 Navigator.pop(context);
               },

@@ -21,6 +21,7 @@ class GetFilterRes {
     required this.selectedState,
     required this.selectedCountry,
     required this.customOptions,
+    required this.skills,
   });
 
   factory GetFilterRes.fromJson(Map<String, dynamic> json) => GetFilterRes(
@@ -40,6 +41,9 @@ class GetFilterRes {
         customOptions: json['customOptions'] != null
             ? List<String>.from(json['customOptions'].map((x) => x))
             : [],
+        skills: json['skills'] != null
+            ? List<String>.from(json['skills'].map((x) => x))
+            : [],
       );
 
   final String id;
@@ -50,6 +54,7 @@ class GetFilterRes {
   final String selectedState;
   final String selectedCountry;
   final List<String> customOptions;
+  final List<String> skills;
 
   Map<String, dynamic> toJson() => {
         '_id': id,
@@ -61,5 +66,6 @@ class GetFilterRes {
         'selectedState': selectedState,
         'selectedCountry': selectedCountry,
         'customOptions': List<dynamic>.from(customOptions.map((x) => x)),
+        'skills': List<dynamic>.from(skills.map((x) => x)),
       };
 }

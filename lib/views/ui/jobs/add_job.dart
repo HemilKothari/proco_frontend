@@ -37,6 +37,7 @@ class _AddJobPageState extends State<AddJobPage> {
   bool _isHiring = true;
   String? selectedDomain;
   String? selectedOpportunityType;
+  final _customDomainController = TextEditingController();
 
   @override
   void dispose() {
@@ -48,6 +49,7 @@ class _AddJobPageState extends State<AddJobPage> {
     _periodController.dispose();
     _contractController.dispose();
     _imageUrlController.dispose();
+    _customDomainController.dispose();
     for (final c in _reqControllers) {
       c.dispose();
     }
@@ -74,6 +76,17 @@ class _AddJobPageState extends State<AddJobPage> {
       return;
     }
 
+    final effectiveDomain = selectedDomain == 'Custom…'
+        ? _customDomainController.text.trim()
+        : selectedDomain!;
+
+    if (effectiveDomain.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a custom domain.')),
+      );
+      return;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId') ?? '';
 
@@ -96,7 +109,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
     final jobData = CreateJobsRequest(
       agentId: userId,
-      domain: selectedDomain!,
+      domain: effectiveDomain,
       opportunityType: selectedOpportunityType!,
       title: _titleController.text.isNotEmpty
           ? _titleController.text
@@ -203,10 +216,15 @@ class _AddJobPageState extends State<AddJobPage> {
               SizedBox(height: 12.h),
               _buildDropdown(
                 hint: 'Select Domain',
-                items: kDomains,
+                items: [...kDomains, 'Custom…'],
                 value: selectedDomain,
                 onChanged: (val) => setState(() => selectedDomain = val),
               ),
+              if (selectedDomain == 'Custom…') ...[
+                SizedBox(height: 12.h),
+                _field(_customDomainController, 'Enter custom domain',
+                    Icons.edit_outlined),
+              ],
               SizedBox(height: 12.h),
               _buildDropdown(
                 hint: 'Select Opportunity Type',

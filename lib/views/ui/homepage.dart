@@ -189,6 +189,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // ─── (filter strip removed — filters shown only on filter page) ───────────
   // ─── Card ─────────────────────────────────────────────────────────────────
   Widget _buildCard(JobsResponse job, CardSwiperDirection? liveDirection) {
     return Stack(
