@@ -52,9 +52,12 @@ class _JobListingPageState extends State<JobListingPage> {
   void loadJobs() async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId') ?? '';
-    if (userId.isNotEmpty && mounted) {
-      context.read<JobsNotifier>().getUserJobs(userId);
-    }
+    if (userId.isEmpty || !mounted) return;
+    final notifier = context.read<JobsNotifier>();
+    // Show cached jobs instantly so listings appear immediately after login
+    await notifier.loadCachedUserJobs(userId);
+    // Then silently refresh from network
+    if (mounted) notifier.getUserJobs(userId);
   }
 
   Future<void> setCurrentJobId(String jobId) async {
@@ -387,7 +390,7 @@ class JobCard extends StatelessWidget {
                               color: Colors.white, size: 10),
                           const SizedBox(width: 3),
                           Text(
-                            '${job.matchedUsers?.length ?? 0}',
+                            '${job.matchedUsers.length}',
                             style: TextStyle(
                               fontSize: 9.sp,
                               color: Colors.white,

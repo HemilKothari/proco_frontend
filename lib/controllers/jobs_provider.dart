@@ -83,6 +83,15 @@ class JobsNotifier extends ChangeNotifier {
     getJobs(); // Refresh the job list after deletion
   }
 
+  // Show cached jobs instantly, then refresh from network in background
+  Future<void> loadCachedUserJobs(String agentId) async {
+    final cached = await JobsHelper.getCachedUserJobs(agentId);
+    if (cached.isNotEmpty) {
+      userJobs = Future.value(cached);
+      notifyListeners();
+    }
+  }
+
   // Add the new function to fetch jobs for a specific user
   void getUserJobs(String agentId) {
     userJobs = JobsHelper.getUserJobs(agentId);

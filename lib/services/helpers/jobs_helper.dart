@@ -96,6 +96,7 @@ class JobsHelper {
 
       List<String> jobIds = jobs.map((job) => job.id).toList();
       await saveJobIdsToPrefs(jobIds);
+      await _saveUserJobsCache(agentId, data); // persist full job data
 
       return jobs;
     } else {
@@ -104,11 +105,32 @@ class JobsHelper {
     }
   }
 
-// Save all job IDs in SharedPreferences
+  // Save all job IDs in SharedPreferences
   static Future<void> saveJobIdsToPrefs(List<String> jobIds) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('savedJobIds', jobIds);
     debugPrint("Saved job IDs: $jobIds");
+  }
+
+  // Persist full job list for instant display after login
+  static Future<void> _saveUserJobsCache(String agentId, List data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userJobsCache_$agentId', jsonEncode(data));
+  }
+
+  // Read cached jobs — returns empty list if no cache exists
+  static Future<List<JobsResponse>> getCachedUserJobs(String agentId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonStr = prefs.getString('userJobsCache_$agentId');
+      if (jsonStr == null) return [];
+      final List data = jsonDecode(jsonStr);
+      return data
+          .map((e) => JobsResponse.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
   }
 
   static Future<void> setCurrentJobId(String jobId) async {
