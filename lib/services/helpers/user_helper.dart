@@ -33,6 +33,11 @@ class UserHelper {
     request.fields['college'] = model.college ?? '';
     request.fields['branch'] = model.branch ?? '';
     request.fields['gender'] = model.gender ?? '';
+    request.fields['age'] = model.age;
+    request.fields['linkedInUrl'] = model.linkedInUrl;
+    request.fields['gitHubUrl'] = model.gitHubUrl;
+    request.fields['twitterUrl'] = model.twitterUrl;
+    request.fields['portfolioUrl'] = model.portfolioUrl;
 
     // if skills is list
     request.fields['skills'] = jsonEncode(model.skills);

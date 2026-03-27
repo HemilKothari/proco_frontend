@@ -48,7 +48,6 @@ class ProfileEditState extends ChangeNotifier {
   }
 
   Future<void> _init() async {
-    await _loadLocalExtras();
     await _loadVisibility();
     await loadProfile();
   }
@@ -72,6 +71,11 @@ class ProfileEditState extends ChangeNotifier {
         branch = data.branch;
         skills = List<String>.from(data.skills);
         profileImageUrl = data.profile;
+        age = data.age;
+        linkedInUrl = data.linkedInUrl;
+        gitHubUrl = data.gitHubUrl;
+        twitterUrl = data.twitterUrl;
+        portfolioUrl = data.portfolioUrl;
       } else {
         error = 'Could not load profile';
       }
@@ -83,7 +87,7 @@ class ProfileEditState extends ChangeNotifier {
     }
   }
 
-  // ── Save to backend + persist local extras ───────────────────────────────────
+  // ── Save to backend ───────────────────────────────────────────────────────────
   Future<bool> saveProfile(File? image) async {
     isSaving = true;
     notifyListeners();
@@ -97,9 +101,13 @@ class ProfileEditState extends ChangeNotifier {
         college: college,
         branch: branch,
         gender: gender.isEmpty ? null : gender,
+        age: age,
+        linkedInUrl: linkedInUrl,
+        gitHubUrl: gitHubUrl,
+        twitterUrl: twitterUrl,
+        portfolioUrl: portfolioUrl,
       );
       final ok = await UserHelper.updateProfile(req, image);
-      if (ok == true) await _saveLocalExtras();
       isSaving = false;
       notifyListeners();
       return ok == true;
@@ -109,25 +117,6 @@ class ProfileEditState extends ChangeNotifier {
       notifyListeners();
       return false;
     }
-  }
-
-  // ── Local extras persistence ─────────────────────────────────────────────────
-  Future<void> _loadLocalExtras() async {
-    final prefs = await SharedPreferences.getInstance();
-    age = prefs.getString('profile_age') ?? '';
-    linkedInUrl = prefs.getString('profile_linkedin') ?? '';
-    gitHubUrl = prefs.getString('profile_github') ?? '';
-    twitterUrl = prefs.getString('profile_twitter') ?? '';
-    portfolioUrl = prefs.getString('profile_portfolio') ?? '';
-  }
-
-  Future<void> _saveLocalExtras() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('profile_age', age);
-    await prefs.setString('profile_linkedin', linkedInUrl);
-    await prefs.setString('profile_github', gitHubUrl);
-    await prefs.setString('profile_twitter', twitterUrl);
-    await prefs.setString('profile_portfolio', portfolioUrl);
   }
 
   // ── Per-field visibility ──────────────────────────────────────────────────────

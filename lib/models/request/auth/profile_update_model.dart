@@ -17,6 +17,11 @@ class ProfileUpdateReq {
     this.college = "",
     this.branch = "",
     this.gender,
+    this.age = "",
+    this.linkedInUrl = "",
+    this.gitHubUrl = "",
+    this.twitterUrl = "",
+    this.portfolioUrl = "",
   });
 
   factory ProfileUpdateReq.fromJson(Map<String, dynamic> json) =>
@@ -30,6 +35,11 @@ class ProfileUpdateReq {
         college: json['college'] ?? "",
         branch: json['branch'] ?? "",
         gender: json['gender'],
+        age: json['age'] ?? "",
+        linkedInUrl: json['linkedInUrl'] ?? "",
+        gitHubUrl: json['gitHubUrl'] ?? "",
+        twitterUrl: json['twitterUrl'] ?? "",
+        portfolioUrl: json['portfolioUrl'] ?? "",
       );
 
   final String city;
@@ -41,6 +51,11 @@ class ProfileUpdateReq {
   final String college;
   final String branch;
   final String? gender;
+  final String age;
+  final String linkedInUrl;
+  final String gitHubUrl;
+  final String twitterUrl;
+  final String portfolioUrl;
 
   Map<String, dynamic> toJson() => {
         'city': city,
@@ -52,5 +67,10 @@ class ProfileUpdateReq {
         'college': college,
         'branch': branch,
         if (gender != null) 'gender': gender,
+        'age': age,
+        'linkedInUrl': linkedInUrl,
+        'gitHubUrl': gitHubUrl,
+        'twitterUrl': twitterUrl,
+        'portfolioUrl': portfolioUrl,
       };
 }

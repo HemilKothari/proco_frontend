@@ -29,6 +29,11 @@ class ProfileRes {
   final String city;
   final String state;
   final String country;
+  final String age;
+  final String linkedInUrl;
+  final String gitHubUrl;
+  final String twitterUrl;
+  final String portfolioUrl;
   final bool isFirstTimeUser;
 
   ProfileRes({
@@ -48,6 +53,11 @@ class ProfileRes {
     this.city = "",
     this.state = "",
     this.country = "",
+    this.age = "",
+    this.linkedInUrl = "",
+    this.gitHubUrl = "",
+    this.twitterUrl = "",
+    this.portfolioUrl = "",
     this.isFirstTimeUser = true,
   });
 
@@ -72,6 +82,11 @@ class ProfileRes {
       city: json['city'] ?? "",
       state: json['state'] ?? "",
       country: json['country'] ?? "",
+      age: json['age'] ?? "",
+      linkedInUrl: json['linkedInUrl'] ?? "",
+      gitHubUrl: json['gitHubUrl'] ?? "",
+      twitterUrl: json['twitterUrl'] ?? "",
+      portfolioUrl: json['portfolioUrl'] ?? "",
       isFirstTimeUser: json['isFirstTimeUser'] ?? true,
     );
   }
@@ -93,6 +108,11 @@ class ProfileRes {
         'city': city,
         'state': state,
         'country': country,
+        'age': age,
+        'linkedInUrl': linkedInUrl,
+        'gitHubUrl': gitHubUrl,
+        'twitterUrl': twitterUrl,
+        'portfolioUrl': portfolioUrl,
         'isFirstTimeUser': isFirstTimeUser,
       };
 }
