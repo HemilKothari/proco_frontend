@@ -15,6 +15,7 @@ class EditTab extends StatefulWidget {
 }
 
 class _EditTabState extends State<EditTab> {
+  static const Color _bg = Color(0xFF040326);
   static const Color _card = Color(0xFF0D1B2A);
   static const Color _teal = kTeal;
   static const Color _tealLight = kTealLight;
@@ -28,12 +29,18 @@ class _EditTabState extends State<EditTab> {
   ];
 
   final _formKey = GlobalKey<FormState>();
+
   late TextEditingController _phoneCtrl;
+  late TextEditingController _ageCtrl;
   late TextEditingController _cityCtrl;
   late TextEditingController _stateCtrl;
   late TextEditingController _countryCtrl;
   late TextEditingController _collegeCtrl;
   late TextEditingController _branchCtrl;
+  late TextEditingController _linkedInCtrl;
+  late TextEditingController _gitHubCtrl;
+  late TextEditingController _twitterCtrl;
+  late TextEditingController _portfolioCtrl;
   final _skillCtrl = TextEditingController();
 
   String? _selectedGender;
@@ -45,11 +52,16 @@ class _EditTabState extends State<EditTab> {
     if (!_initialized) {
       final s = context.read<ProfileEditState>();
       _phoneCtrl = TextEditingController(text: s.phone);
+      _ageCtrl = TextEditingController(text: s.age);
       _cityCtrl = TextEditingController(text: s.city);
       _stateCtrl = TextEditingController(text: s.state);
       _countryCtrl = TextEditingController(text: s.country);
       _collegeCtrl = TextEditingController(text: s.college);
       _branchCtrl = TextEditingController(text: s.branch);
+      _linkedInCtrl = TextEditingController(text: s.linkedInUrl);
+      _gitHubCtrl = TextEditingController(text: s.gitHubUrl);
+      _twitterCtrl = TextEditingController(text: s.twitterUrl);
+      _portfolioCtrl = TextEditingController(text: s.portfolioUrl);
       _selectedGender =
           _genderOptions.contains(s.gender) ? s.gender : null;
       _initialized = true;
@@ -59,11 +71,16 @@ class _EditTabState extends State<EditTab> {
   @override
   void dispose() {
     _phoneCtrl.dispose();
+    _ageCtrl.dispose();
     _cityCtrl.dispose();
     _stateCtrl.dispose();
     _countryCtrl.dispose();
     _collegeCtrl.dispose();
     _branchCtrl.dispose();
+    _linkedInCtrl.dispose();
+    _gitHubCtrl.dispose();
+    _twitterCtrl.dispose();
+    _portfolioCtrl.dispose();
     _skillCtrl.dispose();
     super.dispose();
   }
@@ -72,11 +89,16 @@ class _EditTabState extends State<EditTab> {
     if (!_formKey.currentState!.validate()) return;
     final s = context.read<ProfileEditState>();
     s.setField('phone', _phoneCtrl.text.trim());
+    s.setField('age', _ageCtrl.text.trim());
     s.setField('city', _cityCtrl.text.trim());
     s.setField('state', _stateCtrl.text.trim());
     s.setField('country', _countryCtrl.text.trim());
     s.setField('college', _collegeCtrl.text.trim());
     s.setField('branch', _branchCtrl.text.trim());
+    s.setField('linkedin', _linkedInCtrl.text.trim());
+    s.setField('github', _gitHubCtrl.text.trim());
+    s.setField('twitter', _twitterCtrl.text.trim());
+    s.setField('portfolio', _portfolioCtrl.text.trim());
     s.setField('gender', _selectedGender ?? '');
 
     final imageNotifier = context.read<ImageNotifier>();
@@ -97,52 +119,56 @@ class _EditTabState extends State<EditTab> {
   Widget build(BuildContext context) {
     final state = context.watch<ProfileEditState>();
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 32.h),
+      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 32.h),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Avatar picker ─────────────────────────────────────────────
+            // ── Avatar ────────────────────────────────────────────────────
             _buildAvatarPicker(),
-            SizedBox(height: 24.h),
+            SizedBox(height: 20.h),
 
             // ── Personal Info ─────────────────────────────────────────────
-            _sectionHeader(
-              title: 'Personal Info',
-              showKey: 'phone',
+            _sectionDivider('Personal Info'),
+            SizedBox(height: 12.h),
+            _emailReadOnlyWithToggle(state),
+            SizedBox(height: 10.h),
+            _fieldWithToggle(
+              controller: _phoneCtrl,
+              label: 'Phone',
+              icon: Icons.phone_outlined,
+              visKey: 'phone',
               isVisible: state.showPhone,
               state: state,
-            ),
-            SizedBox(height: 10.h),
-            _field(
-              controller: _phoneCtrl,
-              label: 'Phone Number',
-              hint: '10-digit number',
-              icon: Icons.phone_outlined,
               keyboardType: TextInputType.phone,
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Required';
-                if (!RegExp(r'^\d{10,15}$').hasMatch(v)) {
+                if (v != null && v.isNotEmpty &&
+                    !RegExp(r'^\d{10,15}$').hasMatch(v)) {
                   return 'Enter a valid phone number';
                 }
                 return null;
               },
             ),
             SizedBox(height: 10.h),
-            _genderDropdown(),
+            _genderRowWithToggle(state),
+            SizedBox(height: 10.h),
+            _fieldWithToggle(
+              controller: _ageCtrl,
+              label: 'Age',
+              icon: Icons.cake_outlined,
+              visKey: 'age',
+              isVisible: state.showAge,
+              state: state,
+              keyboardType: TextInputType.number,
+            ),
             SizedBox(height: 20.h),
 
             // ── Location ──────────────────────────────────────────────────
-            _sectionHeader(
-              title: 'Location',
-              showKey: 'location',
-              isVisible: state.showLocation,
-              state: state,
-            ),
-            SizedBox(height: 10.h),
-            _field(
+            _sectionDivider('Location'),
+            SizedBox(height: 12.h),
+            _plainField(
               controller: _cityCtrl,
               label: 'City',
               icon: Icons.location_city_outlined,
@@ -150,7 +176,7 @@ class _EditTabState extends State<EditTab> {
                   v == null || v.isEmpty ? 'Required' : null,
             ),
             SizedBox(height: 10.h),
-            _field(
+            _plainField(
               controller: _stateCtrl,
               label: 'State',
               icon: Icons.map_outlined,
@@ -158,7 +184,7 @@ class _EditTabState extends State<EditTab> {
                   v == null || v.isEmpty ? 'Required' : null,
             ),
             SizedBox(height: 10.h),
-            _field(
+            _plainField(
               controller: _countryCtrl,
               label: 'Country',
               icon: Icons.flag_outlined,
@@ -168,21 +194,18 @@ class _EditTabState extends State<EditTab> {
             SizedBox(height: 20.h),
 
             // ── Education ─────────────────────────────────────────────────
-            _sectionHeader(
-              title: 'Education',
-              showKey: 'education',
-              isVisible: state.showEducation,
+            _sectionDivider('Education'),
+            SizedBox(height: 12.h),
+            _fieldWithToggle(
+              controller: _collegeCtrl,
+              label: 'College / University',
+              icon: Icons.apartment_outlined,
+              visKey: 'college',
+              isVisible: state.showCollege,
               state: state,
             ),
             SizedBox(height: 10.h),
-            _field(
-              controller: _collegeCtrl,
-              label: 'College / University',
-              hint: 'Enter your institution name',
-              icon: Icons.apartment_outlined,
-            ),
-            SizedBox(height: 10.h),
-            _field(
+            _plainField(
               controller: _branchCtrl,
               label: 'Branch / Field of Study',
               hint: 'e.g. Computer Science',
@@ -191,21 +214,62 @@ class _EditTabState extends State<EditTab> {
             SizedBox(height: 20.h),
 
             // ── Skills ────────────────────────────────────────────────────
-            _sectionHeader(
-              title: 'Skills',
-              showKey: 'skills',
-              isVisible: state.showSkills,
-              state: state,
-            ),
+            _sectionDivider('Skills'),
+            SizedBox(height: 8.h),
+            _skillsToggleRow(state),
             SizedBox(height: 10.h),
             _skillsInput(state),
             SizedBox(height: 10.h),
             _skillsChips(state),
+            SizedBox(height: 20.h),
+
+            // ── Social / URLs ─────────────────────────────────────────────
+            _sectionDivider('Social & Links'),
+            SizedBox(height: 12.h),
+            _fieldWithToggle(
+              controller: _linkedInCtrl,
+              label: 'LinkedIn URL',
+              icon: Icons.link_rounded,
+              visKey: 'linkedin',
+              isVisible: state.showLinkedIn,
+              state: state,
+              keyboardType: TextInputType.url,
+            ),
+            SizedBox(height: 10.h),
+            _fieldWithToggle(
+              controller: _gitHubCtrl,
+              label: 'GitHub URL',
+              icon: Icons.code_rounded,
+              visKey: 'github',
+              isVisible: state.showGitHub,
+              state: state,
+              keyboardType: TextInputType.url,
+            ),
+            SizedBox(height: 10.h),
+            _fieldWithToggle(
+              controller: _twitterCtrl,
+              label: 'Twitter / X URL',
+              icon: Icons.alternate_email_rounded,
+              visKey: 'twitter',
+              isVisible: state.showTwitter,
+              state: state,
+              keyboardType: TextInputType.url,
+            ),
+            SizedBox(height: 10.h),
+            _fieldWithToggle(
+              controller: _portfolioCtrl,
+              label: 'Portfolio URL',
+              icon: Icons.language_rounded,
+              visKey: 'portfolio',
+              isVisible: state.showPortfolio,
+              state: state,
+              keyboardType: TextInputType.url,
+            ),
             SizedBox(height: 28.h),
 
-            // ── Save button ───────────────────────────────────────────────
+            // ── Save ──────────────────────────────────────────────────────
             _saveButton(state),
-            SizedBox(height: 20.h),
+            SizedBox(height: 16.h),
           ],
         ),
       ),
@@ -218,10 +282,11 @@ class _EditTabState extends State<EditTab> {
       builder: (context, imageNotifier, _) {
         return Center(
           child: Stack(
+            clipBehavior: Clip.none,
             children: [
               Container(
-                width: 90.w,
-                height: 90.w,
+                width: 86.w,
+                height: 86.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: _card,
@@ -235,7 +300,7 @@ class _EditTabState extends State<EditTab> {
                 ),
                 child: imageNotifier.selectedImage == null
                     ? Icon(Icons.person_rounded,
-                        size: 44.w, color: _teal.withOpacity(0.5))
+                        size: 42.w, color: _teal.withOpacity(0.5))
                     : null,
               ),
               Positioned(
@@ -246,22 +311,21 @@ class _EditTabState extends State<EditTab> {
                       ? null
                       : () async => await imageNotifier.pickImage(),
                   child: Container(
-                    width: 30.w,
-                    height: 30.w,
+                    width: 28.w,
+                    height: 28.w,
                     decoration: BoxDecoration(
                       color: _teal,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                          color: const Color(0xFF040326), width: 2),
+                      border: Border.all(color: _bg, width: 2),
                     ),
                     child: imageNotifier.isLoading
                         ? const Padding(
-                            padding: EdgeInsets.all(6),
+                            padding: EdgeInsets.all(5),
                             child: CircularProgressIndicator(
                                 strokeWidth: 2, color: _white),
                           )
                         : const Icon(Icons.camera_alt_rounded,
-                            size: 14, color: _white),
+                            size: 13, color: _white),
                   ),
                 ),
               ),
@@ -272,101 +336,207 @@ class _EditTabState extends State<EditTab> {
     );
   }
 
-  // ── Section header with visibility switch ──────────────────────────────────
-  Widget _sectionHeader({
-    required String title,
-    required String showKey,
-    required bool isVisible,
-    required ProfileEditState state,
-  }) {
+  // ── Section divider label ──────────────────────────────────────────────────
+  Widget _sectionDivider(String title) {
     return Row(
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  color: _teal,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.1,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              SizedBox(height: 3.h),
-              Container(
-                  height: 1, color: _teal.withOpacity(0.3)),
-            ],
+        Container(
+          width: 4,
+          height: 16.h,
+          decoration: BoxDecoration(
+            color: _teal,
+            borderRadius: BorderRadius.circular(4),
           ),
         ),
-        SizedBox(width: 12.w),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              isVisible ? 'Visible' : 'Hidden',
-              style: TextStyle(
-                color:
-                    isVisible ? _teal : Colors.white38,
-                fontSize: 11.sp,
-                fontFamily: 'Poppins',
-              ),
-            ),
-            SizedBox(width: 4.w),
-            Transform.scale(
-              scale: 0.8,
-              child: Switch(
-                value: isVisible,
-                onChanged: (_) => state.toggleVisibility(showKey),
-                activeColor: _teal,
-                activeTrackColor: _teal.withOpacity(0.3),
-                inactiveThumbColor: Colors.white38,
-                inactiveTrackColor: Colors.white12,
-              ),
-            ),
-          ],
+        SizedBox(width: 8.w),
+        Text(
+          title,
+          style: TextStyle(
+            color: _white,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'Poppins',
+          ),
         ),
       ],
     );
   }
 
-  // ── Text field ─────────────────────────────────────────────────────────────
-  Widget _field({
+  // ── Email read-only row with visibility toggle ────────────────────────────
+  Widget _emailReadOnlyWithToggle(ProfileEditState state) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.email_outlined, color: _teal, size: 15),
+            SizedBox(width: 6.w),
+            Text(
+              'Email',
+              style: TextStyle(
+                color: Colors.white60,
+                fontSize: 12.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            const Spacer(),
+            Text(
+              state.showEmail ? 'Visible' : 'Hidden',
+              style: TextStyle(
+                color: state.showEmail ? _tealLight : Colors.white38,
+                fontSize: 11.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            SizedBox(width: 2.w),
+            SizedBox(
+              height: 24,
+              child: Transform.scale(
+                scale: 0.75,
+                child: Switch(
+                  value: state.showEmail,
+                  onChanged: (_) => state.toggleVisibility('email'),
+                  activeColor: _teal,
+                  activeTrackColor: _teal.withOpacity(0.3),
+                  inactiveThumbColor: Colors.white38,
+                  inactiveTrackColor: Colors.white12,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 5.h),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
+          decoration: BoxDecoration(
+            color: _card.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: _teal.withOpacity(0.15)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.lock_outline_rounded,
+                  color: _teal.withOpacity(0.5), size: 14),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Text(
+                  state.email.isNotEmpty ? state.email : '—',
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 14.sp,
+                    fontFamily: 'Poppins',
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Field with inline visibility toggle ───────────────────────────────────
+  Widget _fieldWithToggle({
     required TextEditingController controller,
     required String label,
-    String? hint,
     required IconData icon,
+    required String visKey,
+    required bool isVisible,
+    required ProfileEditState state,
+    String? hint,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Label row + toggle
+        Row(
+          children: [
+            Icon(icon, color: _teal, size: 15),
+            SizedBox(width: 6.w),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white60,
+                fontSize: 12.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            const Spacer(),
+            Text(
+              isVisible ? 'Visible' : 'Hidden',
+              style: TextStyle(
+                color: isVisible ? _tealLight : Colors.white38,
+                fontSize: 11.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            SizedBox(width: 2.w),
+            SizedBox(
+              height: 24,
+              child: Transform.scale(
+                scale: 0.75,
+                child: Switch(
+                  value: isVisible,
+                  onChanged: (_) => state.toggleVisibility(visKey),
+                  activeColor: _teal,
+                  activeTrackColor: _teal.withOpacity(0.3),
+                  inactiveThumbColor: Colors.white38,
+                  inactiveTrackColor: Colors.white12,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 5.h),
+        // Text field
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          style: TextStyle(color: _white, fontSize: 14.sp),
+          validator: validator,
+          decoration: _fieldDecoration(hint ?? label),
+        ),
+      ],
+    );
+  }
+
+  // ── Plain field (no toggle) ────────────────────────────────────────────────
+  Widget _plainField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? hint,
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      style: const TextStyle(color: _white, fontSize: 15),
+      style: TextStyle(color: _white, fontSize: 14.sp),
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        labelStyle:
-            const TextStyle(color: Colors.white38, fontSize: 14),
-        hintStyle:
-            const TextStyle(color: Colors.white24, fontSize: 13),
-        prefixIcon: Icon(icon, color: _teal, size: 20),
+        labelStyle: const TextStyle(color: Colors.white38, fontSize: 13),
+        hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
+        prefixIcon: Icon(icon, color: _teal, size: 18),
         filled: true,
         fillColor: _card,
         contentPadding:
-            EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+            EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              BorderSide(color: _teal.withOpacity(0.25)),
+          borderSide: BorderSide(color: _teal.withOpacity(0.25)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              BorderSide(color: _teal.withOpacity(0.25)),
+          borderSide: BorderSide(color: _teal.withOpacity(0.25)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -374,64 +544,175 @@ class _EditTabState extends State<EditTab> {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: Colors.redAccent),
+          borderSide: const BorderSide(color: Colors.redAccent),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-              color: Colors.redAccent, width: 1.5),
+          borderSide:
+              const BorderSide(color: Colors.redAccent, width: 1.5),
         ),
-        errorStyle:
-            const TextStyle(color: Colors.redAccent),
       ),
     );
   }
 
-  // ── Gender dropdown ────────────────────────────────────────────────────────
-  Widget _genderDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedGender,
-      decoration: InputDecoration(
-        labelText: 'Gender',
-        labelStyle:
-            const TextStyle(color: Colors.white38, fontSize: 14),
-        prefixIcon:
-            const Icon(Icons.person_outline, color: _teal),
-        filled: true,
-        fillColor: _card,
-        contentPadding:
-            EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide:
-              BorderSide(color: _teal.withOpacity(0.25)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide:
-              BorderSide(color: _teal.withOpacity(0.25)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _teal, width: 1.5),
-        ),
+  InputDecoration _fieldDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
+      filled: true,
+      fillColor: _card,
+      contentPadding:
+          EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _teal.withOpacity(0.25)),
       ),
-      hint: const Text('Select gender',
-          style: TextStyle(color: Colors.white38, fontSize: 14)),
-      dropdownColor: _card,
-      icon: const Icon(Icons.keyboard_arrow_down_rounded,
-          color: _teal),
-      style: const TextStyle(color: _white, fontSize: 15),
-      borderRadius: BorderRadius.circular(12),
-      items: _genderOptions
-          .map((g) => DropdownMenuItem(
-                value: g,
-                child:
-                    Text(g, style: const TextStyle(color: _white)),
-              ))
-          .toList(),
-      onChanged: (val) => setState(() => _selectedGender = val),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _teal.withOpacity(0.25)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: _teal, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.redAccent),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+      ),
+    );
+  }
+
+  // ── Gender row with toggle ─────────────────────────────────────────────────
+  Widget _genderRowWithToggle(ProfileEditState state) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.wc_outlined, color: _teal, size: 15),
+            SizedBox(width: 6.w),
+            Text(
+              'Gender',
+              style: TextStyle(
+                color: Colors.white60,
+                fontSize: 12.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            const Spacer(),
+            Text(
+              state.showGender ? 'Visible' : 'Hidden',
+              style: TextStyle(
+                color: state.showGender ? _tealLight : Colors.white38,
+                fontSize: 11.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            SizedBox(width: 2.w),
+            SizedBox(
+              height: 24,
+              child: Transform.scale(
+                scale: 0.75,
+                child: Switch(
+                  value: state.showGender,
+                  onChanged: (_) => state.toggleVisibility('gender'),
+                  activeColor: _teal,
+                  activeTrackColor: _teal.withOpacity(0.3),
+                  inactiveThumbColor: Colors.white38,
+                  inactiveTrackColor: Colors.white12,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 5.h),
+        DropdownButtonFormField<String>(
+          value: _selectedGender,
+          decoration: InputDecoration(
+            hintText: 'Select gender',
+            hintStyle:
+                const TextStyle(color: Colors.white38, fontSize: 13),
+            prefixIcon: const Icon(Icons.person_outline,
+                color: _teal, size: 18),
+            filled: true,
+            fillColor: _card,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 13.h, horizontal: 14.w),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: _teal.withOpacity(0.25)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: _teal.withOpacity(0.25)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: _teal, width: 1.5),
+            ),
+          ),
+          dropdownColor: const Color(0xFF0D2233),
+          icon: const Icon(Icons.keyboard_arrow_down_rounded,
+              color: _teal),
+          style: TextStyle(color: _white, fontSize: 14.sp),
+          borderRadius: BorderRadius.circular(12),
+          items: _genderOptions
+              .map((g) => DropdownMenuItem(
+                    value: g,
+                    child: Text(g,
+                        style: const TextStyle(color: _white)),
+                  ))
+              .toList(),
+          onChanged: (val) => setState(() => _selectedGender = val),
+        ),
+      ],
+    );
+  }
+
+  // ── Skills toggle row ──────────────────────────────────────────────────────
+  Widget _skillsToggleRow(ProfileEditState state) {
+    return Row(
+      children: [
+        const Icon(Icons.psychology_outlined, color: _teal, size: 15),
+        SizedBox(width: 6.w),
+        Text(
+          'Skills',
+          style: TextStyle(
+            color: Colors.white60,
+            fontSize: 12.sp,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const Spacer(),
+        Text(
+          state.showSkills ? 'Visible' : 'Hidden',
+          style: TextStyle(
+            color: state.showSkills ? _tealLight : Colors.white38,
+            fontSize: 11.sp,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        SizedBox(width: 2.w),
+        SizedBox(
+          height: 24,
+          child: Transform.scale(
+            scale: 0.75,
+            child: Switch(
+              value: state.showSkills,
+              onChanged: (_) => state.toggleVisibility('skills'),
+              activeColor: _teal,
+              activeTrackColor: _teal.withOpacity(0.3),
+              inactiveThumbColor: Colors.white38,
+              inactiveTrackColor: Colors.white12,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -442,51 +723,44 @@ class _EditTabState extends State<EditTab> {
         Expanded(
           child: TextFormField(
             controller: _skillCtrl,
-            style: const TextStyle(color: _white, fontSize: 15),
+            style: TextStyle(color: _white, fontSize: 14.sp),
             onFieldSubmitted: (_) => _addSkill(state),
             decoration: InputDecoration(
-              labelText: 'Add a skill',
-              hintText: 'e.g. Flutter, Python',
-              labelStyle:
-                  const TextStyle(color: Colors.white38, fontSize: 14),
+              hintText: 'Add a skill (e.g. Flutter)',
               hintStyle:
                   const TextStyle(color: Colors.white24, fontSize: 13),
-              prefixIcon: const Icon(Icons.psychology_outlined,
-                  color: _teal, size: 20),
+              prefixIcon: const Icon(Icons.add_circle_outline_rounded,
+                  color: _teal, size: 18),
               filled: true,
               fillColor: _card,
               contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                  EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    BorderSide(color: _teal.withOpacity(0.25)),
+                borderSide: BorderSide(color: _teal.withOpacity(0.25)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    BorderSide(color: _teal.withOpacity(0.25)),
+                borderSide: BorderSide(color: _teal.withOpacity(0.25)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: _teal, width: 1.5),
+                borderSide: const BorderSide(color: _teal, width: 1.5),
               ),
             ),
           ),
         ),
-        SizedBox(width: 10.w),
+        SizedBox(width: 8.w),
         GestureDetector(
           onTap: () => _addSkill(state),
           child: Container(
-            height: 50.h,
-            width: 50.h,
+            height: 46.h,
+            width: 46.h,
             decoration: BoxDecoration(
               color: _teal,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.add_rounded,
-                color: _white, size: 22),
+            child: const Icon(Icons.add_rounded, color: _white, size: 20),
           ),
         ),
       ],
@@ -507,7 +781,7 @@ class _EditTabState extends State<EditTab> {
         width: double.infinity,
         padding: EdgeInsets.all(12.h),
         decoration: BoxDecoration(
-          color: _teal.withOpacity(0.08),
+          color: _teal.withOpacity(0.07),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: _teal.withOpacity(0.2)),
         ),
@@ -515,7 +789,7 @@ class _EditTabState extends State<EditTab> {
           'No skills added yet',
           style: TextStyle(
               color: Colors.white38,
-              fontSize: 13.sp,
+              fontSize: 12.sp,
               fontFamily: 'Poppins'),
           textAlign: TextAlign.center,
         ),
@@ -523,9 +797,9 @@ class _EditTabState extends State<EditTab> {
     }
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(12.h),
+      padding: EdgeInsets.all(10.h),
       decoration: BoxDecoration(
-        color: _teal.withOpacity(0.08),
+        color: _teal.withOpacity(0.07),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: _teal.withOpacity(0.2)),
       ),
@@ -537,9 +811,9 @@ class _EditTabState extends State<EditTab> {
             padding:
                 EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
             decoration: BoxDecoration(
-              color: _teal.withOpacity(0.2),
+              color: _teal.withOpacity(0.18),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _teal.withOpacity(0.5)),
+              border: Border.all(color: _teal.withOpacity(0.45)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -572,7 +846,7 @@ class _EditTabState extends State<EditTab> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: double.infinity,
-        height: 52.h,
+        height: 50.h,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: state.isSaving
@@ -604,7 +878,7 @@ class _EditTabState extends State<EditTab> {
                   'Save Changes',
                   style: TextStyle(
                     color: _white,
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Poppins',
                   ),

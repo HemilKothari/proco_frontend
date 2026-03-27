@@ -6,7 +6,7 @@ import 'package:jobhub_v1/services/helpers/user_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileEditState extends ChangeNotifier {
-  // ── Field values ────────────────────────────────────────────────────────────
+  // ── Backend fields ───────────────────────────────────────────────────────────
   String username = '';
   String email = '';
   String phone = '';
@@ -19,15 +19,26 @@ class ProfileEditState extends ChangeNotifier {
   List<String> skills = [];
   String profileImageUrl = '';
 
-  // ── Visibility flags (persisted locally) ────────────────────────────────────
+  // ── Local-only fields (stored in SharedPreferences) ──────────────────────────
+  String age = '';
+  String linkedInUrl = '';
+  String gitHubUrl = '';
+  String twitterUrl = '';
+  String portfolioUrl = '';
+
+  // ── Per-field visibility flags ───────────────────────────────────────────────
+  bool showEmail = true;
   bool showPhone = true;
   bool showGender = true;
-  bool showEmail = true;
-  bool showLocation = true;
-  bool showEducation = true;
+  bool showAge = true;
+  bool showCollege = true;
   bool showSkills = true;
+  bool showLinkedIn = true;
+  bool showGitHub = true;
+  bool showTwitter = true;
+  bool showPortfolio = true;
 
-  // ── Async state ─────────────────────────────────────────────────────────────
+  // ── Async state ──────────────────────────────────────────────────────────────
   bool isLoading = true;
   bool isSaving = false;
   String? error;
@@ -37,11 +48,12 @@ class ProfileEditState extends ChangeNotifier {
   }
 
   Future<void> _init() async {
+    await _loadLocalExtras();
     await _loadVisibility();
     await loadProfile();
   }
 
-  // ── Load profile from backend ────────────────────────────────────────────────
+  // ── Load backend profile + local extras ──────────────────────────────────────
   Future<void> loadProfile() async {
     isLoading = true;
     error = null;
@@ -71,7 +83,7 @@ class ProfileEditState extends ChangeNotifier {
     }
   }
 
-  // ── Save profile to backend ──────────────────────────────────────────────────
+  // ── Save to backend + persist local extras ───────────────────────────────────
   Future<bool> saveProfile(File? image) async {
     isSaving = true;
     notifyListeners();
@@ -87,6 +99,7 @@ class ProfileEditState extends ChangeNotifier {
         gender: gender.isEmpty ? null : gender,
       );
       final ok = await UserHelper.updateProfile(req, image);
+      if (ok == true) await _saveLocalExtras();
       isSaving = false;
       notifyListeners();
       return ok == true;
@@ -98,20 +111,47 @@ class ProfileEditState extends ChangeNotifier {
     }
   }
 
-  // ── Visibility persistence ────────────────────────────────────────────────────
+  // ── Local extras persistence ─────────────────────────────────────────────────
+  Future<void> _loadLocalExtras() async {
+    final prefs = await SharedPreferences.getInstance();
+    age = prefs.getString('profile_age') ?? '';
+    linkedInUrl = prefs.getString('profile_linkedin') ?? '';
+    gitHubUrl = prefs.getString('profile_github') ?? '';
+    twitterUrl = prefs.getString('profile_twitter') ?? '';
+    portfolioUrl = prefs.getString('profile_portfolio') ?? '';
+  }
+
+  Future<void> _saveLocalExtras() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('profile_age', age);
+    await prefs.setString('profile_linkedin', linkedInUrl);
+    await prefs.setString('profile_github', gitHubUrl);
+    await prefs.setString('profile_twitter', twitterUrl);
+    await prefs.setString('profile_portfolio', portfolioUrl);
+  }
+
+  // ── Per-field visibility ──────────────────────────────────────────────────────
   Future<void> _loadVisibility() async {
     final prefs = await SharedPreferences.getInstance();
+    showEmail = prefs.getBool('vis_email') ?? true;
     showPhone = prefs.getBool('vis_phone') ?? true;
     showGender = prefs.getBool('vis_gender') ?? true;
-    showEmail = prefs.getBool('vis_email') ?? true;
-    showLocation = prefs.getBool('vis_location') ?? true;
-    showEducation = prefs.getBool('vis_education') ?? true;
+    showAge = prefs.getBool('vis_age') ?? true;
+    showCollege = prefs.getBool('vis_college') ?? true;
     showSkills = prefs.getBool('vis_skills') ?? true;
+    showLinkedIn = prefs.getBool('vis_linkedin') ?? true;
+    showGitHub = prefs.getBool('vis_github') ?? true;
+    showTwitter = prefs.getBool('vis_twitter') ?? true;
+    showPortfolio = prefs.getBool('vis_portfolio') ?? true;
   }
 
   Future<void> toggleVisibility(String key) async {
     final prefs = await SharedPreferences.getInstance();
     switch (key) {
+      case 'email':
+        showEmail = !showEmail;
+        await prefs.setBool('vis_email', showEmail);
+        break;
       case 'phone':
         showPhone = !showPhone;
         await prefs.setBool('vis_phone', showPhone);
@@ -120,27 +160,39 @@ class ProfileEditState extends ChangeNotifier {
         showGender = !showGender;
         await prefs.setBool('vis_gender', showGender);
         break;
-      case 'email':
-        showEmail = !showEmail;
-        await prefs.setBool('vis_email', showEmail);
+      case 'age':
+        showAge = !showAge;
+        await prefs.setBool('vis_age', showAge);
         break;
-      case 'location':
-        showLocation = !showLocation;
-        await prefs.setBool('vis_location', showLocation);
-        break;
-      case 'education':
-        showEducation = !showEducation;
-        await prefs.setBool('vis_education', showEducation);
+      case 'college':
+        showCollege = !showCollege;
+        await prefs.setBool('vis_college', showCollege);
         break;
       case 'skills':
         showSkills = !showSkills;
         await prefs.setBool('vis_skills', showSkills);
         break;
+      case 'linkedin':
+        showLinkedIn = !showLinkedIn;
+        await prefs.setBool('vis_linkedin', showLinkedIn);
+        break;
+      case 'github':
+        showGitHub = !showGitHub;
+        await prefs.setBool('vis_github', showGitHub);
+        break;
+      case 'twitter':
+        showTwitter = !showTwitter;
+        await prefs.setBool('vis_twitter', showTwitter);
+        break;
+      case 'portfolio':
+        showPortfolio = !showPortfolio;
+        await prefs.setBool('vis_portfolio', showPortfolio);
+        break;
     }
     notifyListeners();
   }
 
-  // ── Field setters called from EditTab ────────────────────────────────────────
+  // ── Setters ──────────────────────────────────────────────────────────────────
   void setField(String key, String value) {
     switch (key) {
       case 'phone':
@@ -148,6 +200,9 @@ class ProfileEditState extends ChangeNotifier {
         break;
       case 'gender':
         gender = value;
+        break;
+      case 'age':
+        age = value;
         break;
       case 'city':
         city = value;
@@ -163,6 +218,18 @@ class ProfileEditState extends ChangeNotifier {
         break;
       case 'branch':
         branch = value;
+        break;
+      case 'linkedin':
+        linkedInUrl = value;
+        break;
+      case 'github':
+        gitHubUrl = value;
+        break;
+      case 'twitter':
+        twitterUrl = value;
+        break;
+      case 'portfolio':
+        portfolioUrl = value;
         break;
     }
     notifyListeners();

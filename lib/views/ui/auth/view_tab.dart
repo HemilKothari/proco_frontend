@@ -16,71 +16,97 @@ class ViewTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<ProfileEditState>();
+    final location = [state.city, state.state, state.country]
+        .where((s) => s.isNotEmpty)
+        .join(', ');
+    final education = [state.college, state.branch]
+        .where((s) => s.isNotEmpty)
+        .join(' · ');
+
+    final hasAnything = (state.showEmail && state.email.isNotEmpty) ||
+        (state.showPhone && state.phone.isNotEmpty) ||
+        (state.showGender && state.gender.isNotEmpty) ||
+        (state.showAge && state.age.isNotEmpty) ||
+        (state.showCollege && education.isNotEmpty) ||
+        location.isNotEmpty ||
+        (state.showSkills && state.skills.isNotEmpty) ||
+        (state.showLinkedIn && state.linkedInUrl.isNotEmpty) ||
+        (state.showGitHub && state.gitHubUrl.isNotEmpty) ||
+        (state.showTwitter && state.twitterUrl.isNotEmpty) ||
+        (state.showPortfolio && state.portfolioUrl.isNotEmpty);
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 32.h),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Header ──────────────────────────────────────────────────────
           _buildHeader(state),
           SizedBox(height: 20.h),
-          if (state.showEmail) ...[
-            _infoCard(Icons.email_outlined, 'Email', state.email),
-            SizedBox(height: 10.h),
-          ],
-          if (state.showPhone && state.phone.isNotEmpty) ...[
-            _infoCard(Icons.phone_outlined, 'Phone', state.phone),
-            SizedBox(height: 10.h),
-          ],
-          if (state.showGender && state.gender.isNotEmpty) ...[
-            _infoCard(Icons.wc_outlined, 'Gender', state.gender),
-            SizedBox(height: 10.h),
-          ],
-          if (state.showLocation &&
-              (state.city.isNotEmpty ||
-                  state.state.isNotEmpty ||
-                  state.country.isNotEmpty)) ...[
-            _infoCard(
-              Icons.location_on_outlined,
-              'Location',
-              [state.city, state.state, state.country]
-                  .where((s) => s.isNotEmpty)
-                  .join(', '),
-            ),
-            SizedBox(height: 10.h),
-          ],
-          if (state.showEducation &&
-              (state.college.isNotEmpty || state.branch.isNotEmpty)) ...[
-            _infoCard(
-              Icons.school_outlined,
-              'Education',
-              [state.college, state.branch]
-                  .where((s) => s.isNotEmpty)
-                  .join(' · '),
-            ),
-            SizedBox(height: 10.h),
-          ],
-          if (state.showSkills && state.skills.isNotEmpty) ...[
-            _skillsCard(state.skills),
-            SizedBox(height: 10.h),
-          ],
-          if (!state.showEmail &&
-              !state.showPhone &&
-              !state.showGender &&
-              !state.showLocation &&
-              !state.showEducation &&
-              !state.showSkills)
+
+          if (!hasAnything) ...[
             _emptyState(),
+          ] else ...[
+            // ── Personal Info ────────────────────────────────────────────
+            if (state.showEmail && state.email.isNotEmpty) ...[
+              _infoCard(Icons.email_outlined, 'Email', state.email),
+              SizedBox(height: 10.h),
+            ],
+            if (state.showPhone && state.phone.isNotEmpty) ...[
+              _infoCard(Icons.phone_outlined, 'Phone', state.phone),
+              SizedBox(height: 10.h),
+            ],
+            if (state.showGender && state.gender.isNotEmpty) ...[
+              _infoCard(Icons.wc_outlined, 'Gender', state.gender),
+              SizedBox(height: 10.h),
+            ],
+            if (state.showAge && state.age.isNotEmpty) ...[
+              _infoCard(Icons.cake_outlined, 'Age', state.age),
+              SizedBox(height: 10.h),
+            ],
+
+            // ── Location (always shown — no toggle) ──────────────────────
+            if (location.isNotEmpty) ...[
+              _infoCard(
+                  Icons.location_on_outlined, 'Location', location),
+              SizedBox(height: 10.h),
+            ],
+
+            // ── Education ────────────────────────────────────────────────
+            if (state.showCollege && education.isNotEmpty) ...[
+              _infoCard(Icons.school_outlined, 'Education', education),
+              SizedBox(height: 10.h),
+            ],
+
+            // ── Skills ───────────────────────────────────────────────────
+            if (state.showSkills && state.skills.isNotEmpty) ...[
+              _skillsCard(state.skills),
+              SizedBox(height: 10.h),
+            ],
+
+            // ── Social & Links ───────────────────────────────────────────
+            if ((state.showLinkedIn && state.linkedInUrl.isNotEmpty) ||
+                (state.showGitHub && state.gitHubUrl.isNotEmpty) ||
+                (state.showTwitter && state.twitterUrl.isNotEmpty) ||
+                (state.showPortfolio &&
+                    state.portfolioUrl.isNotEmpty)) ...[
+              SizedBox(height: 4.h),
+              _socialSection(state),
+            ],
+          ],
         ],
       ),
     );
   }
 
+  // ── Header ─────────────────────────────────────────────────────────────────
   Widget _buildHeader(ProfileEditState state) {
     return Row(
       children: [
         Container(
-          width: 72.w,
-          height: 72.w,
+          width: 68.w,
+          height: 68.w,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: _teal, width: 2.5),
@@ -88,36 +114,39 @@ class ViewTab extends StatelessWidget {
           child: ClipOval(
             child: state.profileImageUrl.isEmpty ||
                     state.profileImageUrl == 'null'
-                ? Image.asset('assets/images/user.png', fit: BoxFit.cover)
+                ? Image.asset('assets/images/user.png',
+                    fit: BoxFit.cover)
                 : CachedNetworkImage(
                     imageUrl: state.profileImageUrl,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) =>
-                        Image.asset('assets/images/user.png', fit: BoxFit.cover),
+                    errorWidget: (_, __, ___) => Image.asset(
+                        'assets/images/user.png',
+                        fit: BoxFit.cover),
                   ),
           ),
         ),
         SizedBox(width: 16.w),
         Expanded(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 state.username,
                 style: TextStyle(
                   color: _white,
-                  fontSize: 20.sp,
+                  fontSize: 19.sp,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Poppins',
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
-              if (state.showEmail)
+              if (state.showEmail && state.email.isNotEmpty)
                 Text(
                   state.email,
                   style: TextStyle(
                     color: _tealLight,
-                    fontSize: 13.sp,
+                    fontSize: 12.sp,
                     fontFamily: 'Poppins',
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -129,37 +158,39 @@ class ViewTab extends StatelessWidget {
     );
   }
 
+  // ── Info card ──────────────────────────────────────────────────────────────
   Widget _infoCard(IconData icon, String label, String value) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: _card,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: _teal.withOpacity(0.25)),
       ),
       child: Row(
         children: [
-          Icon(icon, color: _teal, size: 20),
+          Icon(icon, color: _teal, size: 18),
           SizedBox(width: 12.w),
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
                   style: const TextStyle(
                     color: Colors.white38,
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   style: const TextStyle(
                     color: _white,
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -171,27 +202,30 @@ class ViewTab extends StatelessWidget {
     );
   }
 
+  // ── Skills card ────────────────────────────────────────────────────────────
   Widget _skillsCard(List<String> skills) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(14.h),
+      padding: EdgeInsets.all(12.h),
       decoration: BoxDecoration(
         color: _card,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: _teal.withOpacity(0.25)),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.psychology_outlined, color: _teal, size: 20),
+              const Icon(Icons.psychology_outlined,
+                  color: _teal, size: 18),
               SizedBox(width: 10.w),
               const Text(
                 'Skills',
                 style: TextStyle(
                   color: Colors.white38,
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -203,12 +237,12 @@ class ViewTab extends StatelessWidget {
             runSpacing: 8,
             children: skills.map((skill) {
               return Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+                padding: EdgeInsets.symmetric(
+                    horizontal: 10.w, vertical: 5.h),
                 decoration: BoxDecoration(
-                  color: _teal.withOpacity(0.18),
+                  color: _teal.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: _teal.withOpacity(0.45)),
+                  border: Border.all(color: _teal.withOpacity(0.4)),
                 ),
                 child: Text(
                   skill,
@@ -227,20 +261,104 @@ class ViewTab extends StatelessWidget {
     );
   }
 
+  // ── Social links section ───────────────────────────────────────────────────
+  Widget _socialSection(ProfileEditState state) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(12.h),
+      decoration: BoxDecoration(
+        color: _card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _teal.withOpacity(0.25)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.link_rounded, color: _teal, size: 18),
+              SizedBox(width: 10.w),
+              const Text(
+                'Social & Links',
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10.h),
+          if (state.showLinkedIn && state.linkedInUrl.isNotEmpty)
+            _socialRow(Icons.link_rounded, 'LinkedIn',
+                state.linkedInUrl),
+          if (state.showGitHub && state.gitHubUrl.isNotEmpty)
+            _socialRow(
+                Icons.code_rounded, 'GitHub', state.gitHubUrl),
+          if (state.showTwitter && state.twitterUrl.isNotEmpty)
+            _socialRow(Icons.alternate_email_rounded, 'Twitter / X',
+                state.twitterUrl),
+          if (state.showPortfolio && state.portfolioUrl.isNotEmpty)
+            _socialRow(Icons.language_rounded, 'Portfolio',
+                state.portfolioUrl),
+        ],
+      ),
+    );
+  }
+
+  Widget _socialRow(IconData icon, String label, String url) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Row(
+        children: [
+          Icon(icon, color: _teal, size: 15),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                      color: Colors.white38, fontSize: 10),
+                ),
+                Text(
+                  url,
+                  style: TextStyle(
+                    color: _tealLight,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.underline,
+                    decorationColor: _tealLight,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Empty state ────────────────────────────────────────────────────────────
   Widget _emptyState() {
     return Center(
       child: Padding(
         padding: EdgeInsets.only(top: 40.h),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.visibility_off_outlined,
-                size: 48, color: _teal.withOpacity(0.35)),
+                size: 46, color: _teal.withOpacity(0.35)),
             SizedBox(height: 12.h),
             Text(
               'All fields are hidden',
               style: TextStyle(
                 color: Colors.white38,
-                fontSize: 14.sp,
+                fontSize: 13.sp,
                 fontFamily: 'Poppins',
               ),
             ),
@@ -249,7 +367,7 @@ class ViewTab extends StatelessWidget {
               'Toggle visibility in the Edit tab',
               style: TextStyle(
                 color: Colors.white24,
-                fontSize: 12.sp,
+                fontSize: 11.sp,
                 fontFamily: 'Poppins',
               ),
             ),
