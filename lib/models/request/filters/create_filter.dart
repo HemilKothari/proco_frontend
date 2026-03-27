@@ -13,6 +13,8 @@ class CreateFilterRequest {
     this.selectedCountry,
     this.customOptions,
     this.skills,
+    this.sortByTime,
+    this.postedWithin,
   });
 
   final String agentId;
@@ -24,6 +26,8 @@ class CreateFilterRequest {
   final String? selectedCountry;
   final List<String>? customOptions;
   final List<String>? skills;
+  final bool? sortByTime;
+  final String? postedWithin;
 
   Map<String, dynamic> toJson() => {
         'agentId': agentId,
@@ -35,5 +39,7 @@ class CreateFilterRequest {
         'selectedCountry': selectedCountry,
         'customOptions': customOptions?.map((x) => x).toList(),
         'skills': skills?.map((x) => x).toList(),
+        'sortByTime': sortByTime,
+        'postedWithin': postedWithin,
       };
 }

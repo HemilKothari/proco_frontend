@@ -44,6 +44,8 @@ class _FilterPageState extends State<FilterPage> {
   final List<String> selectedSkills = [];
   final TextEditingController _skillInputController = TextEditingController();
   bool showCustomInput = false;
+  bool sortByTime = false;
+  String postedWithin = ''; // '' | '24h' | '7d' | '30d'
   String selectedLocationOption = "";
   String selectedCity = "";
   String selectedState = "";
@@ -92,6 +94,9 @@ class _FilterPageState extends State<FilterPage> {
 
     selectedSkills.clear();
     selectedSkills.addAll(existing.skills);
+
+    sortByTime = existing.sortByTime;
+    postedWithin = existing.postedWithin;
   }
 
   Future<void> _loadExistingFilter() async {
@@ -413,6 +418,60 @@ class _FilterPageState extends State<FilterPage> {
                 ),
               ),
             const SizedBox(height: 20),
+            // ── Sort by Time ──────────────────────────────────────────────
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Sort by Latest',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Switch(
+                  value: sortByTime,
+                  activeColor: const Color(0xFF08979F),
+                  onChanged: (val) => setState(() => sortByTime = val),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Show newest jobs first',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+            // ── Posted Within ─────────────────────────────────────────────
+            const Text(
+              'Posted Within',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              children: [
+                for (final entry in const [
+                  ('24h', '24 Hours'),
+                  ('7d', '7 Days'),
+                  ('30d', '30 Days'),
+                ])
+                  ChoiceChip(
+                    label: Text(
+                      entry.$2,
+                      style: TextStyle(
+                        color: postedWithin == entry.$1
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                    selected: postedWithin == entry.$1,
+                    selectedColor: const Color(0xFF040326),
+                    backgroundColor: Colors.grey[200],
+                    checkmarkColor: Colors.teal,
+                    onSelected: (selected) => setState(
+                        () => postedWithin = selected ? entry.$1 : ''),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 20),
             CustomButton(
               onTap: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -433,6 +492,8 @@ class _FilterPageState extends State<FilterPage> {
                   selectedCountry: selectedCountry,
                   customOptions: customInput,
                   skills: List.from(selectedSkills),
+                  sortByTime: sortByTime,
+                  postedWithin: postedWithin,
                 );
 
                 if (!context.mounted) return;
@@ -455,6 +516,8 @@ class _FilterPageState extends State<FilterPage> {
                   selectedCountry: selectedCountry,
                   customOptions: customInput,
                   skills: List.from(selectedSkills),
+                  sortByTime: sortByTime,
+                  postedWithin: postedWithin,
                 ));
 
                 Navigator.pop(context);

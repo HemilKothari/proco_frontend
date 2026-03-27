@@ -22,6 +22,8 @@ class GetFilterRes {
     required this.selectedCountry,
     required this.customOptions,
     required this.skills,
+    required this.sortByTime,
+    required this.postedWithin,
   });
 
   factory GetFilterRes.fromJson(Map<String, dynamic> json) => GetFilterRes(
@@ -44,6 +46,8 @@ class GetFilterRes {
         skills: json['skills'] != null
             ? List<String>.from(json['skills'].map((x) => x))
             : [],
+        sortByTime: json['sortByTime'] == true,
+        postedWithin: json['postedWithin'] as String? ?? '',
       );
 
   final String id;
@@ -55,6 +59,8 @@ class GetFilterRes {
   final String selectedCountry;
   final List<String> customOptions;
   final List<String> skills;
+  final bool sortByTime;
+  final String postedWithin;
 
   Map<String, dynamic> toJson() => {
         '_id': id,
@@ -67,5 +73,7 @@ class GetFilterRes {
         'selectedCountry': selectedCountry,
         'customOptions': List<dynamic>.from(customOptions.map((x) => x)),
         'skills': List<dynamic>.from(skills.map((x) => x)),
+        'sortByTime': sortByTime,
+        'postedWithin': postedWithin,
       };
 }
